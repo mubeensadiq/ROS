@@ -19,7 +19,7 @@ class UsersController extends Controller
         catch (\Exception $ex){
             Log::info($ex);
             return response()->json([
-                'status' => 'success',
+                'status' => 'error',
                 'users' => []
             ],500);
         }

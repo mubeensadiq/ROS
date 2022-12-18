@@ -29,7 +29,7 @@ const routes = [
         },
         {
             path: "/users/create",
-            name: "userCreate",
+            name: "createUser",
             component: AddUser
         },
         {
@@ -43,8 +43,18 @@ const routes = [
             component: Areas,
         },
         {
+            path: "/areas/create",
+            name: "createArea",
+            component: Areas,
+        },
+        {
             path: "categories",
             name: "categories",
+            component: Categories,
+        },
+        {
+            path: "/categories/create",
+            name: "createCategory",
             component: Categories,
         },
         {
@@ -53,14 +63,20 @@ const routes = [
             component: Branches,
         },
         {
-            path: "add-product",
-            name: "addProduct",
-            component: AddProduct,
+            path: "/branches/create",
+            name: "createBranch",
+            component: Categories,
         },
+
         {
             path: "products",
             name: "products",
             component: ProductList,
+        },
+        {
+            path: "/products/create",
+            name: "createProduct",
+            component: AddProduct,
         },
         {
             path: "product-grid",

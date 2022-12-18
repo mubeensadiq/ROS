@@ -47,7 +47,7 @@ export default {
     <div
       class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
     >
-        <RouterLink :to="{name : 'userCreate' }">
+        <RouterLink :to="{name : 'createUser' }">
           <Button variant="primary" class="mr-2 shadow-md">
             Add New User
           </Button>
@@ -211,9 +211,10 @@ export default {
           <Lucide icon="ChevronsRight" class="w-4 h-4" />
         </Pagination.Link>
       </Pagination>
-      <FormSelect class="w-20 mt-3 !box sm:mt-0" v-model="users.per_page">
+        <label>Page Size</label>
+      <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="users.per_page">
         <option v-for="page in limits" :value="page">{{page}}</option>
-      </FormSelect>
+      </select>
     </div>
     <!-- END: Pagination -->
   </div>

@@ -21,16 +21,17 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            categories: []
+            deals: []
         }
     },
     mounted() {
-        this.getCategories();
+        this.getDeals();
     },
     methods : {
-        getCategories(url = '/api/categories'){
+        getDeals(url = '/api/deals'){
             axios.get(url).then((response)=>{
-                this.categories = response.data.categories;
+                this.deals = response.data.deals;
+                console.log(this.deals);
             }).catch( (error) => {
                 console.log(error);
             });
@@ -41,14 +42,14 @@ export default {
 </script>
 
 <template>
-    <h2 class="mt-10 text-lg font-medium intro-y">Categories</h2>
+    <h2 class="mt-10 text-lg font-medium intro-y">Deals</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'createCategory' }">
+            <RouterLink :to="{name : 'createDeal' }">
                 <Button variant="primary" class="mr-2 shadow-md">
-                    Add New Category
+                    Add New Deal
                 </Button>
             </RouterLink>
             <Menu>
@@ -70,7 +71,7 @@ export default {
                 </Menu.Items>
             </Menu>
             <div class="hidden mx-auto md:block text-slate-500">
-                Showing {{categories.from}} to {{ categories.to }} of {{ categories.total }} entries
+                Showing {{deals.from}} to {{ deals.to }} of {{ deals.total }} entries
             </div>
             <div class="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="relative w-56 text-slate-500">
@@ -95,6 +96,9 @@ export default {
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> Price </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> Discounted Price </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> Expiry Date </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             STATUS
                         </Table.Th>
@@ -105,7 +109,7 @@ export default {
                 </Table.Thead>
                 <Table.Tbody>
                     <Table.Tr
-                        v-for="(category, index) in  categories.data"
+                        v-for="(deal, index) in  deals.data"
                         :key="index"
                         class="intro-x"
                     >
@@ -116,9 +120,9 @@ export default {
                                 <div class="w-10 h-10 image-fit zoom-in">
                                     <Tippy
                                         as="img"
-                                        alt="User Profile Image"
+                                        alt="deal Profile Image"
                                         class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                        :src="category.image !== null ? '/images/categories/'+category.image : '/images/categories/profile-2.jpg'"
+                                        :src="deal.image !== null ? '/images/deals/'+deal.image : '/images/deals/profile-2.jpg'"
                                     />
                                 </div>
                             </div>
@@ -127,7 +131,28 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{ category.name }}
+                                {{ deal.name }}
+                            </a>
+                        </Table.Td>
+                        <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <a href="" class="font-medium whitespace-nowrap">
+                                {{deal.price}}
+                            </a>
+                        </Table.Td>
+                        <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <a href="" class="font-medium whitespace-nowrap">
+                                {{deal.discounted_price}}
+                            </a>
+                        </Table.Td>
+                        <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <a href="" class="font-medium whitespace-nowrap">
+                                {{deal.expiry_date}}
                             </a>
                         </Table.Td>
                         <Table.Td
@@ -136,12 +161,12 @@ export default {
                             <div
                                 :class="[
                   'flex items-center justify-center',
-                  { 'text-success': category.status === 1 },
-                  { 'text-danger': category.status === 0 },
+                  { 'text-success': deal.status === 1 },
+                  { 'text-danger': deal.status === 0 },
                 ]"
                             >
                                 <Lucide icon="CheckSquare" class="w-4 h-4 mr-2" />
-                                {{ category.status === 1 ? "Active" : "Inactive" }}
+                                {{ deal.status === 1 ? "Active" : "Inactive" }}
                             </div>
                         </Table.Td>
                         <Table.Td
@@ -176,26 +201,26 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getCategories(categories.first_page_url)">
+                <Pagination.Link @click="getDeals(deals.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="categories.prev_page_url" @click="getCategories(categories.prev_page_url)">
+                <Pagination.Link v-if="deals.prev_page_url" @click="getDeals(deals.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="categories.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link  v-if="categories.prev_page_url" @click="getCategories(categories.prev_page_url)">{{categories.current_page - 1}}</Pagination.Link>
-                <Pagination.Link active>{{categories.current_page}}</Pagination.Link>
-                <Pagination.Link  v-if="categories.next_page_url" @click="getCategories(categories.next_page_url)">{{categories.current_page + 1}}</Pagination.Link>
-                <Pagination.Link v-if="categories.last_page - categories.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="categories.next_page_url" @click="getCategories(categories.next_page_url)">
+                <Pagination.Link v-if="deals.current_page - 1 > 1">...</Pagination.Link>
+                <Pagination.Link  v-if="deals.prev_page_url" @click="getDeals(deals.prev_page_url)">{{deals.current_page - 1}}</Pagination.Link>
+                <Pagination.Link active>{{deals.current_page}}</Pagination.Link>
+                <Pagination.Link  v-if="deals.next_page_url" @click="getDeals(deals.next_page_url)">{{deals.current_page + 1}}</Pagination.Link>
+                <Pagination.Link v-if="deals.last_page - deals.current_page > 1">...</Pagination.Link>
+                <Pagination.Link v-if="deals.next_page_url" @click="getDeals(deals.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link @click="getCategories(categories.last_page_url)">
+                <Pagination.Link @click="getDeals(deals.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>
             <label>Page Size</label>
-            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="categories.per_page">
+            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="deals.per_page">
                 <option v-for="page in limits" :value="page">{{page}}</option>
             </select>
         </div>

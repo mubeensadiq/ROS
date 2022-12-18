@@ -8,11 +8,14 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
+import {pageLimits} from "../utils/helper";
 const deleteConfirmationModal = ref(false);
 const setDeleteConfirmationModal = (value: boolean) => {
     deleteConfirmationModal.value = value;
 };
 const deleteButtonRef = ref(null);
+const limits = pageLimits();
+
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -23,11 +26,11 @@ export default {
         }
     },
     mounted() {
-        this.getCities();
+        this.getCities('/api/cities');
     },
     methods : {
-        getCities(){
-            axios.get('/api/cities').then((response)=>{
+        getCities(url){
+            axios.get(url).then((response)=>{
                 this.cities = response.data.cities;
             }).catch( (error) => {
                 console.log(error);
@@ -39,16 +42,11 @@ export default {
 </script>
 
 <template>
-    <h2 class="mt-10 text-lg font-medium intro-y">cities</h2>
+    <h2 class="mt-10 text-lg font-medium intro-y">Cities</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'userCreate' }">
-                <Button variant="primary" class="mr-2 shadow-md">
-                    Add New User
-                </Button>
-            </RouterLink>
             <Menu>
                 <Menu.Button :as="Button" class="px-2 !box">
           <span class="flex items-center justify-center w-5 h-5">
@@ -99,7 +97,7 @@ export default {
                 </Table.Thead>
                 <Table.Tbody>
                     <Table.Tr
-                        v-for="(city, index) in  _.take(cities)"
+                        v-for="(city, index) in cities.data"
                         :key="index"
                         class="intro-x"
                     >
@@ -160,11 +158,9 @@ export default {
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>
-            <FormSelect class="w-20 mt-3 !box sm:mt-0" v-model="cities.per_page">
-                <option>20</option>
-                <option>30</option>
-                <option>50</option>
-            </FormSelect>
+            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="cities.per_page">
+                <option v-for="page in limits" :value="page">{{page}}</option>
+            </select>
         </div>
         <!-- END: Pagination -->
     </div>
