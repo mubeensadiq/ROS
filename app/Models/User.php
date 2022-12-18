@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
 
 class User extends Authenticatable
 {
@@ -17,10 +19,10 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -33,6 +35,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $appends =[
+        'full_name'
+    ];
+
     /**
      * The attributes that should be cast.
      *
@@ -41,4 +47,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function profile(){
+        return $this->hasOne(UserProfile::class,'user_id');
+    }
+
+    protected function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' .$this->last_name;
+    }
 }
