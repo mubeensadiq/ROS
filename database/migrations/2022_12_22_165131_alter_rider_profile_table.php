@@ -13,13 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('description');
-            $table->boolean('status');
-            $table->string('image')->nullable();
-            $table->timestamps();
+        Schema::table('rider_profile', function (Blueprint $table) {
+            $table->dropForeign(['area_id']);
+            $table->dropColumn(['area_id']);
         });
     }
 
@@ -30,6 +26,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::table('rider_profile', function (Blueprint $table) {
+            $table->foreignId('area_id')
+                ->constrained('areas')
+                ->nullOnDelete();
+        });
     }
 };

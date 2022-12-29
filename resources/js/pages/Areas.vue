@@ -115,14 +115,21 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{ area.name }}
+                                {{ area.area }}
                             </a>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{area.city.name}}
+                                {{area.city.city}}
+                            </a>
+                        </Table.Td>
+                        <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <a href="" class="font-medium whitespace-nowrap">
+                                {{area.postal_code}}
                             </a>
                         </Table.Td>
                         <Table.Td
@@ -171,21 +178,21 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getareas(areas.first_page_url)">
+                <Pagination.Link @click="getAreas(areas.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="areas.prev_page_url" @click="getareas(areas.prev_page_url)">
+                <Pagination.Link v-if="areas.prev_page_url" @click="getAreas(areas.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4" />
                 </Pagination.Link>
                 <Pagination.Link v-if="areas.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link  v-if="areas.prev_page_url" @click="getareas(areas.prev_page_url)">{{areas.current_page - 1}}</Pagination.Link>
+                <Pagination.Link  v-if="areas.prev_page_url" @click="getAreas(areas.prev_page_url)">{{areas.current_page - 1}}</Pagination.Link>
                 <Pagination.Link active>{{areas.current_page}}</Pagination.Link>
-                <Pagination.Link  v-if="areas.next_page_url" @click="getareas(areas.next_page_url)">{{areas.current_page + 1}}</Pagination.Link>
+                <Pagination.Link  v-if="areas.next_page_url" @click="getAreas(areas.next_page_url)">{{areas.current_page + 1}}</Pagination.Link>
                 <Pagination.Link v-if="areas.last_page - areas.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="areas.next_page_url" @click="getareas(areas.next_page_url)">
+                <Pagination.Link v-if="areas.next_page_url" @click="getAreas(areas.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link @click="getareas(areas.last_page_url)">
+                <Pagination.Link @click="getAreas(areas.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>

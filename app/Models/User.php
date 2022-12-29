@@ -51,6 +51,12 @@ class User extends Authenticatable
     public function profile(){
         return $this->hasOne(UserProfile::class,'user_id');
     }
+    public function rider(){
+        return $this->hasOne(RiderProfile::class,'user_id');
+    }
+    public function areas(){
+        return $this->belongsToMany(UserAreas::class,'user_areas','user_id' , 'area_id' ,'id','id');
+    }
 
     protected function getFullNameAttribute()
     {

@@ -13,14 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_profile', function (Blueprint $table) {
+        Schema::create('addons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->onDelete('cascade');
-            $table->string('phone_number')->nullable();
-            $table->longText('address')->nullable();
-            $table->string('avatar')->nullable();
+            $table->string('title');
+            $table->string('name');
+            $table->double('price')->default(0);
+            $table->boolean('required')->default(0);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_profile');
+        Schema::dropIfExists('addons');
     }
 };

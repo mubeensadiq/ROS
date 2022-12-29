@@ -54,7 +54,6 @@ const localValue = ref(props.modelValue);
 const emit = defineEmits<FormInputEmit>();
 
 watch(localValue, () => {
-    console.log(localValue);
   emit("update:modelValue", localValue.value);
 });
 </script>

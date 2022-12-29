@@ -18,10 +18,6 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->onDelete('cascade');
-            $table->foreignId('area_id')
-                ->nullable()
-                ->constrained('areas')
-                ->nullOnDelete();
             $table->string('cnic');
             $table->string('license_no');
             $table->timestamps();

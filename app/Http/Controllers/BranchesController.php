@@ -24,4 +24,33 @@ class BranchesController extends Controller
             ],500);
         }
     }
+
+    public function saveBranch(Request $request){
+        try{
+            $request->validate([
+                'name' => 'required',
+                'address' => 'required',
+                'landmark' => 'required',
+                'area_id' => 'required',
+            ]);
+            $branch = Branch::create([
+                'area_id' => $request->area_id,
+                'name' => $request->name,
+                'address' => $request->address,
+                'landmark' => $request->landmark,
+                'phone_number' => $request->phone_number,
+            ]);
+            return response()->json([
+                'status' => 'success'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+
+    }
 }

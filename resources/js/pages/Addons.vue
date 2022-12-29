@@ -21,16 +21,16 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            branches: []
+            addons: []
         }
     },
     mounted() {
-        this.getBranches();
+        this.getAddons();
     },
     methods : {
-        getBranches(url = '/api/branches'){
+        getAddons(url = '/api/addons'){
             axios.get(url).then((response)=>{
-                this.branches = response.data.branches;
+                this.addons = response.data.addons;
             }).catch( (error) => {
                 console.log(error);
             });
@@ -41,14 +41,14 @@ export default {
 </script>
 
 <template>
-    <h2 class="mt-10 text-lg font-medium intro-y">Branches</h2>
+    <h2 class="mt-10 text-lg font-medium intro-y">Addons</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'createBranch' }">
+            <RouterLink :to="{name : 'createAddon' }">
                 <Button variant="primary" class="mr-2 shadow-md">
-                    Add New Branch
+                    Add New Addon
                 </Button>
             </RouterLink>
             <Menu>
@@ -70,7 +70,7 @@ export default {
                 </Menu.Items>
             </Menu>
             <div class="hidden mx-auto md:block text-slate-500">
-                Showing {{branches.from}} to {{ branches.to }} of {{ branches.total }} entries
+                Showing {{addons.from}} to {{ addons.to }} of {{ addons.total }} entries
             </div>
             <div class="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="relative w-56 text-slate-500">
@@ -91,12 +91,12 @@ export default {
             <Table class="border-spacing-y-[10px] border-separate -mt-2">
                 <Table.Thead>
                     <Table.Tr>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> IMAGE </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap">
-                            NAME
+                            TITLE
                         </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Area </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Phone Number </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Address </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> NAME </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> PRICE </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             ACTIONS
                         </Table.Th>
@@ -104,38 +104,46 @@ export default {
                 </Table.Thead>
                 <Table.Tbody>
                     <Table.Tr
-                        v-for="(branch, index) in  branches.data"
+                        v-for="(addon, index) in  addons.data"
                         :key="index"
                         class="intro-x"
                     >
                         <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <div class="flex">
+                                <div class="w-10 h-10 image-fit zoom-in">
+                                    <Tippy
+                                        as="img"
+                                        alt="Addon Image"
+                                        class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                        :src="addon.image !== null ? '/images/categories/'+addon.image : '/images/categories/profile-2.jpg'"
+                                    />
+                                </div>
+                            </div>
+                        </Table.Td>
+                        <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{ branch.name }}
+                                {{ addon.title }}
                             </a>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{branch.area ? branch.area.area : 'N/A'}}
+                                {{ addon.name }}
                             </a>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <a href="" class="font-medium whitespace-nowrap">
-                                {{branch.phone_number}}
+                                {{addon.price}}
                             </a>
                         </Table.Td>
-                        <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <a href="" class="font-medium whitespace-nowrap">
-                                {{branch.address}}
-                            </a>
-                        </Table.Td>
+
 
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
@@ -169,26 +177,26 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getBranches(branches.first_page_url)">
+                <Pagination.Link @click="getAddons(addons.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="branches.prev_page_url" @click="getBranches(branches.prev_page_url)">
+                <Pagination.Link v-if="addons.prev_page_url" @click="getAddons(addons.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="branches.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link  v-if="branches.prev_page_url" @click="getBranches(branches.prev_page_url)">{{branches.current_page - 1}}</Pagination.Link>
-                <Pagination.Link active>{{branches.current_page}}</Pagination.Link>
-                <Pagination.Link  v-if="branches.next_page_url" @click="getBranches(branches.next_page_url)">{{branches.current_page + 1}}</Pagination.Link>
-                <Pagination.Link v-if="branches.last_page - branches.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="branches.next_page_url" @click="getBranches(branches.next_page_url)">
+                <Pagination.Link v-if="addons.current_page - 1 > 1">...</Pagination.Link>
+                <Pagination.Link  v-if="addons.prev_page_url" @click="getAddons(addons.prev_page_url)">{{addons.current_page - 1}}</Pagination.Link>
+                <Pagination.Link active>{{addons.current_page}}</Pagination.Link>
+                <Pagination.Link  v-if="addons.next_page_url" @click="getAddons(addons.next_page_url)">{{addons.current_page + 1}}</Pagination.Link>
+                <Pagination.Link v-if="addons.last_page - addons.current_page > 1">...</Pagination.Link>
+                <Pagination.Link v-if="addons.next_page_url" @click="getAddons(addons.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link @click="getBranches(branches.last_page_url)">
+                <Pagination.Link @click="getAddons(addons.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>
             <label>Page Size</label>
-            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="branches.per_page">
+            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="addons.per_page">
                 <option v-for="page in limits" :value="page">{{page}}</option>
             </select>
         </div>

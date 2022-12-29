@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserProfile extends Model
+class RiderProfile extends Model
 {
     use HasFactory;
     protected $guarded = [
@@ -13,7 +13,7 @@ class UserProfile extends Model
         'created_at',
         'updated_at',
     ];
-    protected $table = 'user_profile';
+    protected $table = 'rider_profile';
     public function user(){
         return $this->belongsTo(User::class , 'user_id', 'id');
     }

@@ -95,6 +95,9 @@ export default {
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap">
+                            DESCRIPTION
+                        </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             STATUS
                         </Table.Th>
@@ -128,6 +131,13 @@ export default {
                         >
                             <a href="" class="font-medium whitespace-nowrap">
                                 {{ category.name }}
+                            </a>
+                        </Table.Td>
+                        <Table.Td
+                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+                        >
+                            <a href="" class="font-medium whitespace-nowrap">
+                                {{ category.description }}
                             </a>
                         </Table.Td>
                         <Table.Td

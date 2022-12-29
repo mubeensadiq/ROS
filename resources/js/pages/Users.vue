@@ -31,7 +31,6 @@ export default {
         getUsers(url = '/api/users'){
             axios.get(url).then((response)=>{
                 this.users = response.data.users;
-                console.log(this.users);
             }).catch( (error) => {
                 console.log(error);
             });

@@ -140,21 +140,21 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getcities(cities.first_page_url)">
+                <Pagination.Link @click="getCities(cities.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="cities.prev_page_url" @click="getcities(cities.prev_page_url)">
+                <Pagination.Link v-if="cities.prev_page_url" @click="getCities(cities.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4" />
                 </Pagination.Link>
                 <Pagination.Link v-if="cities.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link  v-if="cities.prev_page_url" @click="getcities(cities.prev_page_url)">{{cities.current_page - 1}}</Pagination.Link>
+                <Pagination.Link  v-if="cities.prev_page_url" @click="getCities(cities.prev_page_url)">{{cities.current_page - 1}}</Pagination.Link>
                 <Pagination.Link active>{{cities.current_page}}</Pagination.Link>
-                <Pagination.Link  v-if="cities.next_page_url" @click="getcities(cities.next_page_url)">{{cities.current_page + 1}}</Pagination.Link>
+                <Pagination.Link  v-if="cities.next_page_url" @click="getCities(cities.next_page_url)">{{cities.current_page + 1}}</Pagination.Link>
                 <Pagination.Link v-if="cities.last_page - cities.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="cities.next_page_url" @click="getcities(cities.next_page_url)">
+                <Pagination.Link v-if="cities.next_page_url" @click="getCities(cities.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link @click="getcities(cities.last_page_url)">
+                <Pagination.Link @click="getCities(cities.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>

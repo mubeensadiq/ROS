@@ -2,13 +2,18 @@ import { createRouter, createWebHistory } from "vue-router";
 import SideMenu from "../layouts/SideMenu/SideMenu.vue";
 import Dashboard from "../pages/Dashboard.vue";
 import Users from "../pages/Users.vue";
+import AddUser from "../pages/AddUser.vue";
 import Cities from "../pages/Cities.vue";
 import Areas from "../pages/Areas.vue";
+import AddArea from "../pages/AddArea.vue";
 import Branches from "../pages/Branches.vue";
+import AddBranch from "../pages/AddBranch.vue";
 import Categories from "../pages/Categories.vue";
+import AddCategory from "../pages/AddCategory.vue";
+import Addons from "../pages/Addons.vue";
+import AddAddon from "../pages/AddAddon.vue";
 import ProductList from "../pages/ProductList.vue";
 import ProductGrid from "../pages/ProductGrid.vue";
-import AddUser from "../pages/AddUser.vue";
 import AddProduct from "../pages/AddProduct.vue";
 import Login from "../pages/Login.vue";
 import { useUserStore } from "../stores/users";
@@ -45,28 +50,39 @@ const routes = [
         {
             path: "/areas/create",
             name: "createArea",
-            component: Areas,
+            component: AddArea,
         },
         {
-            path: "categories",
+            path: "Categories",
             name: "categories",
             component: Categories,
         },
         {
             path: "/categories/create",
             name: "createCategory",
-            component: Categories,
+            component: AddCategory,
         },
         {
-            path: "branches",
+            path: "Branches",
             name: "branches",
             component: Branches,
         },
         {
             path: "/branches/create",
             name: "createBranch",
-            component: Categories,
+            component: AddBranch,
         },
+        {
+            path: "Addons",
+            name: "addons",
+            component: Addons,
+        },
+        {
+            path: "/addon/create",
+            name: "createAddon",
+            component: AddAddon,
+        },
+
 
         {
             path: "products",
