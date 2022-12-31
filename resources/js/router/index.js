@@ -8,8 +8,11 @@ import Areas from "../pages/Areas.vue";
 import AddArea from "../pages/AddArea.vue";
 import Branches from "../pages/Branches.vue";
 import AddBranch from "../pages/AddBranch.vue";
+import UpdateBranch from "../pages/AddBranch.vue";
 import Categories from "../pages/Categories.vue";
 import AddCategory from "../pages/AddCategory.vue";
+import Deals from "../pages/Deals.vue";
+import AddDeal from "../pages/AddDeal.vue";
 import Addons from "../pages/Addons.vue";
 import AddAddon from "../pages/AddAddon.vue";
 import ProductList from "../pages/ProductList.vue";
@@ -63,6 +66,16 @@ const routes = [
             component: AddCategory,
         },
         {
+            path: "Deals",
+            name: "deals",
+            component: Deals,
+        },
+        {
+            path: "/deals/create",
+            name: "createDeal",
+            component: AddDeal,
+        },
+        {
             path: "Branches",
             name: "branches",
             component: Branches,
@@ -71,6 +84,11 @@ const routes = [
             path: "/branches/create",
             name: "createBranch",
             component: AddBranch,
+        },
+        {
+            path: "/branches/update/:id",
+            name: "editBranch",
+            component: UpdateBranch,
         },
         {
             path: "Addons",

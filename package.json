@@ -3,7 +3,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "watch": "vite build --watch"
+        "watch": "vite build --mode development --watch"
     },
     "devDependencies": {
         "axios": "^1.1.2",

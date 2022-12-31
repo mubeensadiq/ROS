@@ -6,6 +6,7 @@ import {
     FormSelect,
     FormLabel,
 } from "../base-components/Form";
+import TomSelect from "../base-components/TomSelect";
 import Lucide from "../base-components/Lucide";
 
 </script>
@@ -17,7 +18,7 @@ export default {
         return {
             branch: {
                 name: '',
-                area_id: 1,
+                area_id: "1",
                 address: '',
                 landmark: '',
                 phone_number: ''
@@ -27,6 +28,12 @@ export default {
     },
     mounted() {
         this.getAreas();
+        if (this.$route.params.id !== undefined) {
+            this.$nextTick().then(() => {
+                this.getBranchDetails(this.$route.params.id);
+            });
+        }
+
     },
     methods: {
 
@@ -37,9 +44,20 @@ export default {
                 console.log(error);
             });
         },
+        getBranchDetails(id) {
+            axios.get('/api/get-branch-details/' + id).then((response) => {
+                if (response.data.branch !== undefined){
+                    this.branch = response.data.branch;
+                    this.branch.area_id = response.data.branch.area_id.toString();
+                }
+
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
         saveBranch(addNew = false) {
             axios.post('/api/save-branch', this.branch).then((response) => {
-                if(!addNew)
+                if (!addNew)
                     return this.$router.push('/branches');
             }).catch((error) => {
                 console.log(error);
@@ -91,6 +109,7 @@ export default {
                                     type="text"
                                     placeholder="Branch name"
                                     v-model="branch.name"
+                                    :value="branch.name"
                                 />
                             </div>
                         </FormInline>
@@ -115,6 +134,7 @@ export default {
                                     type="text"
                                     placeholder="Branch Address"
                                     v-model="branch.address"
+                                    :value="branch.address"
                                 />
                             </div>
                         </FormInline>
@@ -140,6 +160,7 @@ export default {
                                     type="text"
                                     placeholder="Landmark"
                                     v-model="branch.landmark"
+                                    :value="branch.landmark"
                                 />
                             </div>
                         </FormInline>
@@ -164,6 +185,7 @@ export default {
                                     type="text"
                                     placeholder="Phone Number"
                                     v-model="branch.phone_number"
+                                    :value="branch.phone_number"
                                 />
                             </div>
                         </FormInline>
@@ -183,7 +205,13 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="city" v-model="branch.area_id">
+                                <TomSelect
+                                    v-model="branch.area_id" :value="branch.area_id"
+                                    :options="{
+                                        placeholder: 'Select Area',
+                                      }"
+                                    class="w-full"
+                                >
                                     <option
                                         v-for="(area, index) in areas"
                                         :key="index"
@@ -191,7 +219,8 @@ export default {
                                     >
                                         {{ area.area }}
                                     </option>
-                                </FormSelect>
+                                </TomSelect>
+
                             </div>
                         </FormInline>
 
@@ -200,7 +229,7 @@ export default {
             </div>
             <!-- END: Product Information -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
-                <RouterLink :to="{name : 'branch' }">
+                <RouterLink :to="{name : 'branches' }">
                     <Button
                         type="button"
                         class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
@@ -213,78 +242,11 @@ export default {
                     class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
                     @click="saveBranch()"
                 >
-                    Save & Add New Area
+                    Save & Add New Branch
                 </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveBranch()">
                     Save
                 </Button>
-            </div>
-        </div>
-        <div class="hidden col-span-2 intro-y 2xl:block">
-            <div class="sticky top-0 pt-10">
-                <ul
-                    class="text-slate-500 relative before:content-[''] before:w-[2px] before:bg-slate-200 before:dark:bg-darkmode-600 before:h-full before:absolute before:left-0 before:z-[-1]"
-                >
-                    <li
-                        class="pl-5 mb-4 font-medium border-l-2 border-primary dark:border-primary text-primary"
-                    >
-                        <a href="">Upload Product</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Information</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Detail</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant (Details)</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Management</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Weight & Shipping</a>
-                    </li>
-                </ul>
-                <div
-                    class="relative p-5 mt-10 border rounded-md bg-warning/20 dark:bg-darkmode-600 border-warning dark:border-0"
-                >
-                    <Lucide
-                        icon="Lightbulb"
-                        class="absolute top-0 right-0 w-12 h-12 mt-5 mr-3 text-warning/80"
-                    />
-                    <h2 class="text-lg font-medium">Tips</h2>
-                    <div class="mt-5 font-medium">Price</div>
-                    <div
-                        class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500"
-                    >
-                        <div>
-                            The image format is .jpg .jpeg .png and a minimum size of 300 x
-                            300 pixels (For optimal images use a minimum size of 700 x 700
-                            pixels).
-                        </div>
-                        <div class="mt-2">
-                            Select product photos or drag and drop up to 5 photos at once
-                            here. Include min. 3 attractive photos to make the product more
-                            attractive to buyers.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

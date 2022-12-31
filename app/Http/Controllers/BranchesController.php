@@ -24,6 +24,29 @@ class BranchesController extends Controller
             ],500);
         }
     }
+    public function getBranchDetails(Request $request , $id){
+        try{
+            $branch = Branch::where('id' , $id)->first();
+            if($branch){
+                return response()->json([
+                    'status' => 'success',
+                    'branch' => $branch
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No Branch Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
 
     public function saveBranch(Request $request){
         try{
@@ -33,7 +56,7 @@ class BranchesController extends Controller
                 'landmark' => 'required',
                 'area_id' => 'required',
             ]);
-            $branch = Branch::create([
+            $branch = Branch::updateOrCreate(['id' => $request->id] , [
                 'area_id' => $request->area_id,
                 'name' => $request->name,
                 'address' => $request->address,
@@ -52,5 +75,20 @@ class BranchesController extends Controller
             ],500);
         }
 
+    }
+    public function deleteBranch($id){
+        try{
+            Branch::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
     }
 }

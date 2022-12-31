@@ -96,6 +96,9 @@ export default {
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap">
+                            NAME
+                        </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Price </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Discounted Price </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Expiry Date </Table.Th>

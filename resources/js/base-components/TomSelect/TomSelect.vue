@@ -17,13 +17,13 @@ export interface TomSelectElement extends HTMLSelectElement {
 }
 
 export interface TomSelectProps extends SelectHTMLAttributes {
-  modelValue: string | string[];
+  modelValue: number | string | string[];
   options?: RecursivePartial<TomSettings>;
-  refKey?: string;
+  refKey?: string | number;
 }
 
 export interface TomSelectEmit {
-  (e: "update:modelValue", value: string | string[]): void;
+  (e: "update:modelValue", value: number | string | string[]): void;
   (e: "optionAdd", value: string | number): void;
 }
 

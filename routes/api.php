@@ -34,7 +34,9 @@ Route::get('/categories', [CategoriesController::class , 'index']);
 Route::post('/save-category', [CategoriesController::class , 'saveCategory']);
 Route::get('/deals', [DealsController::class , 'index']);
 Route::get('/branches', [BranchesController::class , 'index']);
+Route::get('/get-branch-details/{id}', [BranchesController::class , 'getBranchDetails']);
 Route::post('/save-branch', [BranchesController::class , 'saveBranch']);
+Route::delete('/delete-branch/{id}', [BranchesController::class , 'deleteBranch']);
 Route::get('/addons', [AddonsController::class , 'index']);
 Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
 //Route::middleware(['auth'])->group(function () {
