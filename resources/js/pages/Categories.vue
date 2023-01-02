@@ -9,10 +9,6 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
-const deleteConfirmationModal = ref(false);
-const setDeleteConfirmationModal = (value: boolean) => {
-    deleteConfirmationModal.value = value;
-};
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
 </script>
@@ -21,7 +17,9 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            categories: []
+            categories: [],
+            categoryID: 0,
+            deleteConfirmationModal: false
         }
     },
     mounted() {
@@ -33,6 +31,20 @@ export default {
                 this.categories = response.data.categories;
             }).catch( (error) => {
                 console.log(error);
+            });
+        },
+        setDeleteConfirmationModal(value, id = 0) {
+            this.categoryID = id;
+            this.deleteConfirmationModal = value;
+        },
+        deleteCategory() {
+            axios.delete('/api/delete-category/' + this.categoryID).then((response) => {
+                if (response.data.status === 'success') {
+                    this.getCategories("/api/categories?page=" + this.categories.current_page);
+                    this.deleteConfirmationModal = false;
+                }
+            }).catch((error) => {
+
             });
         }
 
@@ -158,21 +170,23 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <a class="flex items-center mr-3" href="">
-                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1" />
+                                <RouterLink :to="{name : 'editCategory', params:{'id' : category.id} }"
+                                            class="flex items-center mr-3">
+                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
-                                </a>
+                                </RouterLink>
                                 <a
                                     class="flex items-center text-danger"
                                     href="#"
                                     @click="
-                    (event) => {
-                      event.preventDefault();
-                      setDeleteConfirmationModal(true);
-                    }
-                  "
+                                        (event) => {
+                                            event.preventDefault();
+                                            setDeleteConfirmationModal(true , category.id);
+                                        }
+                                    "
                                 >
-                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1" /> Delete
+                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1"/>
+                                    Delete
                                 </a>
                             </div>
                         </Table.Td>
@@ -243,7 +257,7 @@ export default {
                 >
                     Cancel
                 </Button>
-                <Button
+                <Button  @click="deleteCategory()"
                     variant="danger"
                     type="button"
                     class="w-24"

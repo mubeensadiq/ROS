@@ -7,7 +7,7 @@ import {
     FormLabel,
 } from "../base-components/Form";
 import Lucide from "../base-components/Lucide";
-
+import TomSelect from "../base-components/TomSelect";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -27,12 +27,28 @@ export default {
     },
     mounted() {
         this.getCities();
+        if (this.$route.params.id !== undefined) {
+            this.$nextTick().then(() => {
+                this.getAreaDetails(this.$route.params.id);
+            });
+        }
     },
     methods: {
 
         getCities() {
             axios.get('/api/cities?get=all').then((response) => {
                 this.cities = response.data.cities;
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
+        getAreaDetails(id) {
+            axios.get('/api/get-area-details/' + id).then((response) => {
+                if (response.data.area !== undefined){
+                    this.area = response.data.area;
+                    this.area.city_id = response.data.area.city_id.toString();
+                }
+
             }).catch((error) => {
                 console.log(error);
             });
@@ -85,10 +101,11 @@ export default {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormInput
-                                    id="last-name"
+                                    id="area"
                                     type="text"
                                     placeholder="Area name"
                                     v-model="area.area"
+                                    :value="area.area"
                                 />
                             </div>
                         </FormInline>
@@ -109,10 +126,11 @@ export default {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormInput
-                                    id="last-name"
+                                    id="postal-code"
                                     type="text"
                                     placeholder="Postal Code"
                                     v-model="area.postal_code"
+                                    :value="area.postal_code"
                                 />
                             </div>
                         </FormInline>
@@ -138,6 +156,7 @@ export default {
                                     type="text"
                                     placeholder="Delivery Time"
                                     v-model="area.delivery_time"
+                                    :value="area.delivery_time"
                                 />
                             </div>
                         </FormInline>
@@ -162,6 +181,7 @@ export default {
                                     type="text"
                                     placeholder="Delivery Charges"
                                     v-model="area.delivery_charges"
+                                    :value="area.delivery_charges"
                                 />
                             </div>
                         </FormInline>
@@ -181,7 +201,13 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="city" v-model="area.city_id">
+                                <TomSelect
+                                    v-model="area.city_id" :value="area.city_id"
+                                    :options="{
+                                        placeholder: 'Select City',
+                                      }"
+                                    class="w-full"
+                                >
                                     <option
                                         v-for="(city, index) in cities"
                                         :key="index"
@@ -189,7 +215,7 @@ export default {
                                     >
                                         {{ city.city }}
                                     </option>
-                                </FormSelect>
+                                </TomSelect>
                             </div>
                         </FormInline>
 

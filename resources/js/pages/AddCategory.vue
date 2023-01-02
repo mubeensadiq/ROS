@@ -23,8 +23,23 @@ export default {
         }
     },
     mounted() {
+        if (this.$route.params.id !== undefined) {
+            this.$nextTick().then(() => {
+                this.getCategoryDetails(this.$route.params.id);
+            });
+        }
     },
     methods: {
+        getCategoryDetails(id) {
+            axios.get('/api/get-category-details/' + id).then((response) => {
+                if (response.data.category !== undefined){
+                    this.category = response.data.category;
+                }
+
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
         saveCategory(addNew = false) {
             axios.post('/api/save-category', this.category).then((response) => {
                 if(!addNew)
@@ -79,6 +94,7 @@ export default {
                                     type="text"
                                     placeholder="Name"
                                     v-model="category.name"
+                                    :value="category.name"
                                 />
                             </div>
                         </FormInline>
@@ -103,6 +119,7 @@ export default {
                                     type="text"
                                     placeholder="Description"
                                     v-model="category.description"
+                                    :value="category.description"
                                 />
                             </div>
                         </FormInline>
@@ -131,6 +148,7 @@ export default {
                                         id="category-status-active"
                                         type="checkbox"
                                         v-model="category.status"
+                                        :value="category.status === 1"
                                     />
                                     <FormSwitch.Label htmlFor="category-status-active">
                                         Active

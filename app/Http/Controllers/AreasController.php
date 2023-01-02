@@ -45,6 +45,29 @@ class AreasController extends Controller
             ],500);
         }
     }
+    public function getAreaDetails(Request $request , $id){
+        try{
+            $area = Area::where('id' , $id)->first();
+            if($area){
+                return response()->json([
+                    'status' => 'success',
+                    'area' => $area
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No Area Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
 
     public function saveArea(Request $request){
         try{
@@ -52,8 +75,7 @@ class AreasController extends Controller
                 'area' => 'required',
                 'city_id' => 'required'
             ]);
-            Log::info($request->all());
-            $area = Area::create([
+            $area = Area::updateOrCreate(['id' => $request->id],[
                 'area' => $request->area,
                 'city_id' => $request->city_id,
                 'postal_code' => $request->postal_code,
@@ -70,6 +92,21 @@ class AreasController extends Controller
             return response()->json([
                 'status' => 'error',
                 'area' => [],
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
+    public function deleteArea($id){
+        try{
+            Area::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
                 'message' => $ex->getMessage()
             ],500);
         }

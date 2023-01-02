@@ -9,6 +9,7 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import {Dialog, Menu} from "../base-components/Headless";
 import Table from "../base-components/Table";
+
 let branchID = 0;
 
 const deleteButtonRef = ref(null);
@@ -17,12 +18,13 @@ const limits = pageLimits();
 <script lang="ts">
 import axios from 'axios';
 import {ref} from "vue";
+
 export default {
     data() {
         return {
             branches: [],
-            branchID : 0,
-            deleteConfirmationModal : false
+            branchID: 0,
+            deleteConfirmationModal: false
         }
     },
     mounted() {
@@ -36,14 +38,14 @@ export default {
                 console.log(error);
             });
         },
-        setDeleteConfirmationModal(value , id = 0){
+        setDeleteConfirmationModal(value, id = 0) {
             this.branchID = id;
             this.deleteConfirmationModal = value;
         },
         deleteBranch() {
-            axios.delete('/api/delete-branch/'+this.branchID).then((response) => {
-                if(response.data.status === 'success'){
-                    this.getBranches("/api/branches?page="+this.branches.current_page);
+            axios.delete('/api/delete-branch/' + this.branchID).then((response) => {
+                if (response.data.status === 'success') {
+                    this.getBranches("/api/branches?page=" + this.branches.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {

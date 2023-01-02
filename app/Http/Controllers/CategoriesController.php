@@ -24,6 +24,29 @@ class CategoriesController extends Controller
             ],500);
         }
     }
+    public function getCategoryDetails(Request $request , $id){
+        try{
+            $category = Category::where('id' , $id)->first();
+            if($category){
+                return response()->json([
+                    'status' => 'success',
+                    'category' => $category
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No Category Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
     public function saveCategory(Request $request){
         try{
             $request->validate([
@@ -31,7 +54,7 @@ class CategoriesController extends Controller
                 'description' => 'required',
                 'status' => 'required',
             ]);
-            Category::create([
+            Category::updateOrCreate(['id' => $request->id],[
                 'name' => $request->name,
                 'description' => $request->description,
                 'status' => $request->status,
@@ -48,5 +71,20 @@ class CategoriesController extends Controller
             ],500);
         }
 
+    }
+    public function deleteCategory($id){
+        try{
+            Category::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
     }
 }

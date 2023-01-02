@@ -56,6 +56,11 @@ const routes = [
             component: AddArea,
         },
         {
+            path: "/areas/update/:id",
+            name: "editArea",
+            component: AddArea,
+        },
+        {
             path: "Categories",
             name: "categories",
             component: Categories,
@@ -63,6 +68,11 @@ const routes = [
         {
             path: "/categories/create",
             name: "createCategory",
+            component: AddCategory,
+        },
+        {
+            path: "/categories/update/:id",
+            name: "editCategory",
             component: AddCategory,
         },
         {
