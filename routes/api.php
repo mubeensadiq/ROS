@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DealsController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\AddonsController;
+use App\Http\Controllers\ImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,10 +22,13 @@ use App\Http\Controllers\AddonsController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('/upload-image', [ImageController::class,'upload']);
 Route::post('/login' , [LoginController::class, 'authenticate']);
 Route::get('/roles', [UsersController::class , 'getRoles']);
 Route::get('/users', [UsersController::class , 'index']);
 Route::post('/save-user', [UsersController::class , 'saveUser']);
+Route::get('/get-user-details/{id}', [UsersController::class , 'getUserDetails']);
+Route::delete('/delete-user/{id}', [UsersController::class , 'deleteUser']);
 Route::get('/cities', [CitiesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);
 Route::get('/areas', [AreasController::class , 'index']);

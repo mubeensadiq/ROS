@@ -8,11 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Permission\Traits\HasRoles;
 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable , HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -54,9 +55,7 @@ class User extends Authenticatable
     public function rider(){
         return $this->hasOne(RiderProfile::class,'user_id');
     }
-    public function areas(){
-        return $this->belongsToMany(UserAreas::class,'user_areas','user_id' , 'area_id' ,'id','id');
-    }
+
 
     protected function getFullNameAttribute()
     {

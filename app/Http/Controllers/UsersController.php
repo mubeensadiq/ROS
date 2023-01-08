@@ -47,11 +47,12 @@ class UsersController extends Controller
             $validator = $request->validate([
                 'first_name' => 'required',
                 'last_name' => 'required',
-                'username' => 'required|unique:users',
-                'email' => 'required|email|unique:users',
-                'password' => 'required'
+                'username' => 'sometimes|required|unique:users',
+                'email' => 'sometimes|required|email|unique:users',
+                'password' => 'sometimes|required',
+                'profile.phone_number' => 'required'
             ]);
-            $user = User::create([
+            $user = User::updateOrCreate(['id' => $request->id],[
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'username' => $request->username,
@@ -59,20 +60,63 @@ class UsersController extends Controller
                 'password' => Hash::make($request->password),
                 'original_password' => $request->password,
             ]);
-            $user->profile()->create([
+            $user->assignRole($request->role);
+            $user->profile()->updateOrCreate(['user_id' => $request->id],[
                 'phone_number' => $request->profile['phone_number'],
                 'address' => $request->profile['address'],
                 'avatar' => $request->profile['avatar'] ?? null,
             ]);
-            $user->rider()->create([
+            $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
                 'cnic' => $request->rider['cnic'],
                 'license_no' => $request->rider['license_no'],
             ]);
-            $user->areas()->attach($request->rider['areas']);
+            $rider->areas()->delete();
+            foreach ($request->rider['areas'] as $area){
+                $rider->areas()->create(['area_id'=>$area]);
+            }
+
 
             return response()->json([
                 'status' => 'success',
                 'users' => $user
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
+    public function getUserDetails(Request $request , $id){
+        try{
+            $user = User::with(['profile','rider.areas.area','roles'])->where('id' , $id)->first();
+            if($user){
+                return response()->json([
+                    'status' => 'success',
+                    'user' => $user
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No user Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
+    public function deleteUser($id){
+        try{
+            User::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success'
             ],200);
         }
         catch (\Exception $ex){

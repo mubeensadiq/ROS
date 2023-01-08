@@ -9,10 +9,6 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
-const deleteConfirmationModal = ref(false);
-const setDeleteConfirmationModal = (value: boolean) => {
-  deleteConfirmationModal.value = value;
-};
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
 </script>
@@ -21,11 +17,14 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            users: []
+            users: [],
+            userID: 0,
+            deleteConfirmationModal: false
         }
     },
     mounted() {
         this.getUsers();
+
     },
     methods : {
         getUsers(url = '/api/users'){
@@ -33,6 +32,20 @@ export default {
                 this.users = response.data.users;
             }).catch( (error) => {
                 console.log(error);
+            });
+        },
+        setDeleteConfirmationModal(value, id = 0) {
+            this.userID = id;
+            this.deleteConfirmationModal = value;
+        },
+        deleteUser() {
+            axios.delete('/api/delete-user/' + this.userID).then((response) => {
+                if (response.data.status === 'success') {
+                    this.getUsers("/api/users?page=" + this.users.current_page);
+                    this.deleteConfirmationModal = false;
+                }
+            }).catch((error) => {
+
             });
         }
 
@@ -120,7 +133,8 @@ export default {
                     as="img"
                     alt="User Profile Image"
                     class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                    :src="user.profile !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
+                    :src="user.profile && user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
+                    content=""
                   />
                 </div>
               </div>
@@ -164,22 +178,24 @@ export default {
               class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
             >
               <div class="flex items-center justify-center">
-                <a class="flex items-center mr-3" href="">
-                  <Lucide icon="CheckSquare" class="w-4 h-4 mr-1" />
-                  Edit
-                </a>
-                <a
-                  class="flex items-center text-danger"
-                  href="#"
-                  @click="
-                    (event) => {
-                      event.preventDefault();
-                      setDeleteConfirmationModal(true);
-                    }
-                  "
-                >
-                  <Lucide icon="Trash2" class="w-4 h-4 mr-1" /> Delete
-                </a>
+                  <RouterLink :to="{name : 'updateUser', params:{'id' : user.id} }"
+                              class="flex items-center mr-3">
+                      <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
+                      Edit
+                  </RouterLink>
+                  <a
+                      class="flex items-center text-danger"
+                      href="#"
+                      @click="
+                                        (event) => {
+                                            event.preventDefault();
+                                            setDeleteConfirmationModal(true , category.id);
+                                        }
+                                    "
+                  >
+                      <Lucide icon="Trash2" class="w-4 h-4 mr-1"/>
+                      Delete
+                  </a>
               </div>
             </Table.Td>
           </Table.Tr>
@@ -249,7 +265,7 @@ export default {
         >
           Cancel
         </Button>
-        <Button
+        <Button  @click="deleteUser()"
           variant="danger"
           type="button"
           class="w-24"

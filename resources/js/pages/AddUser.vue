@@ -26,29 +26,40 @@ export default {
                 username: '',
                 email: '',
                 password: '',
+                role: '',
                 profile: {
-                    avatar: '',
+                    avatar: null,
                     phone_number: '',
                     address: ''
                 },
                 rider: {
                     cnic: '',
                     license_no: '',
-                    areas: [],
-                    city: 1
+                    areas: []
                 },
-                role: 1
+
             },
             roles: [],
             areas: {},
             cities: {},
+            city_id : 1,
+            update:false
 
         }
     },
     mounted() {
         this.getRoles();
         this.getCitiesHasAreas();
-        this.getAreasByCity();
+        this.getAreasByCity(false);
+        if (this.$route.params.id !== undefined) {
+            this.update = true;
+            this.$nextTick().then(() => {
+                this.getUserDetails(this.$route.params.id);
+            });
+        }
+        else{
+
+        }
     },
     watch: {},
     methods: {
@@ -66,11 +77,37 @@ export default {
                 console.log(error);
             });
         },
-        getAreasByCity() {
-            this.user.rider.areas = [];
-            axios.get('/api/areas-by-city', {params: {'city_id': this.user.rider.city}}).then((response) => {
+        getAreasByCity(emptyAreas = true) {
+            if(emptyAreas)
+                this.user.rider.areas = [];
+            axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
                 this.areas = response.data.areas;
                 isset(this.areas[0]) ? this.user.rider.areas.push(this.areas[0].id) : '';
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
+        getUserDetails(id){
+            axios.get('/api/get-user-details/' + id).then((response) => {
+                if (response.data.user !== undefined){
+                    const res = response.data.user;
+                    this.user = response.data.user;
+                    console.log(res);
+                    this.city_id = res.rider.areas[0].area.city_id.toString();
+
+                    if(res.roles)
+                       this.$set( this.user,'role' , res.roles[0].name);
+                    else
+                        this.user.role = 'Rider';
+
+                    if(response.data.user.rider !== null){
+                        this.user.rider.areas.forEach((value , index) => {
+                            this.user.rider.areas[index] = value.area_id.toString();
+                        });
+
+                    }
+                }
+
             }).catch((error) => {
                 console.log(error);
             });
@@ -81,19 +118,39 @@ export default {
             }).catch((error) => {
                 console.log(error);
             })
-        }
+        },
+        uploadImage(event){
+            let config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            };
+            let file = event.target.files[0];
+            let formData = new FormData();
+            formData.append('image',file);
+            formData.append('path',"images/avatar");
+            axios.post("/api/upload-image", formData, config).then((response) => {
+                if (response.data.status == 'success') {
+                    this.user.profile.avatar = response.data.filename;
+                } else {
+                    this.notify('error', 'Error', 'Some thing went wrong');
+                }
+            }).catch( (error) => {
+                this.notify('error', 'Error', 'Some thing went wrong');
+            });
+        },
     }
 }
 </script>
 <template>
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add User</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update User' : 'Add New User'}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
         <!-- BEGIN: Notification -->
         <div class="col-span-11 intro-y 2xl:col-span-9">
-            <div class="p-5 intro-y box">
+            <div class="p-5 intro-y box" v-if="!update">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
@@ -126,23 +183,10 @@ export default {
                             <FormLabel class="w-full xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Product Photos</div>
+                                        <div class="font-medium">User Avatar</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
-                                            Required
-                                        </div>
-                                    </div>
-                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        <div>
-                                            The image format is .jpg .jpeg .png and a minimum size of
-                                            300 x 300 pixels (For optimal images use a minimum size of
-                                            700 x 700 pixels).
-                                        </div>
-                                        <div class="mt-2">
-                                            Select product photos or drag and drop up to 5 photos at
-                                            once here. Include min. 3 attractive photos to make the
-                                            product more attractive to buyers.
                                         </div>
                                     </div>
                                 </div>
@@ -152,14 +196,12 @@ export default {
                             >
                                 <div class="grid grid-cols-10 gap-5 pl-4 pr-5">
                                     <div
-                                        v-for="(faker, fakerKey) in _.take(fakerData, 5)"
-                                        :key="fakerKey"
                                         class="relative col-span-5 cursor-pointer md:col-span-2 h-28 image-fit zoom-in"
                                     >
                                         <img
                                             class="rounded-md"
-                                            alt="Midone - HTML Admin Template"
-                                            :src="faker.photos[0]"
+                                            alt="Avatar"
+                                            :src="user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
                                         />
                                         <Tippy
                                             content="Remove this image?"
@@ -179,6 +221,7 @@ export default {
                                         id="horizontal-form-1"
                                         type="file"
                                         class="absolute top-0 left-0 w-full h-full opacity-0"
+                                        @change="uploadImage($event)"
                                     />
                                 </div>
                             </div>
@@ -221,6 +264,7 @@ export default {
                                     type="text"
                                     placeholder="First name"
                                     v-model="user.first_name"
+                                    :value="user.first_name"
                                 />
                             </div>
                         </FormInline>
@@ -245,11 +289,12 @@ export default {
                                     type="text"
                                     placeholder="Last name"
                                     v-model="user.last_name"
+                                    :value="user.last_name"
                                 />
                             </div>
                         </FormInline>
 
-                        <FormInline
+                        <FormInline v-if="!update"
                             class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >
                             <FormLabel class="xl:w-64 xl:!mr-10">
@@ -270,10 +315,11 @@ export default {
                                     type="text"
                                     placeholder="User name"
                                     v-model="user.username"
+                                    :value="user.username"
                                 />
                             </div>
                         </FormInline>
-                        <FormInline
+                        <FormInline v-if="!update"
                             class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >
                             <FormLabel class="xl:w-64 xl:!mr-10">
@@ -294,11 +340,12 @@ export default {
                                     type="email"
                                     placeholder="Email"
                                     v-model="user.email"
+                                    :value="user.email"
                                 />
                             </div>
                         </FormInline>
                         <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0" v-if="!update"
                         >
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
@@ -342,6 +389,7 @@ export default {
                                     type="text"
                                     placeholder="Address"
                                     v-model="user.profile.address"
+                                    :value="user.profile.address"
                                 />
                             </div>
                         </FormInline>
@@ -366,6 +414,7 @@ export default {
                                     type="text"
                                     placeholder="Phone Number"
                                     v-model="user.profile.phone_number"
+                                    :value="user.profile.phone_number"
                                 />
                             </div>
                         </FormInline>
@@ -385,11 +434,11 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="category" v-model="user.role">
+                                <FormSelect id="category" v-model="user.role" :value="user.role">
                                     <option
                                         v-for="(role, index) in roles"
                                         :key="index"
-                                        :value="role.id"
+                                        :value="role.name"
                                     >
                                         {{ role.name }}
                                     </option>
@@ -435,6 +484,7 @@ export default {
                                     type="text"
                                     placeholder="cnic"
                                     v-model="user.rider.cnic"
+                                    :value="user.rider.cnic"
                                 />
                             </div>
                         </FormInline>
@@ -459,6 +509,7 @@ export default {
                                     type="text"
                                     placeholder="license no"
                                     v-model="user.rider.license_no"
+                                    :value="user.rider.license_no"
                                 />
                             </div>
                         </FormInline>
@@ -479,7 +530,7 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="category" @change="getAreasByCity" v-model="user.rider.city">
+                                <FormSelect id="category" @change="getAreasByCity" v-model="city_id" :value="city_id">
                                     <option
                                         v-for="(city, index) in cities"
                                         :key="index"
@@ -508,6 +559,7 @@ export default {
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
                                     v-model="user.rider.areas"
+                                    :value="user.rider.areas"
                                     :options="{
                                     placeholder: 'Areas',
                                   }"
