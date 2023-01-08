@@ -93,11 +93,11 @@ export default defineComponent({
                   type="checkbox"
                   class="mr-2 border"
                 />
-                <label class="cursor-pointer select-none" htmlFor="remember-me">
+                <!-- <label class="cursor-pointer select-none" htmlFor="remember-me">
                   Remember me
-                </label>
+                </label> -->
               </div>
-              <a href="">Forgot Password?</a>
+              <!-- <a href="">Forgot Password?</a> -->
             </div>
             <div class="mt-5 text-center intro-x xl:mt-8 xl:text-left">
               <Button

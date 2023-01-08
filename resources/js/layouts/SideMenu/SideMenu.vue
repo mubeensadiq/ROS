@@ -47,7 +47,7 @@ onMounted(() => {
             class="w-6"
             :src="logoUrl"
           />
-          <span class="hidden ml-3 text-lg text-white xl:block"> Rubick </span>
+          <span class="hidden ml-3 text-lg text-white xl:block"> Pizza Xpress </span>
         </RouterLink>
         <Devider type="div" class="my-6"></Devider>
         <ul>
