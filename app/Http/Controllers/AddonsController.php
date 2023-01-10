@@ -50,11 +50,12 @@ class AddonsController extends Controller
                 'name' => 'required',
                 'price' => 'required',
             ]);
-            $addon = Addon::create([
+            Addon::updateOrCreate(['id' => $request->id],[
                 'title' => $request->title,
                 'name' => $request->name,
                 'price' => $request->price,
                 'required' => $request->required,
+                'image' => $request->image,
             ]);
             return response()->json([
                 'status' => 'success'

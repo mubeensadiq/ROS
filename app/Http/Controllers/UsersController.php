@@ -52,14 +52,23 @@ class UsersController extends Controller
                 'password' => 'sometimes|required',
                 'profile.phone_number' => 'required'
             ]);
-            $user = User::updateOrCreate(['id' => $request->id],[
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'username' => $request->username,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'original_password' => $request->password,
-            ]);
+            if($request->id){
+              $user = User::updateOrCreate(['id' => $request->id],[
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name
+                ]);
+            }
+            else{
+                $user = User::create([
+                    'first_name' => $request->first_name,
+                    'last_name' => $request->last_name,
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'original_password' => $request->password,
+                ]);
+            }
+
             $user->assignRole($request->role);
             $user->profile()->updateOrCreate(['user_id' => $request->id],[
                 'phone_number' => $request->profile['phone_number'],
@@ -91,7 +100,7 @@ class UsersController extends Controller
     }
     public function getUserDetails(Request $request , $id){
         try{
-            $user = User::with(['profile','rider.areas.area','roles'])->where('id' , $id)->first();
+            $user = User::with(['profile','rider.areas.area','roles'])->select(['first_name','last_name','id'])->where('id' , $id)->first();
             if($user){
                 return response()->json([
                     'status' => 'success',
