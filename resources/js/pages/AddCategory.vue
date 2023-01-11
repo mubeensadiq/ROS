@@ -47,7 +47,27 @@ export default {
             }).catch((error) => {
                 console.log(error);
             })
-        }
+        },
+        uploadImage(event){
+            let config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            };
+            let file = event.target.files[0];
+            let formData = new FormData();
+            formData.append('image',file);
+            formData.append('path',"images/categories");
+            axios.post("/api/upload-image", formData, config).then((response) => {
+                if (response.data.status == 'success') {
+                    this.category.image = response.data.filename;
+                } else {
+                    this.notify('error', 'Error', 'Some thing went wrong');
+                }
+            }).catch( (error) => {
+                this.notify('error', 'Error', 'Some thing went wrong');
+            });
+        },
     }
 }
 </script>
@@ -189,6 +209,7 @@ export default {
                                         id="horizontal-form-1"
                                         type="file"
                                         class="absolute top-0 left-0 w-full h-full opacity-0"
+                                        @change="uploadImage($event)"
                                     />
                                 </div>
                             </div>

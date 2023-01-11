@@ -26,7 +26,7 @@ export default {
                 username: '',
                 email: '',
                 password: '',
-                role: '',
+                role: 1,
                 profile: {
                     avatar: null,
                     phone_number: '',
@@ -42,7 +42,7 @@ export default {
             roles: [],
             areas: {},
             cities: {},
-            city_id : 1,
+            city_id : '',
             update:false
 
         }
@@ -50,7 +50,7 @@ export default {
     mounted() {
         this.getRoles();
         this.getCitiesHasAreas();
-        this.getAreasByCity(false);
+
         if (this.$route.params.id !== undefined) {
             this.update = true;
             this.$nextTick().then(() => {
@@ -58,7 +58,8 @@ export default {
             });
         }
         else{
-
+            this.city_id = this.cities[0].id.toString();
+            this.getAreasByCity();
         }
     },
     watch: {},
@@ -77,12 +78,10 @@ export default {
                 console.log(error);
             });
         },
-        getAreasByCity(emptyAreas = true) {
-            if(emptyAreas)
-                this.user.rider.areas = [];
+        getAreasByCity() {
             axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
                 this.areas = response.data.areas;
-                isset(this.areas[0]) ? this.user.rider.areas.push(this.areas[0].id) : '';
+                (isset(this.areas[0]) && this.user.rider.areas.length === 0) ? this.user.rider.areas.push(this.areas[0].id) : '';
             }).catch((error) => {
                 console.log(error);
             });
@@ -92,20 +91,23 @@ export default {
                 if (response.data.user !== undefined){
                     const res = response.data.user;
                     this.user = response.data.user;
-                    console.log(res);
-                    this.city_id = res.rider.areas[0].area.city_id.toString();
 
-                    if(res.roles)
-                       this.$set( this.user,'role' , res.roles[0].name);
+                    if(res.rider)
+                        this.city_id = res.rider.areas[0].area.city_id.toString();
                     else
-                        this.user.role = 'Rider';
+                        this.city_id = this.cities[0].id.toString();
 
-                    if(response.data.user.rider !== null){
-                        this.user.rider.areas.forEach((value , index) => {
-                            this.user.rider.areas[index] = value.area_id.toString();
-                        });
+                    this.getAreasByCity();
+                    if(res.roles)
+                        this.user.role = res.roles[0].id.toString();
 
-                    }
+                    setTimeout(()=>{
+                        if(response.data.user.rider !== null){
+                            this.user.rider.areas.forEach((value , index) => {
+                                this.user.rider.areas[index] = value.area_id.toString();
+                            });
+                        }
+                    },10)
                 }
 
             }).catch((error) => {
@@ -434,15 +436,22 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="category" v-model="user.role" :value="user.role">
+                                <TomSelect
+                                    v-model="user.role"
+                                    :value="user.role"
+                                    :options="{
+                                    placeholder: 'Roles',
+                                  }"
+                                    class="w-full"
+                                >
                                     <option
                                         v-for="(role, index) in roles"
                                         :key="index"
-                                        :value="role.name"
+                                        :value="role.id"
                                     >
                                         {{ role.name }}
                                     </option>
-                                </FormSelect>
+                                </TomSelect>
                             </div>
                         </FormInline>
 
@@ -530,7 +539,15 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSelect id="category" @change="getAreasByCity" v-model="city_id" :value="city_id">
+                                <TomSelect
+                                    v-model="city_id"
+                                    :value="city_id"
+                                    :options="{
+                                    placeholder: 'Cities',
+                                  }"
+                                    class="w-full"
+                                    @change="getAreasByCity"
+                                >
                                     <option
                                         v-for="(city, index) in cities"
                                         :key="index"
@@ -538,7 +555,7 @@ export default {
                                     >
                                         {{ city.city }}
                                     </option>
-                                </FormSelect>
+                                </TomSelect>
                             </div>
                         </FormInline>
 

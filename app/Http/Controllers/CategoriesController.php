@@ -58,6 +58,7 @@ class CategoriesController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'status' => $request->status,
+                'image' => $request->image,
             ]);
             return response()->json([
                 'status' => 'success'
