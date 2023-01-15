@@ -24,7 +24,8 @@ class CitiesController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'cities' => []
+                'cities' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
@@ -41,7 +42,8 @@ class CitiesController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'cities' => []
+                'cities' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }

@@ -115,7 +115,11 @@ const routes = [
             name: "createAddon",
             component: AddAddon,
         },
-
+        {
+            path: "/addon/update/:id",
+            name: "updateAddon",
+            component: AddAddon,
+        },
 
         {
             path: "products",
@@ -151,7 +155,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
     // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/login'];
+    const publicPages = ['/login' , '/logout'];
     const authRequired = !publicPages.includes(to.path);
     const auth = useUserStore();
     if (authRequired && !auth.user) {

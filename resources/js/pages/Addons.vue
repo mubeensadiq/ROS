@@ -15,13 +15,19 @@ const setDeleteConfirmationModal = (value: boolean) => {
 };
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
 export default {
     data(){
         return {
-            addons: []
+            addons: [],
+            addonID: 0,
+            deleteConfirmationModal: false,
+            toastText : '',
+            toastType : 'success',
+            search:''
         }
     },
     mounted() {
@@ -32,8 +38,28 @@ export default {
             axios.get(url).then((response)=>{
                 this.addons = response.data.addons;
             }).catch( (error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
+        },
+        setDeleteConfirmationModal(value, id = 0) {
+            this.addonID = id;
+            this.deleteConfirmationModal = value;
+        },
+        deleteCategory() {
+            axios.delete('/api/delete-addon/' + this.addonID).then((response) => {
+                if (response.data.status === 'success') {
+                    this.showNoty(response.data.message)
+                    this.getAddons("/api/addons?page=" + this.addons.current_page);
+                    this.deleteConfirmationModal = false;
+                }
+            }).catch((error) => {
+                this.showNoty(error.response.data.message, 'error')
+            });
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
 
     }
@@ -41,6 +67,7 @@ export default {
 </script>
 
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <h2 class="mt-10 text-lg font-medium intro-y">Addons</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
@@ -78,6 +105,8 @@ export default {
                         type="text"
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
+                        v-model="search"
+                        @keypress.enter="getAddons('/api/addons?query='+search)"
                     />
                     <Lucide
                         icon="Search"
@@ -117,7 +146,7 @@ export default {
                                         as="img"
                                         alt="Addon Image"
                                         class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                        :src="addon.image !== null ? '/images/categories/'+addon.image : '/images/categories/profile-2.jpg'"
+                                        :src="addon.image !== null ? '/images/addons/'+addon.image : '/images/categories/profile-2.jpg'"
                                     />
                                 </div>
                             </div>
@@ -149,21 +178,23 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <a class="flex items-center mr-3" href="">
-                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1" />
+                                <RouterLink :to="{name : 'updateAddon', params:{'id' : addon.id} }"
+                                            class="flex items-center mr-3">
+                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
-                                </a>
+                                </RouterLink>
                                 <a
                                     class="flex items-center text-danger"
                                     href="#"
                                     @click="
-                    (event) => {
-                      event.preventDefault();
-                      setDeleteConfirmationModal(true);
-                    }
-                  "
+                                        (event) => {
+                                            event.preventDefault();
+                                            setDeleteConfirmationModal(true , addon.id);
+                                        }
+                                    "
                                 >
-                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1" /> Delete
+                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1"/>
+                                    Delete
                                 </a>
                             </div>
                         </Table.Td>

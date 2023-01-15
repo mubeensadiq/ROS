@@ -22,13 +22,18 @@ use App\Http\Controllers\ImageController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/upload-image', [ImageController::class,'upload']);
+Route::group(['middleware' => ['auth:api']], function () {
+
+
+
+});
 Route::post('/login' , [LoginController::class, 'authenticate']);
+Route::post('/logout' , [LoginController::class, 'logout']);
 Route::get('/roles', [UsersController::class , 'getRoles']);
 Route::get('/users', [UsersController::class , 'index']);
 Route::post('/save-user', [UsersController::class , 'saveUser']);
-Route::get('/get-user-details/{id}', [UsersController::class , 'getUserDetails']);
 Route::delete('/delete-user/{id}', [UsersController::class , 'deleteUser']);
+Route::get('/get-user-details/{id}', [UsersController::class , 'getUserDetails']);
 Route::get('/cities', [CitiesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);
 Route::get('/areas', [AreasController::class , 'index']);
@@ -47,6 +52,10 @@ Route::get('/get-branch-details/{id}', [BranchesController::class , 'getBranchDe
 Route::delete('/delete-branch/{id}', [BranchesController::class , 'deleteBranch']);
 Route::get('/addons', [AddonsController::class , 'index']);
 Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
+Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
+Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
+Route::post('/upload-image', [ImageController::class,'upload']);
+
 //Route::middleware(['auth'])->group(function () {
 //    Route::get('/users', [UsersController::class , 'index']);
 //});

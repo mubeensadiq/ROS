@@ -10,7 +10,15 @@ class BranchesController extends Controller
 {
     public function index(Request $request){
         try{
-            $branches = Branch::with('area')->paginate(20)->appends($request->all());
+            $branches = Branch::with('area');
+            if(isset($request->query) && $request->query != ''){
+                $query = $request['query'];
+                $branches = $branches->where('name' ,'like', "%$query%")
+                    ->orWhere('address' ,'like', "%$query%")
+                    ->orWhere('landmark' ,'like', "%$query%")
+                    ->orWhere('phone_number' ,'like', "%$query%");
+            }
+            $branches = $branches->paginate(20)->appends($request->all());
             return response()->json([
                 'status' => 'success',
                 'branches' => $branches
@@ -64,7 +72,8 @@ class BranchesController extends Controller
                 'phone_number' => $request->phone_number,
             ]);
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Saved'
             ],200);
         }
         catch (\Exception $ex){
@@ -80,7 +89,8 @@ class BranchesController extends Controller
         try{
             Branch::where('id' , $id)->delete();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
             ],200);
         }
         catch (\Exception $ex){

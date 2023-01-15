@@ -8,6 +8,7 @@ import {
 } from "../base-components/Form";
 import Lucide from "../base-components/Lucide";
 import TomSelect from "../base-components/TomSelect";
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -23,6 +24,8 @@ export default {
                 delivery_charges: 100
             },
             cities: {},
+            toastText : '',
+            toastType : 'success'
         }
     },
     mounted() {
@@ -39,7 +42,7 @@ export default {
             axios.get('/api/cities?get=all').then((response) => {
                 this.cities = response.data.cities;
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         getAreaDetails(id) {
@@ -50,19 +53,28 @@ export default {
                 }
 
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
-        saveArea() {
+        saveArea(addNew = false) {
             axios.post('/api/save-area', this.area).then((response) => {
+                this.showNoty(response.data.message)
+                if(!addNew)
+                    return this.$router.push('/areas');
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             })
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
     }
 }
 </script>
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Add Area</h2>
     </div>
@@ -235,80 +247,13 @@ export default {
                 <Button
                     type="button"
                     class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveArea()"
+                    @click="saveArea(true)"
                 >
                     Save & Add New Area
                 </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveArea()">
                     Save
                 </Button>
-            </div>
-        </div>
-        <div class="hidden col-span-2 intro-y 2xl:block">
-            <div class="sticky top-0 pt-10">
-                <ul
-                    class="text-slate-500 relative before:content-[''] before:w-[2px] before:bg-slate-200 before:dark:bg-darkmode-600 before:h-full before:absolute before:left-0 before:z-[-1]"
-                >
-                    <li
-                        class="pl-5 mb-4 font-medium border-l-2 border-primary dark:border-primary text-primary"
-                    >
-                        <a href="">Upload Product</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Information</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Detail</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant (Details)</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Management</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Weight & Shipping</a>
-                    </li>
-                </ul>
-                <div
-                    class="relative p-5 mt-10 border rounded-md bg-warning/20 dark:bg-darkmode-600 border-warning dark:border-0"
-                >
-                    <Lucide
-                        icon="Lightbulb"
-                        class="absolute top-0 right-0 w-12 h-12 mt-5 mr-3 text-warning/80"
-                    />
-                    <h2 class="text-lg font-medium">Tips</h2>
-                    <div class="mt-5 font-medium">Price</div>
-                    <div
-                        class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500"
-                    >
-                        <div>
-                            The image format is .jpg .jpeg .png and a minimum size of 300 x
-                            300 pixels (For optimal images use a minimum size of 700 x 700
-                            pixels).
-                        </div>
-                        <div class="mt-2">
-                            Select product photos or drag and drop up to 5 photos at once
-                            here. Include min. 3 attractive photos to make the product more
-                            attractive to buyers.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

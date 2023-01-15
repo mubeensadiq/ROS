@@ -8,7 +8,7 @@ import {
 } from "../base-components/Form";
 import TomSelect from "../base-components/TomSelect";
 import Lucide from "../base-components/Lucide";
-
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -24,6 +24,8 @@ export default {
                 phone_number: ''
             },
             areas: {},
+            toastText : '',
+            toastType : 'success'
         }
     },
     mounted() {
@@ -41,7 +43,7 @@ export default {
             axios.get('/api/areas?get=all').then((response) => {
                 this.areas = response.data.areas;
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         getBranchDetails(id) {
@@ -52,21 +54,28 @@ export default {
                 }
 
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         saveBranch(addNew = false) {
             axios.post('/api/save-branch', this.branch).then((response) => {
+                this.showNoty(response.data.message)
                 if (!addNew)
                     return this.$router.push('/branches');
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             })
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
     }
 }
 </script>
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Add Branch</h2>
     </div>

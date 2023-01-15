@@ -14,6 +14,7 @@ let branchID = 0;
 
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -24,7 +25,10 @@ export default {
         return {
             branches: [],
             branchID: 0,
-            deleteConfirmationModal: false
+            deleteConfirmationModal: false,
+            toastText : '',
+            toastType : 'success',
+            search : ''
         }
     },
     mounted() {
@@ -35,8 +39,16 @@ export default {
             axios.get(url).then((response) => {
                 this.branches = response.data.branches;
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
+        },
+        searchResult() {
+            axios.get('/api/branches?query='+this.search).then((response) => {
+                this.branches = response.data.branches;
+            }).catch((error) => {
+                this.showNoty(error.response.data.message, 'error')
+            });
+
         },
         setDeleteConfirmationModal(value, id = 0) {
             this.branchID = id;
@@ -45,12 +57,18 @@ export default {
         deleteBranch() {
             axios.delete('/api/delete-branch/' + this.branchID).then((response) => {
                 if (response.data.status === 'success') {
+                    this.showNoty(response.data.message)
                     this.getBranches("/api/branches?page=" + this.branches.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {
-
+                this.showNoty(error.response.data.message, 'error')
             });
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
 
     }
@@ -58,6 +76,7 @@ export default {
 </script>
 
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <h2 class="mt-10 text-lg font-medium intro-y">Branches</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
@@ -98,6 +117,8 @@ export default {
                         type="text"
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
+                        v-model="search"
+                        @keypress.enter="getBranches('/api/branches?query='+search)"
                     />
                     <Lucide
                         icon="Search"

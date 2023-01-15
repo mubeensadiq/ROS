@@ -6,13 +6,22 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
 {
     public function index(Request $request){
         try{
-            $users = User::with('profile')->paginate(20)->appends($request->all());
+            $users = User::with('profile');
+            if(isset($request->query) && $request->query != ''){
+                $query = $request['query'];
+                $users = $users->where('first_name' ,'like', "%$query%")
+                    ->orWhere('last_name' ,'like', "%$query%")
+                    ->orWhere('email' ,'like', "%$query%")
+                    ->orWhere('username' ,'like', "%$query%");
+            }
+            $users = $users->paginate(20)->appends($request->all());
             return response()->json([
                 'status' => 'success',
                 'users' => $users
@@ -22,7 +31,8 @@ class UsersController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'users' => []
+                'users' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
@@ -55,7 +65,7 @@ class UsersController extends Controller
             if($request->id){
               $user = User::updateOrCreate(['id' => $request->id],[
                     'first_name' => $request->first_name,
-                    'last_name' => $request->last_name
+                    'last_name' => $request->last_name,
                 ]);
             }
             else{
@@ -66,6 +76,9 @@ class UsersController extends Controller
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
                     'original_password' => $request->password,
+                    'api_token' => hash('sha256', Str::random(60))
+
+
                 ]);
             }
 
@@ -125,7 +138,8 @@ class UsersController extends Controller
         try{
             User::where('id' , $id)->delete();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
             ],200);
         }
         catch (\Exception $ex){

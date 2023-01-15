@@ -18,8 +18,17 @@ class AddonsController extends Controller
         try{
             if(isset($request->get) && $request->get === 'all')
                 $addons = Addon::get();
-            else
-                $addons = Addon::paginate(20)->appends($request->all());
+            else{
+                $addons = new Addon();
+                if(isset($request->query) && $request->query != ''){
+                    $query = $request['query'];
+                    $addons = $addons->where('name' ,'like', "%$query%")
+                        ->orWhere('title' ,'like', "%$query%")
+                        ->orWhere('price' ,'like', "%$query%");
+                }
+                $addons = $addons->paginate(20)->appends($request->all());
+            }
+
 
             return response()->json([
                 'status' => 'success',
@@ -58,7 +67,8 @@ class AddonsController extends Controller
                 'image' => $request->image,
             ]);
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Saved'
             ],200);
         }
         catch (\Exception $ex){
@@ -69,49 +79,43 @@ class AddonsController extends Controller
             ],500);
         }
     }
+    public function getAddonDetails(Request $request , $id){
+        try{
+            $addon = Addon::where('id' , $id)->first();
+            if($addon){
+                return response()->json([
+                    'status' => 'success',
+                    'addon' => $addon
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No addon Found'
+            ],200);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+    public function deleteAddon($id){
+        try{
+            Addon::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
     }
 }

@@ -16,7 +16,7 @@ interface InputProps extends InputHTMLAttributes {
 }
 
 interface InputEmit {
-  (e: "update:modelValue", value: string): void;
+  (e: "update:modelValue", value: string|boolean): void;
 }
 
 const props = defineProps<InputProps>();

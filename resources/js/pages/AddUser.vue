@@ -10,8 +10,7 @@ import {
 } from "../base-components/Form";
 import TomSelect from "../base-components/TomSelect";
 import Lucide from "../base-components/Lucide";
-import Tippy from "../base-components/Tippy";
-
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -43,13 +42,15 @@ export default {
             areas: {},
             cities: {},
             city_id : '',
-            update:false
+            update:false,
+            toastText : '',
+            toastType : 'success'
 
         }
     },
     mounted() {
-        this.getRoles();
         this.getCitiesHasAreas();
+        this.getRoles();
 
         if (this.$route.params.id !== undefined) {
             this.update = true;
@@ -58,7 +59,6 @@ export default {
             });
         }
         else{
-            this.city_id = this.cities[0].id.toString();
             this.getAreasByCity();
         }
     },
@@ -68,14 +68,16 @@ export default {
             axios.get('/api/roles').then((response) => {
                 this.roles = response.data.roles;
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         getCitiesHasAreas() {
             axios.get('/api/cities-has-areas').then((response) => {
                 this.cities = response.data.cities;
+                if(this.$route.params.id == undefined)
+                    this.city_id = this.cities[0].id.toString();
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         getAreasByCity() {
@@ -83,7 +85,7 @@ export default {
                 this.areas = response.data.areas;
                 (isset(this.areas[0]) && this.user.rider.areas.length === 0) ? this.user.rider.areas.push(this.areas[0].id) : '';
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         getUserDetails(id){
@@ -111,14 +113,17 @@ export default {
                 }
 
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         saveUser(addNew = false) {
             axios.post('/api/save-user', this.user).then((response) => {
+                this.showNoty(response.data.message)
+                if(!addNew)
+                    return this.$router.push('/users');
 
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             })
         },
         uploadImage(event){
@@ -134,17 +139,22 @@ export default {
             axios.post("/api/upload-image", formData, config).then((response) => {
                 if (response.data.status == 'success') {
                     this.user.profile.avatar = response.data.filename;
-                } else {
-                    this.notify('error', 'Error', 'Some thing went wrong');
                 }
+                this.showNoty(response.data.message)
             }).catch( (error) => {
-                this.notify('error', 'Error', 'Some thing went wrong');
+                this.showNoty(error.response.data.message, 'error')
             });
         },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
+        }
     }
 }
 </script>
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">{{update ? 'Update User' : 'Add New User'}}</h2>
     </div>
@@ -156,31 +166,7 @@ export default {
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
-                    <div
-                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
-                    >
-                        <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
-                        Upload Product
-                    </div>
                     <div class="mt-5">
-                        <div class="flex items-center text-slate-500">
-                  <span>
-                    <Lucide icon="Lightbulb" class="w-5 h-5 text-warning"/>
-                  </span>
-                            <div class="ml-2">
-                    <span class="mr-1">
-                      Avoid selling counterfeit products / violating Intellectual
-                      Property Rights, so that your products are not deleted.
-                    </span>
-                                <a
-                                    href="https://themeforest.net/item/midone-jquery-tailwindcss-html-admin-template/26366820"
-                                    class="font-medium text-primary"
-                                    target="blank"
-                                >
-                                    Learn More
-                                </a>
-                            </div>
-                        </div>
                         <FormInline class="flex-col items-start mt-10 xl:flex-row">
                             <FormLabel class="w-full xl:w-64 xl:!mr-10">
                                 <div class="text-left">
@@ -205,12 +191,6 @@ export default {
                                             alt="Avatar"
                                             :src="user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
                                         />
-                                        <Tippy
-                                            content="Remove this image?"
-                                            class="absolute top-0 right-0 flex items-center justify-center w-5 h-5 -mt-2 -mr-2 text-white rounded-full bg-danger"
-                                        >
-                                            <Lucide icon="X" class="w-4 h-4"/>
-                                        </Tippy>
                                     </div>
                                 </div>
                                 <div
@@ -460,7 +440,7 @@ export default {
             </div>
             <!-- END: Product Information -->
             <!-- BEGIN: Product Detail -->
-            <div class="p-5 mt-5 intro-y box">
+            <div class="p-5 mt-5 intro-y box" v-if="user.role == '2'">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
@@ -625,65 +605,17 @@ export default {
                     class="text-slate-500 relative before:content-[''] before:w-[2px] before:bg-slate-200 before:dark:bg-darkmode-600 before:h-full before:absolute before:left-0 before:z-[-1]"
                 >
                     <li
-                        class="pl-5 mb-4 font-medium border-l-2 border-primary dark:border-primary text-primary"
+                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
                     >
-                        <a href="">Upload Product</a>
+                        <a href="">User Information</a>
                     </li>
                     <li
                         class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
                     >
-                        <a href="">Product Information</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Detail</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant (Details)</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Management</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Weight & Shipping</a>
+                        <a href="">Rider Information</a>
                     </li>
                 </ul>
-                <div
-                    class="relative p-5 mt-10 border rounded-md bg-warning/20 dark:bg-darkmode-600 border-warning dark:border-0"
-                >
-                    <Lucide
-                        icon="Lightbulb"
-                        class="absolute top-0 right-0 w-12 h-12 mt-5 mr-3 text-warning/80"
-                    />
-                    <h2 class="text-lg font-medium">Tips</h2>
-                    <div class="mt-5 font-medium">Price</div>
-                    <div
-                        class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500"
-                    >
-                        <div>
-                            The image format is .jpg .jpeg .png and a minimum size of 300 x
-                            300 pixels (For optimal images use a minimum size of 700 x 700
-                            pixels).
-                        </div>
-                        <div class="mt-2">
-                            Select product photos or drag and drop up to 5 photos at once
-                            here. Include min. 3 attractive photos to make the product more
-                            attractive to buyers.
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>

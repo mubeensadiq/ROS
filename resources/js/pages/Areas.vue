@@ -11,7 +11,7 @@ import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
-
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -20,7 +20,10 @@ export default {
         return {
             areas: [],
             areaID: 0,
-            deleteConfirmationModal: false
+            deleteConfirmationModal: false,
+            toastText : '',
+            toastType : 'success',
+            search: ''
         }
     },
     mounted() {
@@ -31,7 +34,7 @@ export default {
             axios.get(url).then((response)=>{
                 this.areas = response.data.areas;
             }).catch( (error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error')
             });
         },
         setDeleteConfirmationModal(value, id = 0) {
@@ -41,12 +44,18 @@ export default {
         deleteArea() {
             axios.delete('/api/delete-area/' + this.areaID).then((response) => {
                 if (response.data.status === 'success') {
+                    this.showNoty(response.data.message)
                     this.getAreas("/api/areas?page=" + this.branches.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {
-
+                this.showNoty(error.response.data.message, 'error')
             });
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
 
     }
@@ -54,6 +63,7 @@ export default {
 </script>
 
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <h2 class="mt-10 text-lg font-medium intro-y">Areas</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
@@ -91,6 +101,8 @@ export default {
                         type="text"
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
+                        v-model="search"
+                        @keypress.enter="getAreas('/api/areas?query='+search)"
                     />
                     <Lucide
                         icon="Search"

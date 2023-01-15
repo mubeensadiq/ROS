@@ -25,7 +25,7 @@ class ImageController extends Controller
             $src = $request->path;
             $filename = $file->getClientOriginalName();
             $request->image->move(public_path($src), $filename);
-            return response()->json(['status' => 'success', 'message' => 'Successfully saved', 'filename' => $filename]);
+            return response()->json(['status' => 'success', 'message' => 'Successfully uploaded', 'filename' => $filename]);
         } catch (\Exception $e) {
             Log::info($e);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);

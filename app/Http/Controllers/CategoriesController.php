@@ -10,7 +10,14 @@ class CategoriesController extends Controller
 {
     public function index(Request $request){
         try{
-            $categories = Category::orderBy('id','desc')->paginate(20)->appends($request->all());
+            if(isset($request->query) && $request->query != ''){
+                $query = $request['query'];
+                $categories = Category::where('name' ,'like', "%$query%")
+                    ->orWhere('description' ,'like', "%$query%")
+                    ->paginate(20)->appends($request->all());
+            }
+            else
+                $categories = Category::orderBy('id','desc')->paginate(20)->appends($request->all());
             return response()->json([
                 'status' => 'success',
                 'categories' => $categories
@@ -61,7 +68,8 @@ class CategoriesController extends Controller
                 'image' => $request->image,
             ]);
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Saved'
             ],200);
         }
         catch (\Exception $ex){
@@ -77,7 +85,8 @@ class CategoriesController extends Controller
         try{
             Category::where('id' , $id)->delete();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
             ],200);
         }
         catch (\Exception $ex){

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import _ from "lodash";
-import { ref } from "vue";
+import { ref, provide } from "vue";
 import Button from "../base-components/Button";
 import {pageLimits} from "../utils/helper";
 import Pagination from "../base-components/Pagination";
@@ -9,29 +9,38 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
+import Notification from "./Notification.vue";
+
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
+
+
+
 </script>
 <script lang="ts">
 import axios from 'axios';
-export default {
+import {defineComponent, ref} from "vue";
+export default defineComponent({
     data(){
         return {
             users: [],
             userID: 0,
-            deleteConfirmationModal: false
+            deleteConfirmationModal: false,
+            toastText : '',
+            toastType : 'success',
+            search : ''
         }
     },
+
     mounted() {
         this.getUsers();
-
     },
     methods : {
         getUsers(url = '/api/users'){
             axios.get(url).then((response)=>{
                 this.users = response.data.users;
             }).catch( (error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message, 'error');
             });
         },
         setDeleteConfirmationModal(value, id = 0) {
@@ -39,21 +48,36 @@ export default {
             this.deleteConfirmationModal = value;
         },
         deleteUser() {
-            axios.delete('/api/delete-user/' + this.userID).then((response) => {
+            let config= {
+                headers:{
+                    "Authorization":"Bearer "+localStorage.getItem('access_token'),
+                    "api_token":localStorage.getItem('access_token')
+                },
+            }
+
+            axios.delete('/api/delete-user/' + this.userID,config).then((response) => {
+
                 if (response.data.status === 'success') {
+                    this.showNoty(response.data.message)
                     this.getUsers("/api/users?page=" + this.users.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {
-
+                this.showNoty(error.response.data.message, 'error');
             });
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
 
     }
-}
+})
 </script>
 
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
   <h2 class="mt-10 text-lg font-medium intro-y">Users</h2>
   <div class="grid grid-cols-12 gap-6 mt-5">
     <div
@@ -91,6 +115,8 @@ export default {
             type="text"
             class="w-56 pr-10 !box"
             placeholder="Search..."
+            v-model="search"
+            @keypress.enter="getUsers('/api/users?query='+search)"
           />
           <Lucide
             icon="Search"
@@ -189,7 +215,7 @@ export default {
                       @click="
                                         (event) => {
                                             event.preventDefault();
-                                            setDeleteConfirmationModal(true , category.id);
+                                            setDeleteConfirmationModal(true , user.id);
                                         }
                                     "
                   >

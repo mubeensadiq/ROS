@@ -93,9 +93,9 @@ export default defineComponent({
                   type="checkbox"
                   class="mr-2 border"
                 />
-                <!-- <label class="cursor-pointer select-none" htmlFor="remember-me">
+                <label class="cursor-pointer select-none" htmlFor="remember-me">
                   Remember me
-                </label> -->
+                </label>
               </div>
               <!-- <a href="">Forgot Password?</a> -->
             </div>

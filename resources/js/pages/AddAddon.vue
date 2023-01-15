@@ -7,7 +7,7 @@ import {
     FormLabel,
 } from "../base-components/Form";
 import Lucide from "../base-components/Lucide";
-
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -19,20 +19,43 @@ export default {
                 title: '',
                 name: '',
                 price: 0,
-                required: 0,
-                image: ''
+                required: false,
+                image: null
             },
+            toastText : '',
+            toastType : 'success'
         }
     },
     mounted() {
+        if (this.$route.params.id !== undefined) {
+            this.$nextTick().then(() => {
+                this.getAddonDetails(this.$route.params.id);
+                setTimeout(() => {
+                    console.log("set Requeired");
+                    this.addon.required = this.addon.required === 1 ?  true : false;
+                },1000)
+            });
+        }
+
     },
     methods: {
+        getAddonDetails(id) {
+            axios.get('/api/get-addon-details/' + id).then((response) => {
+                if (response.data.addon !== undefined){
+                    this.addon = response.data.addon;
+                }
+
+            }).catch((error) => {
+                this.showNoty(error.response.data.message,'error')
+            });
+        },
         saveAddon(addNew = false) {
             axios.post('/api/save-addon', this.addon).then((response) => {
+                this.showNoty(response.data.message)
                 if(!addNew)
                     return this.$router.push('/addons');
             }).catch((error) => {
-                console.log(error);
+                this.showNoty(error.response.data.message,'error')
             })
         },
         uploadImage(event){
@@ -48,17 +71,22 @@ export default {
             axios.post("/api/upload-image", formData, config).then((response) => {
                 if (response.data.status == 'success') {
                     this.addon.image = response.data.filename;
-                } else {
-                    this.notify('error', 'Error', 'Some thing went wrong');
                 }
+                this.showNoty(response.data.message)
             }).catch( (error) => {
-                this.notify('error', 'Error', 'Some thing went wrong');
+                this.showNoty(error.response.data.message, 'error')
             });
         },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
+        }
     }
 }
 </script>
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Add Addon</h2>
     </div>
@@ -101,6 +129,7 @@ export default {
                                     type="text"
                                     placeholder="Title"
                                     v-model="addon.title"
+                                    :value="addon.title"
                                 />
                             </div>
                         </FormInline>
@@ -125,6 +154,7 @@ export default {
                                     type="text"
                                     placeholder="Name"
                                     v-model="addon.name"
+                                    :value="addon.name"
                                 />
                             </div>
                         </FormInline>
@@ -149,6 +179,7 @@ export default {
                                     type="text"
                                     placeholder="Price"
                                     v-model="addon.price"
+                                    :value="addon.price"
                                 />
                             </div>
                         </FormInline>
@@ -174,12 +205,13 @@ export default {
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormSwitch>
                                     <FormSwitch.Input
-                                        id="category-status-active"
+                                        id="addon-required"
                                         type="checkbox"
                                         v-model="addon.required"
+                                        :checked="addon.required"
                                     />
                                     <FormSwitch.Label htmlFor="category-status-active">
-                                        Active
+                                        {{addon.required ? 'Yes' : "No" }}
                                     </FormSwitch.Label>
                                 </FormSwitch>
                             </div>
@@ -195,18 +227,22 @@ export default {
                                             Required
                                         </div>
                                     </div>
-                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        <div>
-                                            The image format is .jpg .jpeg .png and a minimum size of
-                                            300 x 300 pixels (For optimal images use a minimum size of
-                                            700 x 700 pixels).
-                                        </div>
-                                    </div>
                                 </div>
                             </FormLabel>
                             <div
                                 class="flex-1 w-full pt-4 mt-3 border-2 border-dashed rounded-md xl:mt-0 dark:border-darkmode-400"
                             >
+                                <div class="grid grid-cols-10 gap-5 pl-4 pr-5" v-if="addon.image !== null">
+                                    <div
+                                        class="relative col-span-5 cursor-pointer md:col-span-2 h-28 image-fit zoom-in"
+                                    >
+                                        <img
+                                            class="rounded-md"
+                                            alt="Avatar"
+                                            :src="'/images/addons/'+addon.image"
+                                        />
+                                    </div>
+                                </div>
                                 <div
                                     class="relative flex items-center justify-center px-4 pb-4 mt-5 cursor-pointer"
                                 >
@@ -246,73 +282,6 @@ export default {
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveAddon()">
                     Save
                 </Button>
-            </div>
-        </div>
-        <div class="hidden col-span-2 intro-y 2xl:block">
-            <div class="sticky top-0 pt-10">
-                <ul
-                    class="text-slate-500 relative before:content-[''] before:w-[2px] before:bg-slate-200 before:dark:bg-darkmode-600 before:h-full before:absolute before:left-0 before:z-[-1]"
-                >
-                    <li
-                        class="pl-5 mb-4 font-medium border-l-2 border-primary dark:border-primary text-primary"
-                    >
-                        <a href="">Upload Product</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Information</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Detail</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Variant (Details)</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Product Management</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Weight & Shipping</a>
-                    </li>
-                </ul>
-                <div
-                    class="relative p-5 mt-10 border rounded-md bg-warning/20 dark:bg-darkmode-600 border-warning dark:border-0"
-                >
-                    <Lucide
-                        icon="Lightbulb"
-                        class="absolute top-0 right-0 w-12 h-12 mt-5 mr-3 text-warning/80"
-                    />
-                    <h2 class="text-lg font-medium">Tips</h2>
-                    <div class="mt-5 font-medium">Price</div>
-                    <div
-                        class="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500"
-                    >
-                        <div>
-                            The image format is .jpg .jpeg .png and a minimum size of 300 x
-                            300 pixels (For optimal images use a minimum size of 700 x 700
-                            pixels).
-                        </div>
-                        <div class="mt-2">
-                            Select product photos or drag and drop up to 5 photos at once
-                            here. Include min. 3 attractive photos to make the product more
-                            attractive to buyers.
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

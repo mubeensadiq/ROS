@@ -13,8 +13,16 @@ class AreasController extends Controller
             $areas = Area::with('city');
             if(isset($request->get) && $request->get === 'all')
                 $areas = $areas->get();
-            else
-              $areas = $areas->paginate(20)->appends($request->all());
+            else{
+                if(isset($request->query) && $request->query != ''){
+                    $query = $request['query'];
+                    $areas = $areas->where('area' ,'like', "%$query%")
+                        ->orWhereHas('city', function ($q) use ($query) {
+                            $q->where('city', 'like', "%$query%");
+                        });
+                }
+                $areas = $areas->paginate(20)->appends($request->all());
+            }
 
             return response()->json([
                 'status' => 'success',
@@ -25,7 +33,8 @@ class AreasController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'areas' => []
+                'areas' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
@@ -41,7 +50,8 @@ class AreasController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'areas' => []
+                'areas' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
@@ -84,7 +94,8 @@ class AreasController extends Controller
             ]);
             return response()->json([
                 'status' => 'success',
-                'area' => $area
+                'area' => $area,
+                'message' => 'Successfully Saved'
             ],200);
         }
         catch (\Exception $ex){
@@ -100,7 +111,8 @@ class AreasController extends Controller
         try{
             Area::where('id' , $id)->delete();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
             ],200);
         }
         catch (\Exception $ex){
