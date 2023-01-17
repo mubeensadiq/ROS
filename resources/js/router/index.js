@@ -15,7 +15,7 @@ import Deals from "../pages/Deals.vue";
 import AddDeal from "../pages/AddDeal.vue";
 import Addons from "../pages/Addons.vue";
 import AddAddon from "../pages/AddAddon.vue";
-import ProductList from "../pages/ProductList.vue";
+import Products from "../pages/Products.vue";
 import ProductGrid from "../pages/ProductGrid.vue";
 import AddProduct from "../pages/AddProduct.vue";
 import Login from "../pages/Login.vue";
@@ -124,7 +124,7 @@ const routes = [
         {
             path: "products",
             name: "products",
-            component: ProductList,
+            component: Products,
         },
         {
             path: "/products/create",
@@ -132,9 +132,9 @@ const routes = [
             component: AddProduct,
         },
         {
-            path: "product-grid",
-            name: "product-grid",
-            component: ProductGrid,
+            path: "/product/update/:id",
+            name: "updateProduct",
+            component: AddProduct,
         },
     ],
   },

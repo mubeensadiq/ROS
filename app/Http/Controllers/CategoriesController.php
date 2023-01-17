@@ -10,14 +10,19 @@ class CategoriesController extends Controller
 {
     public function index(Request $request){
         try{
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
-                $categories = Category::where('name' ,'like', "%$query%")
-                    ->orWhere('description' ,'like', "%$query%")
-                    ->paginate(20)->appends($request->all());
+            if(isset($request->get) && $request->get === 'all')
+                $categories = Category::orderBy('id','desc')->get();
+            else{
+                if(isset($request->query) && $request->query != ''){
+                    $query = $request['query'];
+                    $categories = Category::where('name' ,'like', "%$query%")
+                        ->orWhere('description' ,'like', "%$query%")
+                        ->paginate(20)->appends($request->all());
+                }
+                else
+                    $categories = Category::orderBy('id','desc')->paginate(20)->appends($request->all());
             }
-            else
-                $categories = Category::orderBy('id','desc')->paginate(20)->appends($request->all());
+
             return response()->json([
                 'status' => 'success',
                 'categories' => $categories

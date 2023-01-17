@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DealsController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\AddonsController;
+use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\ImageController;
 
 /*
@@ -54,6 +55,10 @@ Route::get('/addons', [AddonsController::class , 'index']);
 Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
 Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
 Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
+Route::get('/products', [ProductsController::class , 'index']);
+Route::post('/save-product', [ProductsController::class , 'saveProduct']);
+Route::get('/get-product-details/{id}', [ProductsController::class , 'getProductDetails']);
+Route::delete('/delete-product/{id}', [ProductsController::class , 'deleteProduct']);
 Route::post('/upload-image', [ImageController::class,'upload']);
 
 //Route::middleware(['auth'])->group(function () {

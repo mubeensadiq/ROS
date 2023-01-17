@@ -28,7 +28,8 @@ class BranchesController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'branches' => []
+                'branches' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
