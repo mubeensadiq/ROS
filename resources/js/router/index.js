@@ -19,14 +19,20 @@ import Products from "../pages/Products.vue";
 import ProductGrid from "../pages/ProductGrid.vue";
 import AddProduct from "../pages/AddProduct.vue";
 import Login from "../pages/Login.vue";
+import Home from "../pages/Home.vue";
 import { useUserStore } from "../stores/users";
 const routes = [
-  {
-    path: "/",
-    component: SideMenu,
-    children: [
+    {
+        path: "/",
+        name: "Home",
+        component: Home,
+    },
+    {
+        path: "/admin",
+        component: SideMenu,
+        children: [
         {
-            path: "/",
+            path: "",
             name: "dashboard",
             component: Dashboard,
         },
@@ -36,12 +42,12 @@ const routes = [
             component: Users
         },
         {
-            path: "/users/create",
+            path: "users/create",
             name: "createUser",
             component: AddUser
         },
         {
-            path: "/user/update/:id",
+            path: "user/update/:id",
             name: "updateUser",
             component: AddUser,
         },
@@ -56,12 +62,12 @@ const routes = [
             component: Areas,
         },
         {
-            path: "/areas/create",
+            path: "areas/create",
             name: "createArea",
             component: AddArea,
         },
         {
-            path: "/areas/update/:id",
+            path: "areas/update/:id",
             name: "editArea",
             component: AddArea,
         },
@@ -71,52 +77,52 @@ const routes = [
             component: Categories,
         },
         {
-            path: "/categories/create",
+            path: "categories/create",
             name: "createCategory",
             component: AddCategory,
         },
         {
-            path: "/categories/update/:id",
+            path: "categories/update/:id",
             name: "editCategory",
             component: AddCategory,
         },
         {
-            path: "Deals",
+            path: "deals",
             name: "deals",
             component: Deals,
         },
         {
-            path: "/deals/create",
+            path: "deals/create",
             name: "createDeal",
             component: AddDeal,
         },
         {
-            path: "Branches",
+            path: "branches",
             name: "branches",
             component: Branches,
         },
         {
-            path: "/branches/create",
+            path: "branches/create",
             name: "createBranch",
             component: AddBranch,
         },
         {
-            path: "/branches/update/:id",
+            path: "branches/update/:id",
             name: "editBranch",
             component: UpdateBranch,
         },
         {
-            path: "Addons",
+            path: "addons",
             name: "addons",
             component: Addons,
         },
         {
-            path: "/addon/create",
+            path: "addon/create",
             name: "createAddon",
             component: AddAddon,
         },
         {
-            path: "/addon/update/:id",
+            path: "addon/update/:id",
             name: "updateAddon",
             component: AddAddon,
         },
@@ -127,12 +133,12 @@ const routes = [
             component: Products,
         },
         {
-            path: "/products/create",
+            path: "products/create",
             name: "createProduct",
             component: AddProduct,
         },
         {
-            path: "/product/update/:id",
+            path: "product/update/:id",
             name: "updateProduct",
             component: AddProduct,
         },
@@ -142,7 +148,8 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
-  },
+  }
+
 ];
 
 const router = createRouter({
@@ -155,7 +162,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
     // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/login' , '/logout'];
+    const publicPages = ['/login' , '/logout','/'];
     const authRequired = !publicPages.includes(to.path);
     const auth = useUserStore();
     if (authRequired && !auth.user) {

@@ -16,7 +16,7 @@ export const useUserStore = defineStore("user", {
                 this.user = authUser;
                 localStorage.setItem('user', authUser);
                 localStorage.setItem('access_token', response.data.user.api_token);
-                router.push('/');
+                router.push('/admin');
 
             }).catch( (error) => {
                console.log(error);
