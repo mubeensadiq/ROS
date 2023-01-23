@@ -3,10 +3,6 @@
     "file": "assets/logo.9a88cec5.svg",
     "src": "resources/js/assets/images/logo.svg"
   },
-  "resources/js/assets/images/illustration.svg": {
-    "file": "assets/illustration.bbfd1da0.svg",
-    "src": "resources/js/assets/images/illustration.svg"
-  },
   "public/images/assets/logo.png": {
     "file": "assets/logo.88a845cb.png",
     "src": "public/images/assets/logo.png"
@@ -19,6 +15,14 @@
     "file": "assets/banner.a34c806a.png",
     "src": "public/images/assets/banner.png"
   },
+  "resources/js/assets/images/illustration.svg": {
+    "file": "assets/illustration.bbfd1da0.svg",
+    "src": "resources/js/assets/images/illustration.svg"
+  },
+  "public/images/assets/banner1.png": {
+    "file": "assets/banner1.1a4dac32.png",
+    "src": "public/images/assets/banner1.png"
+  },
   "public/images/assets/back.png": {
     "file": "assets/back.054de263.png",
     "src": "public/images/assets/back.png"
@@ -30,10 +34,6 @@
   "public/images/assets/deal-1.png": {
     "file": "assets/deal-1.150339f7.png",
     "src": "public/images/assets/deal-1.png"
-  },
-  "public/images/assets/banner1.png": {
-    "file": "assets/banner1.1a4dac32.png",
-    "src": "public/images/assets/banner1.png"
   },
   "public/images/assets/deal-2.png": {
     "file": "assets/deal-2.3bf691de.png",
@@ -67,21 +67,25 @@
     "file": "assets/location.65247e12.png",
     "src": "public/images/assets/location.png"
   },
+  "resources/js/assets/images/fakers/food-beverage-12.jpg": {
+    "file": "assets/food-beverage-12.0c94018a.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-12.jpg"
+  },
   "resources/js/assets/images/fakers/food-beverage-10.jpg": {
     "file": "assets/food-beverage-10.39bf5e52.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-10.jpg"
-  },
-  "resources/js/assets/images/fakers/food-beverage-1.jpg": {
-    "file": "assets/food-beverage-1.d39f08d6.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-1.jpg"
   },
   "resources/js/assets/images/fakers/food-beverage-11.jpg": {
     "file": "assets/food-beverage-11.f85011a1.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-11.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-12.jpg": {
-    "file": "assets/food-beverage-12.0c94018a.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-12.jpg"
+  "resources/js/assets/images/fakers/food-beverage-1.jpg": {
+    "file": "assets/food-beverage-1.d39f08d6.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-1.jpg"
+  },
+  "resources/js/assets/images/fakers/food-beverage-15.jpg": {
+    "file": "assets/food-beverage-15.09a76183.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-15.jpg"
   },
   "resources/js/assets/images/fakers/food-beverage-13.jpg": {
     "file": "assets/food-beverage-13.6341cf13.jpg",
@@ -91,10 +95,6 @@
     "file": "assets/food-beverage-14.7953b134.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-14.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-15.jpg": {
-    "file": "assets/food-beverage-15.09a76183.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-15.jpg"
-  },
   "resources/js/assets/images/fakers/food-beverage-16.jpg": {
     "file": "assets/food-beverage-16.de692df1.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-16.jpg"
@@ -103,13 +103,13 @@
     "file": "assets/food-beverage-17.e050b657.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-17.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-19.jpg": {
-    "file": "assets/food-beverage-19.f2ab7d3b.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-19.jpg"
-  },
   "resources/js/assets/images/fakers/food-beverage-18.jpg": {
     "file": "assets/food-beverage-18.332bf84d.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-18.jpg"
+  },
+  "resources/js/assets/images/fakers/food-beverage-19.jpg": {
+    "file": "assets/food-beverage-19.f2ab7d3b.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-19.jpg"
   },
   "resources/js/assets/images/fakers/food-beverage-2.jpg": {
     "file": "assets/food-beverage-2.5830bdb3.jpg",
@@ -119,21 +119,25 @@
     "file": "assets/food-beverage-3.6374b7dc.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-3.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-4.jpg": {
-    "file": "assets/food-beverage-4.769bd0cc.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-4.jpg"
-  },
   "resources/js/assets/images/fakers/food-beverage-6.jpg": {
     "file": "assets/food-beverage-6.bfeda123.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-6.jpg"
+  },
+  "resources/js/assets/images/fakers/food-beverage-7.jpg": {
+    "file": "assets/food-beverage-7.fc348e0b.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-7.jpg"
+  },
+  "resources/js/assets/images/fakers/food-beverage-4.jpg": {
+    "file": "assets/food-beverage-4.769bd0cc.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-4.jpg"
   },
   "resources/js/assets/images/fakers/food-beverage-5.jpg": {
     "file": "assets/food-beverage-5.e1593a21.jpg",
     "src": "resources/js/assets/images/fakers/food-beverage-5.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-7.jpg": {
-    "file": "assets/food-beverage-7.fc348e0b.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-7.jpg"
+  "resources/js/assets/images/fakers/food-beverage-9.jpg": {
+    "file": "assets/food-beverage-9.d8a8005e.jpg",
+    "src": "resources/js/assets/images/fakers/food-beverage-9.jpg"
   },
   "resources/js/assets/images/fakers/food-beverage-8.jpg": {
     "file": "assets/food-beverage-8.ab9cf411.jpg",
@@ -143,6 +147,10 @@
     "file": "assets/preview-1.2cae9cad.jpg",
     "src": "resources/js/assets/images/fakers/preview-1.jpg"
   },
+  "resources/js/assets/images/fakers/preview-11.jpg": {
+    "file": "assets/preview-11.36a1d04d.jpg",
+    "src": "resources/js/assets/images/fakers/preview-11.jpg"
+  },
   "resources/js/assets/images/fakers/preview-10.jpg": {
     "file": "assets/preview-10.eb96f2a4.jpg",
     "src": "resources/js/assets/images/fakers/preview-10.jpg"
@@ -151,29 +159,21 @@
     "file": "assets/preview-12.64e6dfb7.jpg",
     "src": "resources/js/assets/images/fakers/preview-12.jpg"
   },
-  "resources/js/assets/images/fakers/food-beverage-9.jpg": {
-    "file": "assets/food-beverage-9.d8a8005e.jpg",
-    "src": "resources/js/assets/images/fakers/food-beverage-9.jpg"
-  },
-  "resources/js/assets/images/fakers/preview-11.jpg": {
-    "file": "assets/preview-11.36a1d04d.jpg",
-    "src": "resources/js/assets/images/fakers/preview-11.jpg"
+  "resources/js/assets/images/fakers/preview-13.jpg": {
+    "file": "assets/preview-13.c5ac9ae4.jpg",
+    "src": "resources/js/assets/images/fakers/preview-13.jpg"
   },
   "resources/js/assets/images/fakers/preview-14.jpg": {
     "file": "assets/preview-14.d5228d4d.jpg",
     "src": "resources/js/assets/images/fakers/preview-14.jpg"
   },
-  "resources/js/assets/images/fakers/preview-13.jpg": {
-    "file": "assets/preview-13.c5ac9ae4.jpg",
-    "src": "resources/js/assets/images/fakers/preview-13.jpg"
+  "resources/js/assets/images/fakers/preview-3.jpg": {
+    "file": "assets/preview-3.71548c26.jpg",
+    "src": "resources/js/assets/images/fakers/preview-3.jpg"
   },
   "resources/js/assets/images/fakers/preview-15.jpg": {
     "file": "assets/preview-15.ea941116.jpg",
     "src": "resources/js/assets/images/fakers/preview-15.jpg"
-  },
-  "resources/js/assets/images/fakers/preview-3.jpg": {
-    "file": "assets/preview-3.71548c26.jpg",
-    "src": "resources/js/assets/images/fakers/preview-3.jpg"
   },
   "resources/js/assets/images/fakers/preview-2.jpg": {
     "file": "assets/preview-2.a983be43.jpg",
@@ -191,18 +191,6 @@
     "file": "assets/preview-6.e998bc28.jpg",
     "src": "resources/js/assets/images/fakers/preview-6.jpg"
   },
-  "resources/js/assets/images/fakers/preview-7.jpg": {
-    "file": "assets/preview-7.5fc23e2a.jpg",
-    "src": "resources/js/assets/images/fakers/preview-7.jpg"
-  },
-  "resources/js/assets/images/fakers/preview-8.jpg": {
-    "file": "assets/preview-8.473654d2.jpg",
-    "src": "resources/js/assets/images/fakers/preview-8.jpg"
-  },
-  "resources/js/assets/images/fakers/preview-9.jpg": {
-    "file": "assets/preview-9.595878a6.jpg",
-    "src": "resources/js/assets/images/fakers/preview-9.jpg"
-  },
   "resources/js/assets/images/fakers/profile-1.jpg": {
     "file": "assets/profile-1.0441b45e.jpg",
     "src": "resources/js/assets/images/fakers/profile-1.jpg"
@@ -219,13 +207,13 @@
     "file": "assets/profile-12.097d5674.jpg",
     "src": "resources/js/assets/images/fakers/profile-12.jpg"
   },
-  "resources/js/assets/images/fakers/profile-14.jpg": {
-    "file": "assets/profile-14.67599da9.jpg",
-    "src": "resources/js/assets/images/fakers/profile-14.jpg"
-  },
   "resources/js/assets/images/fakers/profile-13.jpg": {
     "file": "assets/profile-13.d2befb57.jpg",
     "src": "resources/js/assets/images/fakers/profile-13.jpg"
+  },
+  "resources/js/assets/images/fakers/profile-14.jpg": {
+    "file": "assets/profile-14.67599da9.jpg",
+    "src": "resources/js/assets/images/fakers/profile-14.jpg"
   },
   "resources/js/assets/images/fakers/profile-15.jpg": {
     "file": "assets/profile-15.ab896cb7.jpg",
@@ -235,9 +223,9 @@
     "file": "assets/profile-2.21f19505.jpg",
     "src": "resources/js/assets/images/fakers/profile-2.jpg"
   },
-  "resources/js/assets/images/fakers/profile-3.jpg": {
-    "file": "assets/profile-3.614e7dcb.jpg",
-    "src": "resources/js/assets/images/fakers/profile-3.jpg"
+  "resources/js/assets/images/fakers/preview-7.jpg": {
+    "file": "assets/preview-7.5fc23e2a.jpg",
+    "src": "resources/js/assets/images/fakers/preview-7.jpg"
   },
   "resources/js/assets/images/fakers/profile-4.jpg": {
     "file": "assets/profile-4.eb6bc8ad.jpg",
@@ -250,6 +238,18 @@
   "resources/js/assets/images/fakers/profile-6.jpg": {
     "file": "assets/profile-6.a9037862.jpg",
     "src": "resources/js/assets/images/fakers/profile-6.jpg"
+  },
+  "resources/js/assets/images/fakers/preview-9.jpg": {
+    "file": "assets/preview-9.595878a6.jpg",
+    "src": "resources/js/assets/images/fakers/preview-9.jpg"
+  },
+  "resources/js/assets/images/fakers/preview-8.jpg": {
+    "file": "assets/preview-8.473654d2.jpg",
+    "src": "resources/js/assets/images/fakers/preview-8.jpg"
+  },
+  "resources/js/assets/images/fakers/profile-3.jpg": {
+    "file": "assets/profile-3.614e7dcb.jpg",
+    "src": "resources/js/assets/images/fakers/profile-3.jpg"
   },
   "resources/js/assets/images/fakers/profile-7.jpg": {
     "file": "assets/profile-7.63062017.jpg",
@@ -268,7 +268,7 @@
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app.91939afb.css"
+      "assets/app.d655816b.css"
     ],
     "assets": [
       "assets/logo.9a88cec5.svg",
@@ -340,7 +340,7 @@
     ]
   },
   "resources/js/app.css": {
-    "file": "assets/app.91939afb.css",
+    "file": "assets/app.d655816b.css",
     "src": "resources/js/app.css"
   },
   "public/images/assets/mdeal-4.png": {

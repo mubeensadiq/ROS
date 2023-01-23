@@ -414,6 +414,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
 </template>
 
 <style>
+body { padding: 0 !important; }
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -530,6 +531,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
     object-position: center;
     overflow: hidden;
     height:100vh;
+    width: 100%;
 }
 
 #myCarousel .customize-caption {
