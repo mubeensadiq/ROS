@@ -836,6 +836,13 @@ input[type="text"].form-control{
     font-size: 24px;
 }
 
+.categories-section.fixed-top {
+    top: -40px;
+    transform: translateY(40px);
+    transition: transform .3s;
+    height: 60px;
+}
+
 @media (max-width: 767.98px) {
     .alert-msg {
         margin-top: 55px;
