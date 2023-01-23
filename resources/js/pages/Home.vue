@@ -149,7 +149,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
             <div class="container-fluid px-container">
                 <h3 class="section-title text-uppercase text-center">mighty deals</h3>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="deal1" alt="Card image cap"></div>
                             <div class="card-body">
@@ -162,7 +162,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="deal2" alt="Card image cap"></div>
                             <div class="card-body">
@@ -178,7 +178,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="deal3" alt="Card image cap"></div>
                             <div class="card-body">
@@ -194,7 +194,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="deal4" alt="Card image cap"></div>
                             <div class="card-body">
@@ -219,7 +219,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
             <div class="container-fluid px-container">
                 <h3 class="section-title text-uppercase text-center">ONLINE EXCLUSIVE DEAL</h3>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal1" alt="Card image cap"></div>
                             <div class="card-body">
@@ -235,7 +235,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal2" alt="Card image cap"></div>
                             <div class="card-body">
@@ -248,7 +248,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal3" alt="Card image cap"></div>
                             <div class="card-body">
@@ -264,7 +264,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal4" alt="Card image cap"></div>
                             <div class="card-body">
@@ -289,7 +289,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
             <div class="container-fluid px-container">
                 <h3 class="section-title text-uppercase text-center">GOURMET FRIES</h3>
                 <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal1" alt="Card image cap"></div>
                             <div class="card-body">
@@ -305,7 +305,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal2" alt="Card image cap"></div>
                             <div class="card-body">
@@ -318,7 +318,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal3" alt="Card image cap"></div>
                             <div class="card-body">
@@ -334,7 +334,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 d-flex justify-content-center">
+                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
                             <div class="card-image"><img class="card-img-top" :src="mdeal4" alt="Card image cap"></div>
                             <div class="card-body">
@@ -750,32 +750,32 @@ input[type="text"].form-control{
     max-width: 1720px;
 }
 
-.deal-card {
+.card.deal-card {
     position: relative;
     background: #FFFFFF;
     border: 2px solid #ECECEC;
     border-radius: 30px;
 }
 
-.deal-card .card-title {
+.card.deal-card .card-title {
     font-weight: 600;
     font-size: 24px;
     color: #1E1D23;
 }
 
-.deal-card .card-text {
+.card.deal-card .card-text {
     font-weight: 400;
     font-size: 18px;
     color: #7E7E7E;
 }
 
-.deal-card .price-label {
+.card.deal-card .price-label {
     font-weight: 700;
     font-size: 24px;
     color: #00CF64;
 }
 
-.deal-card .discount-tag {
+.card.deal-card .discount-tag {
     position: absolute;
     width: 117px;
     height: 92px;
