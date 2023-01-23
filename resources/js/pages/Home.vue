@@ -4,7 +4,7 @@ import Vector from "../../../public/images/assets/Vector.png";
 import banner from "../../../public/images/assets/banner.png";
 import banner1 from "../../../public/images/assets/banner1.png";
 import back from "../../../public/images/assets/back.png";
-import fwd from "../../../public/images/assets/banner1.png";
+import fwd from "../../../public/images/assets/fwd.png";
 import deal1 from "../../../public/images/assets/deal-1.png";
 import deal2 from "../../../public/images/assets/deal-2.png";
 import deal3 from "../../../public/images/assets/deal-3.png";
