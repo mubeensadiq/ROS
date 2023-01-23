@@ -33,11 +33,10 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
     };
 
     $(window).on('resize scroll', function() {
-        console.log("in view port? ", $('.base-section').isInViewport());
-        if ($('.base-section').isInViewport()) {
-            $('.categories-section').addClass('fixed-top');
-        } else {
+        if ($('#mainHeaderSection').isInViewport()) {
             $('.categories-section').removeClass('fixed-top');
+        } else {
+            $('.categories-section').addClass('fixed-top');
         }
     });
 </script>
@@ -54,7 +53,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
     <link rel="manifest" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/manifest.json">
     <link rel="mask-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
     <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico">
-    <section>
+    <section id="mainHeaderSection">
         <div class="container-fluid p-0">
             <div class="alert-msg text-light">FREE Delivery On Orders Above <span>Rs. 2000</span></div>
             <header class="d-block d-md-none">
@@ -841,6 +840,15 @@ input[type="text"].form-control{
     transform: translateY(40px);
     transition: transform .3s;
     height: 60px;
+}
+
+.categories-section.fixed-top .categories-list img, .categories-section.fixed-top .search-label img {
+    width: 36px;
+}
+
+.categories-section.fixed-top > .categories-list ul li a {
+    font-size: 20px;
+    padding: 15px;
 }
 
 @media (max-width: 767.98px) {
