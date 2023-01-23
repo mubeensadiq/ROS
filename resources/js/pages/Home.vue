@@ -19,6 +19,27 @@ import lcoationBG from "../../../public/images/assets/location-bg.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
+
+
+
+    $.fn.isInViewport = function() {
+        var elementTop = $(this).offset().top;
+        var elementBottom = elementTop + $(this).outerHeight();
+
+        var viewportTop = $(window).scrollTop();
+        var viewportBottom = viewportTop + $(window).height();
+
+        return elementBottom > viewportTop && elementTop < viewportBottom;
+    };
+
+    $(window).on('resize scroll', function() {
+        console.log("in view port? ", $('.base-section').isInViewport());
+        if ($('.base-section').isInViewport()) {
+            $('.categories-section').addClass('fixed-top');
+        } else {
+            $('.categories-section').removeClass('fixed-top');
+        }
+    });
 </script>
 
 <template>
