@@ -10,8 +10,13 @@ class CategoriesController extends Controller
 {
     public function index(Request $request){
         try{
-            if(isset($request->get) && $request->get === 'all')
-                $categories = Category::orderBy('id','desc')->get();
+            if(isset($request->get) && $request->get === 'all'){
+                $categories = Category::orderBy('id','desc');
+                if(isset($request->status))
+                    $categories = $categories->where('status' , $request->status);
+
+                $categories = $categories->get();
+            }
             else{
                 if(isset($request->query) && $request->query != ''){
                     $query = $request['query'];
@@ -101,5 +106,27 @@ class CategoriesController extends Controller
                 'message' => $ex->getMessage()
             ],500);
         }
+    }
+
+    public function products(){
+        try{
+           $products =  Category::with('products')->whereHas('products', function ($q){
+                $q->where('status',1);
+                $q->orderBy('id','desc');
+            })->where('status' , 1)->get();
+            return response()->json([
+                'status' => 'success',
+                'products' => $products
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'products' => [],
+                'message' => $ex->getMessage()
+            ],500);
+        }
+
     }
 }

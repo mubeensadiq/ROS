@@ -43,10 +43,12 @@ Route::get('/get-area-details/{id}', [AreasController::class , 'getAreaDetails']
 Route::delete('/delete-area/{id}', [AreasController::class , 'deleteArea']);
 Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
 Route::get('/categories', [CategoriesController::class , 'index']);
+Route::get('/category-products', [CategoriesController::class , 'products']);
 Route::post('/save-category', [CategoriesController::class , 'saveCategory']);
 Route::get('/get-category-details/{id}', [CategoriesController::class , 'getCategoryDetails']);
 Route::delete('/delete-category/{id}', [CategoriesController::class , 'deleteCategory']);
 Route::get('/deals', [DealsController::class , 'index']);
+Route::get('/deal-products', [DealsController::class , 'products']);
 Route::get('/branches', [BranchesController::class , 'index']);
 Route::post('/save-branch', [BranchesController::class , 'saveBranch']);
 Route::get('/get-branch-details/{id}', [BranchesController::class , 'getBranchDetails']);

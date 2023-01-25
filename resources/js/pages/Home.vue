@@ -38,6 +38,39 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
             $('.categories-section').addClass('fixed-top');
         }
     });
+
+import _ from "lodash";
+import { ref, reactive , onMounted } from "vue";
+
+import axios from "axios";
+const data = reactive({ categories: [], dealProducts:[], categoryProducts: [] })
+onMounted(() => {
+    getCategories();
+    getDealProducts();
+    getCategoryProducts();
+})
+
+const getCategories = (() => {
+    axios.get('/api/categories?get=all&status=1').then((response)=>{
+        data.categories = response.data.categories;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
+const getDealProducts = (() => {
+    axios.get('/api/deal-products').then((response)=>{
+        data.dealProducts = response.data.products;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
+const getCategoryProducts = (() => {
+    axios.get('/api/category-products').then((response)=>{
+        data.categoryProducts = response.data.products;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
 </script>
 
 <template>
@@ -140,12 +173,7 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                     <img :src="back" alt="">
                 </div>
                 <ul class="list-group">
-                    <li class=""><a href="">Mighty Deals</a></li>
-                    <li class=""><a href="">Online Exclusive Deals</a></li>
-                    <li class=""><a href="">Gourmet Fries</a></li>
-                    <li class=""><a href="">Premium Burgers</a></li>
-                    <li class=""><a href="">Appetizers</a></li>
-                    <li class=""><a href="">beverages</a></li>
+                    <li v-for="(category,index) in data.categories" class="" ><a :href="'#'+category.id">{{category.name}}</a></li>
                 </ul>
                 <div class="ctg-forward">
                     <img :src="fwd" alt="">
@@ -305,68 +333,23 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
         </section>
 
 
-        <section class="base-section gourmet-fries">
+        <section v-for="(category , index) in data.categoryProducts" class="base-section gourmet-fries" :id="category.id">
             <div class="container-fluid px-container">
-                <h3 class="section-title text-uppercase text-center">GOURMET FRIES</h3>
+                <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
                 <div class="row">
-                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
+                    <div v-for="(product , index) in category.products" class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                         <div class="card deal-card">
-                            <div class="card-image"><img class="card-img-top" :src="mdeal1" alt="Card image cap"></div>
+                            <div class="card-image"><img class="card-img-top" :src="'/images/products/'+product.image" alt="Card image cap"></div>
                             <div class="card-body">
-                                <h5 class="card-title">Deal 01</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
+                                <h5 class="card-title">{{product.name}}</h5>
+                                <p class="card-text">{{product.description}} </p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <label class="price-label">Rs. 559</label>
+                                    <label class="price-label">Rs. {{product.price}}</label>
                                     <img :src="cartIcon" alt="">
                                 </div>
                             </div>
-                            <div class="discount-tag">
+                            <div class="discount-tag hidden">
                                 <label>10%<br><span>OFF</span></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
-                        <div class="card deal-card">
-                            <div class="card-image"><img class="card-img-top" :src="mdeal2" alt="Card image cap"></div>
-                            <div class="card-body">
-                                <h5 class="card-title">Deal 02</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
-                        <div class="card deal-card">
-                            <div class="card-image"><img class="card-img-top" :src="mdeal3" alt="Card image cap"></div>
-                            <div class="card-body">
-                                <h5 class="card-title">Deal 03</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
-                                </div>
-                            </div>
-                            <div class="discount-tag">
-                                <label>10%<br><span>OFF</span></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
-                        <div class="card deal-card">
-                            <div class="card-image"><img class="card-img-top" :src="mdeal4" alt="Card image cap"></div>
-                            <div class="card-body">
-                                <h5 class="card-title">Deal 04</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
-                                </div>
-                            </div>
-                            <div class="discount-tag">
-                                <label>30%<br><span>OFF</span></label>
                             </div>
                         </div>
                     </div>
@@ -488,6 +471,9 @@ body { padding: 0 !important; }
 </style>
 
 <style>
+.hidden{
+    display: none !important;
+}
 .brand {
     position: absolute;
     left: 0;
