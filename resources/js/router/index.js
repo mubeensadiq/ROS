@@ -20,12 +20,24 @@ import ProductGrid from "../pages/ProductGrid.vue";
 import AddProduct from "../pages/AddProduct.vue";
 import Login from "../pages/Login.vue";
 import Home from "../pages/Home.vue";
+import Confirmation from "../pages/Confirmation.vue";
+import Checkout from "../pages/Checkout.vue";
 import { useUserStore } from "../stores/users";
 const routes = [
     {
         path: "/",
         name: "Home",
         component: Home,
+    },
+    {
+        path: "/confirmation",
+        name: "Confirmation",
+        component: Confirmation,
+    },
+    {
+        path: "/checkout",
+        name: "Checkout",
+        component: Checkout,
     },
     {
         path: "/admin",

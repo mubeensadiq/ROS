@@ -15,7 +15,6 @@ import mdeal3 from "../../../public/images/assets/mdeal-3.png";
 import mdeal4 from "../../../public/images/assets/mdeal-4.png";
 import cartIcon from "../../../public/images/assets/cart-icon.png";
 import location from "../../../public/images/assets/location.png";
-import lcoationBG from "../../../public/images/assets/location-bg.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
