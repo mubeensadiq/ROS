@@ -48,7 +48,6 @@ Route::post('/save-category', [CategoriesController::class , 'saveCategory']);
 Route::get('/get-category-details/{id}', [CategoriesController::class , 'getCategoryDetails']);
 Route::delete('/delete-category/{id}', [CategoriesController::class , 'deleteCategory']);
 Route::get('/deals', [DealsController::class , 'index']);
-Route::get('/deal-products', [DealsController::class , 'products']);
 Route::get('/branches', [BranchesController::class , 'index']);
 Route::post('/save-branch', [BranchesController::class , 'saveBranch']);
 Route::get('/get-branch-details/{id}', [BranchesController::class , 'getBranchDetails']);

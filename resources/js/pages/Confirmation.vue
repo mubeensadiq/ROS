@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 @import "https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css";
 @import "https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css";
 .bd-placeholder-img {
