@@ -18,6 +18,10 @@ import mdeal3 from "../../../public/images/assets/mdeal-3.png";
 import mdeal4 from "../../../public/images/assets/mdeal-4.png";
 import cartIcon from "../../../public/images/assets/cart-icon.png";
 import location from "../../../public/images/assets/location.png";
+import facebook from "../../../public/images/assets/facebook.png";
+import youtube from "../../../public/images/assets/youtube.png";
+import googlePlus from "../../../public/images/assets/google-plus.png";
+import twitter from "../../../public/images/assets/twitter.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
@@ -181,15 +185,6 @@ const getCategoryProducts = (() => {
                 <div class="ctg-forward">
                     <img :src="fwd" alt="">
                 </div>
-            </div>
-            <div class="categories-search">
-                <form class="search-form" role="search">
-                    <div class="form-group pull-right" id="search">
-                        <input type="text" class="form-control" placeholder="Search">
-                        <button type="submit" class="form-control form-control-submit">Submit</button>
-                        <span class="search-label"><img :src="search" alt=""></span>
-                    </div>
-                </form>
             </div>
         </div>
     </section>
@@ -409,9 +404,14 @@ const getCategoryProducts = (() => {
 
 
         <!-- FOOTER -->
-        <footer class="container">
-            <p class="float-end"><a href="#">Back to top</a></p>
-            <p>&copy; 2017–2022 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+        <footer class="container-fluid d-flex flex-column justify-content-center align-items-center">
+            <div class="social-icons mb-3 d-inline-flex">
+                <img :src="facebook" alt="facebook icon">
+                <img :src="googlePlus" alt="google icon">
+                <img :src="twitter" alt="twitter icon">
+                <img :src="youtube" alt="youtube icon">
+            </div>
+            <p class="mb-0">Copyright &copy; 2023 <span class="color-1">FastBurger</span>. All Rights Reserved.</p>
         </footer>
     </main>
 

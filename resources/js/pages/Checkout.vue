@@ -61,7 +61,6 @@ $(document).ready(function(){
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
     <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css">
     <!-- Favicons -->
     <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/apple-touch-icon.png"
           sizes="180x180">
@@ -234,13 +233,13 @@ $(document).ready(function(){
 
         <!-- FOOTER -->
         <footer class="container-fluid d-flex flex-column justify-content-center align-items-center">
-            <div class="social-icons mb-3">
+            <div class="social-icons mb-3 d-inline-flex">
                 <img :src="facebook" alt="facebook icon">
                 <img :src="googlePlus" alt="google icon">
                 <img :src="twitter" alt="twitter icon">
                 <img :src="youtube" alt="youtube icon">
             </div>
-            <p class="mb-0">Copyright &copy; 2023 <span class="color-1">Fastburger</span>. All Rights Reserved.</p>
+            <p class="mb-0">Copyright &copy; 2023 <span class="color-1">FastBurger</span>. All Rights Reserved.</p>
         </footer>
     </main>
 

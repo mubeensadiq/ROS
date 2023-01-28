@@ -245,7 +245,7 @@ export default {
                     class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
                     @click="saveCategory()"
                 >
-                    Save & Add New Area
+                    Save & Add New Category
                 </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveCategory()">
                     Save
