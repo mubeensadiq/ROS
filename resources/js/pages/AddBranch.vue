@@ -61,7 +61,7 @@ export default {
             axios.post('/api/save-branch', this.branch).then((response) => {
                 this.showNoty(response.data.message)
                 if (!addNew)
-                    return this.$router.push('/branches');
+                    return this.$router.push('/admin/branches');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })

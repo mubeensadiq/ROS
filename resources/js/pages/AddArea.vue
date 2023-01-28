@@ -60,7 +60,7 @@ export default {
             axios.post('/api/save-area', this.area).then((response) => {
                 this.showNoty(response.data.message)
                 if(!addNew)
-                    return this.$router.push('/areas');
+                    return this.$router.push('/admin/areas');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })

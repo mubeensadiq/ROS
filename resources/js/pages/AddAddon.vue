@@ -53,7 +53,7 @@ export default {
             axios.post('/api/save-addon', this.addon).then((response) => {
                 this.showNoty(response.data.message)
                 if(!addNew)
-                    return this.$router.push('/addons');
+                    return this.$router.push('/admin/addons');
             }).catch((error) => {
                 this.showNoty(error.response.data.message,'error')
             })

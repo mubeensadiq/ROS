@@ -46,7 +46,7 @@ export default {
             axios.post('/api/save-category', this.category).then((response) => {
                 this.showNoty(response.data.message)
                 if(!addNew)
-                    return this.$router.push('/categories');
+                    return this.$router.push('/admin/categories');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })
