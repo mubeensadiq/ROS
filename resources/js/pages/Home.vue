@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 @import "../../../public/css/frontend.css";
 </style>
 <script setup lang="ts">
@@ -79,6 +79,8 @@ const getCategoryProducts = (() => {
 <template>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
+    <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css">
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">

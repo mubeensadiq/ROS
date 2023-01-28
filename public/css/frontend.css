@@ -1,6 +1,4 @@
-@import "https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css";
-@import "https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css";
-body { padding: 0 !important; }
+html body { padding: 0 !important; }
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
