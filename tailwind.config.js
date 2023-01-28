@@ -9,7 +9,7 @@ const toRGB = (value) => {
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./resources/**/*.{js,jsx,ts,vue,blade.php}"],
+    content: ["./resources/**/*.{js,jsx,ts,vue,blade.php}", "!./resources/js/pages/Home.vue"],
   safelist: [
     {
       pattern: /animate-delay-.+/,
