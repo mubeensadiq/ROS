@@ -11,15 +11,17 @@ export const useUserStore = defineStore("user", {
           return JSON.parse(localStorage.getItem('user'));
         },
         async signIn(data) {
-            const res = await axios.post("/api/login", data).then((response) => {
-                let authUser = JSON.stringify(response.data.user);
-                this.user = authUser;
-                localStorage.setItem('user', authUser);
-                localStorage.setItem('access_token', response.data.user.api_token);
-                router.push('/admin');
-
+            return await axios.post("/api/login", data).then((response) => {
+                if(response.data.status === "success"){
+                    let authUser = JSON.stringify(response.data.user);
+                    this.user = authUser;
+                    localStorage.setItem('user', authUser);
+                    localStorage.setItem('access_token', response.data.user.api_token);
+                    router.push('/admin/products');
+                }
+                return response.data;
             }).catch( (error) => {
-               console.log(error);
+               return error.response.data
             });
         },
         async logout() {

@@ -3,6 +3,7 @@ import logoUrl from "../assets/images/logo.svg";
 import illustrationUrl from "../assets/images/illustration.svg";
 import { FormInput, FormCheck } from "../base-components/Form" ;
 import Button from "../base-components/Button";
+import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import { useUserStore } from "../stores/users";
@@ -16,12 +17,19 @@ export default defineComponent({
                 password: "",
             },
             submitted: false,
+            toastText: 'Invalid Credentials',
+            toastType: 'error',
         };
     },
     methods: {
         async submit() {
             const userStore = useUserStore();
-            await userStore.signIn(this.login);
+            let data = await userStore.signIn(this.login);
+            if(data.status == 'error'){
+                this.toastText = data.error
+                document.getElementById("toastBtn").click();
+            }
+
         }
     },
 });
@@ -35,6 +43,7 @@ export default defineComponent({
       'after:hidden after:xl:block after:content-[\'\'] after:w-[57%] after:-mt-[20%] after:-mb-[13%] after:-ml-[13%] after:absolute after:inset-y-0 after:left-0 after:transform after:rotate-[-4.5deg] after:bg-primary after:rounded-[100%] after:dark:bg-darkmode-700',
     ]"
   >
+    <Notification :toastText="toastText" :toastType="toastType" />
     <div class="container relative z-10 sm:px-10">
       <div class="block grid-cols-2 gap-4 xl:grid">
         <!-- BEGIN: Login Info -->

@@ -86,7 +86,7 @@ const saveProduct = ((addNew = false) => {
     axios.post('/api/save-product', product).then((response) => {
         showNoty(response.data.message)
         if(!addNew)
-            return router.push('/products');
+            return router.push('/admin/products');
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     })
