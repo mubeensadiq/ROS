@@ -1,4 +1,7 @@
-html body { padding: 0 !important; }
+body { padding: 0 !important; }
+label , h2, h3,h4,h5,h6,p,span {
+    color: #000 !important;
+}
 .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -103,7 +106,7 @@ html body { padding: 0 !important; }
 }
 
 .alert-msg span {
-    color: #FAC031;
+    color: #FAC031 !important;
 }
 
 #myCarousel{
@@ -130,19 +133,20 @@ html body { padding: 0 !important; }
 
 #myCarousel .customize-caption h1 span {
     font-size: 160px;
-    color: #FF0000;
+    color: #FF0000 !important;
     margin-left:-6px;
 }
 
 #myCarousel .customize-caption p {
     font-size: 45px;
-    color: #009146;
+    color: #009146 !important;
     font-weight: 400;
 }
 
 #myCarousel .customize-caption span {
     font-size: 24px;
     font-weight: 400;
+    color: #fff !important;
 }
 
 #myCarousel .customize-caption p.cta a {
@@ -157,7 +161,9 @@ html body { padding: 0 !important; }
     font-size: 26px;
     font-weight: 400;
 }
-
+.text-white{
+    color : #fff !important;
+}
 #myCarousel .carousel-indicators button {
     background: #808080;
     border-radius: 77%;
@@ -200,9 +206,9 @@ html body { padding: 0 !important; }
     z-index:10;
 }
 
-input[type="text"].form-control{
-    -webkit-appearence:none;
+.form-control{
     -webkit-border-radius:0;
+    border-color: #dee2e6 !important;
 }
 .form-control-submit, .search-label{
     width:60px;
@@ -356,7 +362,7 @@ input[type="text"].form-control{
 .card.deal-card .price-label {
     font-weight: 700;
     font-size: 24px;
-    color: #00CF64;
+    color: #00CF64 !important;
 }
 
 .card.deal-card .discount-tag {
@@ -367,7 +373,7 @@ input[type="text"].form-control{
     top: -27px;
     background: #B60000;
     border-radius: 46px 46px 0px 46px;
-    color: #FFF2F2;
+    color: #FFF2F2 !important;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -377,16 +383,18 @@ input[type="text"].form-control{
     font-size: 35px;
     line-height: 20px;
     text-align: right;
+    color: #fff !important;
 }
 
 .discount-tag span {
     font-size: 16px;
+    color: #fff !important;
 }
 
 .location-content div {
     margin-bottom: 50px;
     align-items: center;
-    color: #fff;
+    color: #fff !important;
     padding: 0 60px;
 }
 
@@ -397,6 +405,8 @@ input[type="text"].form-control{
 .location-content div p {
     font-weight: 400;
     font-size: 24px;
+    line-height: 24px;
+    color: #fff !important;
 }
 
 .categories-section.fixed-top {
@@ -420,6 +430,27 @@ input[type="text"].form-control{
         margin-top: 55px;
     }
 }
+
+/* Banner */
+.checkout-brand img.background {
+    height: 460px;
+}
+
+.checkout-brand .checkout-logo {
+    position: absolute;
+    color: white !important;
+    height: 450px;
+}
+
+.checkout-brand .checkout-logo img.logo {
+    width: 244px;
+}
+
+.checkout-brand .checkout-logo h2 {
+    font-weight: 600;
+    font-size: 60px;
+    color: #fff !important;
+}
 /* Checkout Form */
 #checkoutForm {
     box-shadow: 0px 1px 50px rgb(0 0 0 / 5%);
@@ -430,26 +461,31 @@ input[type="text"].form-control{
 .billing-details p {
     font-weight: 300;
     font-size: 24px;
-    color: #090808;
+    color: #090808 !important;
+    line-height: 36px;
 }
 
 .billing-details p span {
     font-weight: 600;
     font-size: 24px;
-    color: #1E1D23;
+    color: #1E1D23 !important;
 }
-
+.summary-labels p{
+    font-size: 16px;
+}
 .order-details {
 }
 
 .hr {
-    border-color: #D0D0D0;
+    border-color: #D0D0D0 !important;
 }
 
 .text-right {
     text-align: right;
 }
-
+.order-total{
+    padding-bottom: 10px;
+}
 .order-total label {
     font-weight: 600;
     font-size: 24px;
@@ -457,12 +493,109 @@ input[type="text"].form-control{
 
 .summary-values p {
     font-weight: 400;
+    font-size: 16px;
 }
 
 .order-total span {
     font-weight: 700;
     font-size: 25px;
-    color: #00CF64;
+    color: #00CF64 !important;
+}
+
+.order-list img { max-width: 120px; }
+.order-image-separator { border: 1px dashed #000000 !important; }
+.order-item .item-name h6 {
+    font-weight: 600;
+    font-size: 20px;
+}
+.order-item .item-name p, .order-item .item-name span {
+    font-weight: 300;
+    font-size: 16px;
+}
+.order-item .item-value {
+    font-weight: 700;
+    font-size: 20px;
+    color: #00CF64 !important;
+}
+
+/* Checkout Form */
+#checkoutForm {
+    box-shadow: 0px 1px 50px rgb(0 0 0 / 5%);
+    border-radius: 10px;
+    margin: 100px 70px;
+}
+
+.billing-details h3 {
+    font-weight: 600;
+    font-size: 40px;
+}
+
+.billing-details h6 {
+    font-weight: 600;
+    font-size: 26px;
+}
+
+.payment-selector div {
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    text-align: center;
+}
+
+.payment-selector label {
+    font-weight: 400;
+    font-size: 20px;
+}
+
+.order-details {
+    box-sizing: border-box;
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+}
+
+.order-heading label {
+    font-weight: 600;
+    font-size: 26px;
+}
+
+.hr {
+    border-color: #D0D0D0 !important;
+}
+
+.text-right {
+    text-align: right;
+}
+
+
+.voucher-input input {
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    padding: 10px;
+    width: 75%;
+}
+.voucher-input button {
+    background: #FFA52D;
+    border-radius: 34px;
+    font-weight: 400;
+    font-size: 22px;
+    width: 100px;
+}
+
+.btn-submit {
+    background: #FFA52D;
+    border-radius: 34px;
+    font-weight: 400;
+    font-size: 26px;
+    width: 100%;
+}
+
+.continue-shopping {
+    font-weight: 400;
+    font-size: 20px;
+    color: #5177FF !important;
+    float: right;
 }
 
 .order-list img { max-width: 120px; }
@@ -475,11 +608,6 @@ input[type="text"].form-control{
     font-weight: 300;
     font-size: 16px;
 }
-.order-item .item-value {
-    font-weight: 700;
-    font-size: 20px;
-    color: #00CF64;
-}
 
 footer {
     height: 225px;
@@ -487,11 +615,17 @@ footer {
 }
 
 footer p {
-    color: #898989;
+    color: #898989 !important;
     font-weight: 300;
     font-size: 24px;
 }
 
 .color-1 {
-    color: #FFA52D
+    color: #FFA52D !important;
+}
+
+@media (max-width: 767.98px) {
+    .alert-msg {
+        margin-top: 55px;
+    }
 }
