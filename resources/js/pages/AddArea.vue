@@ -25,12 +25,14 @@ export default {
             },
             cities: {},
             toastText : '',
-            toastType : 'success'
+            toastType : 'success',
+            update:false,
         }
     },
     mounted() {
         this.getCities();
         if (this.$route.params.id !== undefined) {
+            this.update = true;
             this.$nextTick().then(() => {
                 this.getAreaDetails(this.$route.params.id);
             });
@@ -56,11 +58,10 @@ export default {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        saveArea(addNew = false) {
+        saveArea() {
             axios.post('/api/save-area', this.area).then((response) => {
                 this.showNoty(response.data.message)
-                if(!addNew)
-                    return this.$router.push('/admin/areas');
+                return this.$router.push('/admin/areas');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })
@@ -76,7 +77,7 @@ export default {
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add Area</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update Trade Area' : 'Add New Trade Area'}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
@@ -92,7 +93,7 @@ export default {
                         class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
                     >
                         <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
-                        Area
+                        Trade Area
                         Information
                     </div>
                     <div class="mt-5">
@@ -244,15 +245,8 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveArea(true)"
-                >
-                    Save & Add New Area
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveArea()">
-                    Save
+                    {{ update ? 'Update' : 'Save' }}
                 </Button>
             </div>
         </div>

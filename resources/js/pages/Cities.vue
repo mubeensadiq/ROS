@@ -9,12 +9,9 @@ import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
 import {pageLimits} from "../utils/helper";
-const deleteConfirmationModal = ref(false);
-const setDeleteConfirmationModal = (value: boolean) => {
-    deleteConfirmationModal.value = value;
-};
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
+import Notification from "./Notification.vue";
 
 </script>
 <script lang="ts">
@@ -22,7 +19,12 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            cities: []
+            cities: [],
+            cityID: 0,
+            deleteConfirmationModal: false,
+            toastText : '',
+            toastType : 'success',
+            search:''
         }
     },
     mounted() {
@@ -35,6 +37,26 @@ export default {
             }).catch( (error) => {
                 console.log(error);
             });
+        },
+        setDeleteConfirmationModal(value, id = 0) {
+            this.cityID = id;
+            this.deleteConfirmationModal = value;
+        },
+        deleteCity() {
+            axios.delete('/api/delete-city/' + this.cityID).then((response) => {
+                if (response.data.status === 'success') {
+                    this.showNoty(response.data.message)
+                    this.setDeleteConfirmationModal(false);
+                    this.getCities("/api/cities?page=" + this.cities.current_page);
+                }
+            }).catch((error) => {
+                this.showNoty(error.response.data.message, 'error')
+            });
+        },
+        showNoty(message,type = 'success'){
+            this.toastText = message;
+            this.toastType = type;
+            document.getElementById("toastBtn").click();
         }
 
     }
@@ -42,29 +64,13 @@ export default {
 </script>
 
 <template>
+    <Notification :toastText="toastText" :toastType="toastType" />
     <h2 class="mt-10 text-lg font-medium intro-y">Cities</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <Menu>
-                <Menu.Button :as="Button" class="px-2 !box">
-          <span class="flex items-center justify-center w-5 h-5">
-            <Lucide icon="Plus" class="w-4 h-4" />
-          </span>
-                </Menu.Button>
-                <Menu.Items class="w-40">
-                    <Menu.Item>
-                        <Lucide icon="Printer" class="w-4 h-4 mr-2" /> Print
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to Excel
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to PDF
-                    </Menu.Item>
-                </Menu.Items>
-            </Menu>
+
             <div class="hidden mx-auto md:block text-slate-500">
                 Showing {{cities.from}} to {{ cities.to }} of {{ cities.total }} entries
             </div>
@@ -74,6 +80,8 @@ export default {
                         type="text"
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
+                        v-model="search"
+                        @keypress.enter="getCities('/api/cities?query='+search)"
                     />
                     <Lucide
                         icon="Search"
@@ -104,29 +112,31 @@ export default {
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
-                            <a href="" class="font-medium whitespace-nowrap">
+                            <span href="" class="font-medium whitespace-nowrap">
                                 {{ city.city }}
-                            </a>
+                            </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <a class="flex items-center mr-3" href="">
-                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1" />
+                                <RouterLink :to="{name : 'editCity', params:{'id' : city.id} }"
+                                            class="flex items-center mr-3">
+                                    <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
-                                </a>
+                                </RouterLink>
                                 <a
                                     class="flex items-center text-danger"
                                     href="#"
                                     @click="
-                    (event) => {
-                      event.preventDefault();
-                      setDeleteConfirmationModal(true);
-                    }
-                  "
+                                        (event) => {
+                                            event.preventDefault();
+                                            setDeleteConfirmationModal(true , city.id);
+                                        }
+                                    "
                                 >
-                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1" /> Delete
+                                    <Lucide icon="Trash2" class="w-4 h-4 mr-1"/>
+                                    Delete
                                 </a>
                             </div>
                         </Table.Td>
@@ -196,11 +206,11 @@ export default {
                 >
                     Cancel
                 </Button>
-                <Button
-                    variant="danger"
-                    type="button"
-                    class="w-24"
-                    ref="deleteButtonRef"
+                <Button  @click="deleteCity()"
+                         variant="danger"
+                         type="button"
+                         class="w-24"
+                         ref="deleteButtonRef"
                 >
                     Delete
                 </Button>

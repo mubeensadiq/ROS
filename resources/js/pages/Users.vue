@@ -70,6 +70,9 @@ export default defineComponent({
             this.toastText = message;
             this.toastType = type;
             document.getElementById("toastBtn").click();
+        },
+        getDateFormat(date){
+            return new Date(date).getDate();
         }
 
     }
@@ -88,24 +91,6 @@ export default defineComponent({
             Add New User
           </Button>
         </RouterLink>
-      <Menu>
-        <Menu.Button :as="Button" class="px-2 !box">
-          <span class="flex items-center justify-center w-5 h-5">
-            <Lucide icon="Plus" class="w-4 h-4" />
-          </span>
-        </Menu.Button>
-        <Menu.Items class="w-40">
-          <Menu.Item>
-            <Lucide icon="Printer" class="w-4 h-4 mr-2" /> Print
-          </Menu.Item>
-          <Menu.Item>
-            <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to Excel
-          </Menu.Item>
-          <Menu.Item>
-            <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to PDF
-          </Menu.Item>
-        </Menu.Items>
-      </Menu>
       <div class="hidden mx-auto md:block text-slate-500">
         Showing {{users.from}} to {{ users.to }} of {{ users.total }} entries
       </div>
@@ -136,9 +121,9 @@ export default defineComponent({
             </Table.Th>
             <Table.Th class="border-b-0 whitespace-nowrap"> Email </Table.Th>
             <Table.Th class="border-b-0 whitespace-nowrap"> Phone Number </Table.Th>
-            <Table.Th class="text-center border-b-0 whitespace-nowrap">
-              STATUS
-            </Table.Th>
+<!--            <Table.Th class="text-center border-b-0 whitespace-nowrap">-->
+<!--              STATUS-->
+<!--            </Table.Th>-->
             <Table.Th class="text-center border-b-0 whitespace-nowrap">
               ACTIONS
             </Table.Th>
@@ -159,8 +144,8 @@ export default defineComponent({
                     as="img"
                     alt="User Profile Image"
                     class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                    :src="user.profile && user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
-                    content=""
+                    :src="user.profile && user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/default.png'"
+                    :content="'Added on ' + getDateFormat(user.created_at)"
                   />
                 </div>
               </div>
@@ -168,38 +153,38 @@ export default defineComponent({
             <Table.Td
               class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
             >
-              <a href="" class="font-medium whitespace-nowrap">
+              <span class="font-medium whitespace-nowrap">
                 {{ user.full_name }}
-              </a>
+              </span>
             </Table.Td>
               <Table.Td
                   class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
               >
-                  <a href="" class="font-medium whitespace-nowrap">
+                  <span class="font-medium whitespace-nowrap">
                       {{user.email}}
-                  </a>
+                  </span>
               </Table.Td>
               <Table.Td
                   class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
               >
-                  <a href="" class="font-medium whitespace-nowrap">
+                  <span class="font-medium whitespace-nowrap">
                       {{user.profile ? user.profile.phone_number : 'N/A'}}
-                  </a>
+                  </span>
               </Table.Td>
-            <Table.Td
-              class="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-            >
-              <div
-                :class="[
-                  'flex items-center justify-center',
-                  { 'text-success': user.status === 1 },
-                  { 'text-danger': user.status === 0 },
-                ]"
-              >
-                <Lucide icon="CheckSquare" class="w-4 h-4 mr-2" />
-                {{ user.status === 1 ? "Active" : "Inactive" }}
-              </div>
-            </Table.Td>
+<!--            <Table.Td-->
+<!--              class="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"-->
+<!--            >-->
+<!--              <div-->
+<!--                :class="[-->
+<!--                  'flex items-center justify-center',-->
+<!--                  { 'text-success': user.status === 1 },-->
+<!--                  { 'text-danger': user.status === 0 },-->
+<!--                ]"-->
+<!--              >-->
+<!--                <Lucide icon="CheckSquare" class="w-4 h-4 mr-2" />-->
+<!--                {{ user.status === 1 ? "Active" : "Inactive" }}-->
+<!--              </div>-->
+<!--            </Table.Td>-->
             <Table.Td
               class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
             >

@@ -25,8 +25,8 @@ export default defineComponent({
         async submit() {
             const userStore = useUserStore();
             let data = await userStore.signIn(this.login);
-            if(data.status == 'error'){
-                this.toastText = data.error
+            if(data.message){
+                this.toastText = data.message
                 document.getElementById("toastBtn").click();
             }
 
