@@ -120,7 +120,7 @@ export default {
             axios.post('/api/save-user', this.user).then((response) => {
                 this.showNoty(response.data.message)
                 if(!addNew)
-                    return this.$router.push('/users');
+                    return this.$router.push('/admin/users');
 
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
@@ -189,7 +189,7 @@ export default {
                                         <img
                                             class="rounded-md"
                                             alt="Avatar"
-                                            :src="user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
+                                            :src="user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/default.png'"
                                         />
                                     </div>
                                 </div>
@@ -587,15 +587,8 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveUser(true)"
-                >
-                    Save & Add New User
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveUser()">
-                    Save
+                    {{ update ? 'Update' : 'Save' }}
                 </Button>
             </div>
         </div>

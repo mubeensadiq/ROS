@@ -12,6 +12,7 @@ export const useUserStore = defineStore("user", {
         },
         async signIn(data) {
             return await axios.post("/api/login", data).then((response) => {
+                console.log(response);
                 if(response.data.status === "success"){
                     let authUser = JSON.stringify(response.data.user);
                     this.user = authUser;
@@ -21,6 +22,7 @@ export const useUserStore = defineStore("user", {
                 }
                 return response.data;
             }).catch( (error) => {
+                console.log(error)
                return error.response.data
             });
         },

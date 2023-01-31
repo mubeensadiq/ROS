@@ -16,8 +16,8 @@ class LoginController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            'email' => 'required|email',
+            'password' => 'required'
         ]);
 
         if (Auth::attempt($credentials)) {
@@ -31,7 +31,7 @@ class LoginController extends Controller
         else{
             return response()->json([
                 'status' => 'error',
-                'error' => 'The provided credentials do not match our records.'
+                'message' => 'The provided credentials do not match our records.'
             ],400);
         }
     }

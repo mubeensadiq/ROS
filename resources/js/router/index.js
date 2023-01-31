@@ -4,6 +4,7 @@ import Dashboard from "../pages/Dashboard.vue";
 import Users from "../pages/Users.vue";
 import AddUser from "../pages/AddUser.vue";
 import Cities from "../pages/Cities.vue";
+import AddCity from "../pages/AddCity.vue";
 import Areas from "../pages/Areas.vue";
 import AddArea from "../pages/AddArea.vue";
 import Branches from "../pages/Branches.vue";
@@ -67,6 +68,11 @@ const routes = [
             path: "cities",
             name: "cities",
             component: Cities,
+        },
+        {
+            path: "cities/update/:id",
+            name: "editCity",
+            component: AddCity,
         },
         {
             path: "areas",

@@ -23,15 +23,16 @@ export default {
                 image: null
             },
             toastText : '',
-            toastType : 'success'
+            toastType : 'success',
+            update:false
         }
     },
     mounted() {
         if (this.$route.params.id !== undefined) {
+            this.update = true
             this.$nextTick().then(() => {
                 this.getAddonDetails(this.$route.params.id);
                 setTimeout(() => {
-                    console.log("set Requeired");
                     this.addon.required = this.addon.required === 1 ?  true : false;
                 },1000)
             });
@@ -49,11 +50,10 @@ export default {
                 this.showNoty(error.response.data.message,'error')
             });
         },
-        saveAddon(addNew = false) {
+        saveAddon() {
             axios.post('/api/save-addon', this.addon).then((response) => {
                 this.showNoty(response.data.message)
-                if(!addNew)
-                    return this.$router.push('/admin/addons');
+                return this.$router.push('/admin/addons');
             }).catch((error) => {
                 this.showNoty(error.response.data.message,'error')
             })
@@ -88,7 +88,7 @@ export default {
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add Addon</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? "Update Addon" : "Add New Addon"}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
@@ -272,15 +272,8 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveAddon(true)"
-                >
-                    Save & Add New Addon
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveAddon()">
-                    Save
+                    {{ update ? "Update" : "Save" }}
                 </Button>
             </div>
         </div>

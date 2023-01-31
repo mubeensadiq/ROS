@@ -24,6 +24,7 @@ export default {
                 phone_number: ''
             },
             areas: {},
+            update:false,
             toastText : '',
             toastType : 'success'
         }
@@ -31,6 +32,7 @@ export default {
     mounted() {
         this.getAreas();
         if (this.$route.params.id !== undefined) {
+            this.update = true
             this.$nextTick().then(() => {
                 this.getBranchDetails(this.$route.params.id);
             });
@@ -57,11 +59,10 @@ export default {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        saveBranch(addNew = false) {
+        saveBranch() {
             axios.post('/api/save-branch', this.branch).then((response) => {
                 this.showNoty(response.data.message)
-                if (!addNew)
-                    return this.$router.push('/admin/branches');
+                return this.$router.push('/admin/branches');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })
@@ -77,7 +78,7 @@ export default {
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add Branch</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update Branch' : 'Add New Branch'}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
@@ -246,15 +247,8 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveBranch()"
-                >
-                    Save & Add New Branch
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveBranch()">
-                    Save
+                    {{ update ? 'Update' : 'Save' }}
                 </Button>
             </div>
         </div>

@@ -74,24 +74,7 @@ export default {
                     Add New Category
                 </Button>
             </RouterLink>
-            <Menu>
-                <Menu.Button :as="Button" class="px-2 !box">
-          <span class="flex items-center justify-center w-5 h-5">
-            <Lucide icon="Plus" class="w-4 h-4" />
-          </span>
-                </Menu.Button>
-                <Menu.Items class="w-40">
-                    <Menu.Item>
-                        <Lucide icon="Printer" class="w-4 h-4 mr-2" /> Print
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to Excel
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Lucide icon="FileText" class="w-4 h-4 mr-2" /> Export to PDF
-                    </Menu.Item>
-                </Menu.Items>
-            </Menu>
+
             <div class="hidden mx-auto md:block text-slate-500">
                 Showing {{categories.from}} to {{ categories.to }} of {{ categories.total }} entries
             </div>
@@ -154,16 +137,16 @@ export default {
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
-                            <a href="" class="font-medium whitespace-nowrap">
+                            <span href="" class="font-medium whitespace-nowrap">
                                 {{ category.name }}
-                            </a>
+                            </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
-                            <a href="" class="font-medium whitespace-nowrap">
+                            <span href="" class="font-medium whitespace-nowrap">
                                 {{ category.description }}
-                            </a>
+                            </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"

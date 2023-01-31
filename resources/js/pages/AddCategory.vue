@@ -21,11 +21,13 @@ export default {
                 image: null,
             },
             toastText : '',
-            toastType : 'success'
+            toastType : 'success',
+            update:false
         }
     },
     mounted() {
         if (this.$route.params.id !== undefined) {
+            this.update = true;
             this.$nextTick().then(() => {
                 this.getCategoryDetails(this.$route.params.id);
             });
@@ -81,7 +83,7 @@ export default {
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add category</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update Category' : 'Add New Category'}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
@@ -240,15 +242,8 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveCategory()"
-                >
-                    Save & Add New Category
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveCategory()">
-                    Save
+                    {{ update ? 'Update' : 'Save' }}
                 </Button>
             </div>
         </div>
