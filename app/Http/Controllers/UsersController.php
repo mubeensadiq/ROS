@@ -106,17 +106,6 @@ class UsersController extends Controller
             ]);
 
             $user->assignRole($request->role);
-
-            if($request->role === 5){
-                $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
-                    'cnic' => $request->rider['cnic'],
-                    'license_no' => $request->rider['license_no'],
-                ]);
-                $rider->areas()->delete();
-                foreach ($request->rider['areas'] as $area){
-                    $rider->areas()->create(['area_id'=>$area]);
-                }
-            }
             return response()->json([
                 'status' => 'success',
                 'users' => $user

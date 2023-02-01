@@ -31,17 +31,9 @@ export default {
                     phone_number: '',
                     address: ''
                 },
-                rider: {
-                    cnic: '',
-                    license_no: '',
-                    areas: []
-                },
 
             },
             roles: [],
-            areas: {},
-            cities: {},
-            city_id : '',
             update:false,
             toastText : '',
             toastType : 'success'
@@ -49,9 +41,7 @@ export default {
         }
     },
     mounted() {
-        this.getCitiesHasAreas();
         this.getRoles();
-
         if (this.$route.params.id !== undefined) {
             this.update = true;
             this.$nextTick().then(() => {
@@ -59,7 +49,6 @@ export default {
             });
         }
         else{
-            this.getAreasByCity();
         }
     },
     watch: {},
@@ -72,49 +61,13 @@ export default {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        getCitiesHasAreas() {
-            axios.get('/api/cities-has-areas').then((response) => {
-                this.cities = response.data.cities;
-                if(this.$route.params.id == undefined)
-                    this.city_id = this.cities[0].id.toString();
-            }).catch((error) => {
-                this.showNoty(error.response.data.message, 'error')
-            });
-        },
-        getAreasByCity() {
-            axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
-                this.areas = response.data.areas;
-            }).catch((error) => {
-                this.showNoty(error.response.data.message, 'error')
-            });
-        },
         getUserDetails(id){
             axios.get('/api/get-user-details/' + id).then((response) => {
                 if (response.data.user !== undefined){
                     const res = response.data.user;
                     this.user = response.data.user;
-                    this.city_id = this.cities[0].id.toString();
                     if(res.roles)
                         this.user.role = res.roles[0].id.toString();
-                    this.getAreasByCity();
-                    if(res.rider){
-                        this.city_id = res.rider.areas[0].area.city_id.toString();
-                        setTimeout(()=>{
-                            if(response.data.user.rider !== null){
-                                this.user.rider.areas.forEach((value , index) => {
-                                    this.user.rider.areas[index] = value.area_id.toString();
-                                });
-                            }
-                        },10)
-                    }
-                    else{
-                        this.user.rider = {
-                            cnic: '',
-                            license_no: '',
-                            areas: []
-                        }
-                    }
-
                 }
 
             }).catch((error) => {
@@ -461,145 +414,6 @@ export default {
                 </div>
             </div>
             <!-- END: Product Information -->
-            <!-- BEGIN: Product Detail -->
-            <div class="p-5 mt-5 intro-y box" v-if="user.role === '5'">
-                <div
-                    class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
-                >
-                    <div
-                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
-                    >
-                        <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
-                        Rider
-                        Information
-                    </div>
-                    <div class="mt-5">
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">CNIC</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="cnic"
-                                    type="text"
-                                    placeholder="cnic"
-                                    v-model="user.rider.cnic"
-                                    :value="user.rider.cnic"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">License Number</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="cnic"
-                                    type="text"
-                                    placeholder="license no"
-                                    v-model="user.rider.license_no"
-                                    :value="user.rider.license_no"
-                                />
-                            </div>
-                        </FormInline>
-
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">City</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <TomSelect
-                                    v-model="city_id"
-                                    :value="city_id"
-                                    :options="{
-                                    placeholder: 'Cities',
-                                  }"
-                                    class="w-full"
-                                    @change="getAreasByCity"
-                                >
-                                    <option
-                                        v-for="(city, index) in cities"
-                                        :key="index"
-                                        :value="city.id"
-                                    >
-                                        {{ city.city }}
-                                    </option>
-                                </TomSelect>
-                            </div>
-                        </FormInline>
-
-
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Areas</div>
-                                    </div>
-                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        You can choose multiple areas for single rider.
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <TomSelect
-                                    v-model="user.rider.areas"
-                                    :value="user.rider.areas"
-                                    :options="{
-                                    placeholder: 'Areas',
-                                  }"
-                                    class="w-full"
-                                    multiple
-                                >
-                                    <option
-                                        v-for="(area, key) in areas"
-                                        :key="key"
-                                        :value="area.id"
-                                    >
-                                        {{ area.area }}
-                                    </option>
-                                </TomSelect>
-                            </div>
-                        </FormInline>
-
-                    </div>
-                </div>
-            </div>
-            <!-- END: Weight & Shipping -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
                 <RouterLink :to="{name : 'users' }">
                     <Button

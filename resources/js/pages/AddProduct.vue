@@ -84,6 +84,7 @@ const getProductDetails = ((id) => {
 const saveProduct = (() => {
     axios.post('/api/save-product', data.product).then((response) => {
         showNoty(response.data.message)
+        return router.push('/admin/products');
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     })

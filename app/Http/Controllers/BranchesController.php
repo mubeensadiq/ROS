@@ -10,7 +10,7 @@ class BranchesController extends Controller
 {
     public function index(Request $request){
         try{
-            $branches = Branch::with('area');
+            $branches = new Branch();
             if(isset($request->query) && $request->query != ''){
                 $query = $request['query'];
                 $branches = $branches->where('name' ,'like', "%$query%")
@@ -35,7 +35,7 @@ class BranchesController extends Controller
     }
     public function getBranchDetails(Request $request , $id){
         try{
-            $branch = Branch::where('id' , $id)->first();
+            $branch = Branch::with('areas')->where('id' , $id)->first();
             if($branch){
                 return response()->json([
                     'status' => 'success',
@@ -63,15 +63,15 @@ class BranchesController extends Controller
                 'name' => 'required',
                 'address' => 'required',
                 'landmark' => 'required',
-                'area_id' => 'required',
+                'areas.0' => 'required',
             ]);
             $branch = Branch::updateOrCreate(['id' => $request->id] , [
-                'area_id' => $request->area_id,
                 'name' => $request->name,
                 'address' => $request->address,
                 'landmark' => $request->landmark,
                 'phone_number' => $request->phone_number,
             ]);
+            $branch->areas()->sync($request->areas);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved'

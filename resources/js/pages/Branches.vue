@@ -115,7 +115,6 @@ export default {
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Area</Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Phone Number</Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Address</Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
@@ -134,13 +133,6 @@ export default {
                         >
                             <span href="" class="font-medium whitespace-nowrap">
                                 {{ branch.name }}
-                            </span>
-                        </Table.Td>
-                        <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <span href="" class="font-medium whitespace-nowrap">
-                                {{ branch.area ? branch.area.area : 'N/A' }}
                             </span>
                         </Table.Td>
                         <Table.Td

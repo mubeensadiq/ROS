@@ -18,43 +18,52 @@ export default {
         return {
             branch: {
                 name: '',
-                area_id: "1",
+                areas: [],
                 address: '',
                 landmark: '',
-                phone_number: ''
+                phone_number: '',
             },
             areas: {},
             update:false,
             toastText : '',
-            toastType : 'success'
+            toastType : 'success',
+            city_id : 1
         }
     },
     mounted() {
-        this.getAreas();
+
         if (this.$route.params.id !== undefined) {
             this.update = true
             this.$nextTick().then(() => {
                 this.getBranchDetails(this.$route.params.id);
             });
         }
+        else{
+            this.getAreas();
+        }
 
     },
     methods: {
 
         getAreas() {
-            axios.get('/api/areas?get=all').then((response) => {
+            axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
                 this.areas = response.data.areas;
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        getBranchDetails(id) {
-            axios.get('/api/get-branch-details/' + id).then((response) => {
+        async getBranchDetails(id) {
+            await axios.get('/api/get-branch-details/' + id).then((response) => {
                 if (response.data.branch !== undefined){
                     this.branch = response.data.branch;
-                    this.branch.area_id = response.data.branch.area_id.toString();
+                    if(response.data.branch.areas.length > 0){
+                        this.city_id = response.data.branch.areas[0].city_id;
+                        this.branch.areas.forEach((value , index) => {
+                            this.branch.areas[index] = value.id.toString();
+                        });
+                    }
                 }
-
+                this.getAreas();
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
@@ -205,7 +214,7 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Area</div>
+                                        <div class="font-medium">Areas</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
@@ -216,11 +225,12 @@ export default {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
-                                    v-model="branch.area_id" :value="branch.area_id"
+                                    v-model="branch.areas" :value="branch.areas"
                                     :options="{
-                                        placeholder: 'Select Area',
+                                        placeholder: 'Select Areas',
                                       }"
                                     class="w-full"
+                                    multiple="multiple"
                                 >
                                     <option
                                         v-for="(area, index) in areas"

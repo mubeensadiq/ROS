@@ -11,6 +11,7 @@ use App\Http\Controllers\DealsController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\AddonsController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\RidersController;
 use App\Http\Controllers\ImageController;
 
 /*
@@ -45,10 +46,10 @@ Route::post('/save-city', [CitiesController::class , 'saveCity']);
 Route::get('/get-city-details/{id}', [CitiesController::class , 'getCityDetails']);
 Route::delete('/delete-city/{id}', [CitiesController::class , 'deleteCity']);
 Route::get('/areas', [AreasController::class , 'index']);
+Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
 Route::post('/save-area', [AreasController::class , 'saveArea']);
 Route::get('/get-area-details/{id}', [AreasController::class , 'getAreaDetails']);
 Route::delete('/delete-area/{id}', [AreasController::class , 'deleteArea']);
-Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
 Route::get('/categories', [CategoriesController::class , 'index']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
 Route::post('/save-category', [CategoriesController::class , 'saveCategory']);
@@ -67,6 +68,10 @@ Route::get('/products', [ProductsController::class , 'index']);
 Route::post('/save-product', [ProductsController::class , 'saveProduct']);
 Route::get('/get-product-details/{id}', [ProductsController::class , 'getProductDetails']);
 Route::delete('/delete-product/{id}', [ProductsController::class , 'deleteProduct']);
+Route::get('/riders', [RidersController::class , 'index']);
+Route::post('/save-rider', [RidersController::class , 'saveRider']);
+Route::get('/get-rider-details/{id}', [RidersController::class , 'getRiderDetails']);
+Route::delete('/delete-rider/{id}', [RidersController::class , 'deleteRider']);
 Route::post('/upload-image', [ImageController::class,'upload']);
 
 //Route::middleware(['auth'])->group(function () {

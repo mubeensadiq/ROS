@@ -2,50 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Rider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ProductsController extends Controller
+class RidersController extends Controller
 {
     public function index(Request $request){
         try{
-            $products = Product::with('category');
+            $riders = Rider::orderBy('name','asc');
             if(isset($request->query) && $request->query != ''){
                 $query = $request['query'];
-                $products = $products->where('name' ,'like', "%$query%")
-                    ->orWhere('price' ,'like', "%$query%")
-                    ->orWhereHas('category', function ($q) use ($query) {
-                        $q->where('name', 'like', "%$query%");
-                    });
+                $riders = $riders->where('name' ,'like', "%$query%")
+                    ->orWhere('phone_number_1' ,'like', "%$query%");
             }
-            $products = $products->paginate(20)->appends($request->all());
+            else
+                $riders = $riders->paginate(20)->appends($request->all());
+
             return response()->json([
                 'status' => 'success',
-                'products' => $products
+                'riders' => $riders
             ],200);
         }
         catch (\Exception $ex){
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'products' => [],
-                'message' => $ex->getMessage()
+                'riders' => []
             ],500);
         }
     }
-    public function getProductDetails(Request $request , $id){
+    public function getRiderDetails(Request $request , $id){
         try{
-            $product = Product::with('addons')->where('id' , $id)->first();
-            if($product){
+            $rider = Rider::where('id' , $id)->first();
+            if($rider){
                 return response()->json([
                     'status' => 'success',
-                    'product' => $product
+                    'rider' => $rider
                 ],200);
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'No product Found'
+                'message' => 'No Rider Found'
             ],200);
 
         }
@@ -57,30 +55,20 @@ class ProductsController extends Controller
             ],500);
         }
     }
-
-    public function saveProduct(Request $request){
+    public function saveRider(Request $request){
         try{
             $request->validate([
                 'name' => 'required',
-                'description' => 'required',
-                'image' => 'required',
-                'price' => 'required',
-                'stock' => 'required',
-                'min_quantity' => 'required',
+                'phone_number_1' => 'required',
+                'nic_image' => 'required',
             ]);
-            $product = Product::updateOrCreate(['id' => $request->id] , [
-                'category_id' => $request->category_id,
+            Rider::updateOrCreate(['id' => $request->id],[
+                'branch_id' => $request->branch_id,
                 'name' => $request->name,
-                'description' => $request->description,
-                'price' => $request->price,
-                'stock' => $request->stock,
-                'min_quantity' => $request->min_quantity,
-                'max_quantity' => $request->max_quantity,
-                'status' => $request->status,
-                'image' => $request->image,
-                'prep_time' => $request->prep_time,
+                'phone_number_1' => $request->phone_number_1,
+                'phone_number_2' => $request->phone_number_2,
+                'nic_image' => $request->image,
             ]);
-            $product->addons()->sync($request->addons);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved'
@@ -95,9 +83,9 @@ class ProductsController extends Controller
         }
 
     }
-    public function deleteProduct($id){
+    public function deleteRider($id){
         try{
-            Product::where('id' , $id)->delete();
+            Rider::where('id' , $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Deleted'

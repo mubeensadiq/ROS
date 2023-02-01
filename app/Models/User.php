@@ -53,7 +53,7 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class,'user_id');
     }
     public function rider(){
-        return $this->hasOne(RiderProfile::class,'user_id');
+        return $this->hasOne(Rider::class,'user_id');
     }
 
 

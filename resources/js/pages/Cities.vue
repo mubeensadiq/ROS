@@ -70,7 +70,11 @@ export default {
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-
+            <RouterLink :to="{name : 'createCity' }">
+                <Button variant="primary" class="mr-2 shadow-md">
+                    Add New City
+                </Button>
+            </RouterLink>
             <div class="hidden mx-auto md:block text-slate-500">
                 Showing {{cities.from}} to {{ cities.to }} of {{ cities.total }} entries
             </div>
