@@ -3,6 +3,8 @@ import SideMenu from "../layouts/SideMenu/SideMenu.vue";
 import Dashboard from "../pages/Dashboard.vue";
 import Users from "../pages/Users.vue";
 import AddUser from "../pages/AddUser.vue";
+import Roles from "../pages/Roles.vue";
+import AddRole from "../pages/AddRole.vue";
 import Cities from "../pages/Cities.vue";
 import AddCity from "../pages/AddCity.vue";
 import Areas from "../pages/Areas.vue";
@@ -63,6 +65,21 @@ const routes = [
             path: "user/update/:id",
             name: "updateUser",
             component: AddUser,
+        },
+        {
+            path: "roles",
+            name: "roles",
+            component: Roles
+        },
+        {
+            path: "roles/create",
+            name: "createRole",
+            component: AddRole
+        },
+        {
+            path: "role/update/:id",
+            name: "updateRole",
+            component: AddRole,
         },
         {
             path: "cities",

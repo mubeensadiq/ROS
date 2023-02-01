@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UsersController extends Controller
@@ -52,6 +54,22 @@ class UsersController extends Controller
             ],500);
         }
     }
+    public function getPermissions(Request $request){
+        try{
+            $permissions = Permission::get();
+            return response()->json([
+                'status' => 'success',
+                'permissions' => $permissions
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'permissions' => []
+            ],500);
+        }
+    }
     public function saveUser(Request $request){
         try{
             $validator = $request->validate([
@@ -60,7 +78,7 @@ class UsersController extends Controller
                 'username' => 'sometimes|required|unique:users',
                 'email' => 'sometimes|required|email|unique:users',
                 'password' => 'sometimes|required',
-                'profile.phone_number' => 'required'
+                'profile.phone_number' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10'
             ]);
             if($request->id){
               $user = User::updateOrCreate(['id' => $request->id],[
@@ -88,16 +106,16 @@ class UsersController extends Controller
                 'address' => $request->profile['address'],
                 'avatar' => $request->profile['avatar'] ?? null,
             ]);
-            $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
-                'cnic' => $request->rider['cnic'],
-                'license_no' => $request->rider['license_no'],
-            ]);
-            $rider->areas()->delete();
-            foreach ($request->rider['areas'] as $area){
-                $rider->areas()->create(['area_id'=>$area]);
+            if($request->role === 5){
+                $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
+                    'cnic' => $request->rider['cnic'],
+                    'license_no' => $request->rider['license_no'],
+                ]);
+                $rider->areas()->delete();
+                foreach ($request->rider['areas'] as $area){
+                    $rider->areas()->create(['area_id'=>$area]);
+                }
             }
-
-
             return response()->json([
                 'status' => 'success',
                 'users' => $user
@@ -135,6 +153,71 @@ class UsersController extends Controller
         }
     }
     public function deleteUser($id){
+        try{
+            User::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
+
+    public function saveRole(Request $request){
+        try{
+            $validator = $request->validate([
+                'name' => 'required',
+                'permissions' => 'required'
+            ]);
+            $role = Role::updateOrCreate(['id' => $request->id],[
+                'name' => $request->name
+            ]);
+
+            $role->syncPermissions($request->permissions);
+
+
+            return response()->json([
+                'status' => 'success'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
+    public function getRoleDetails(Request $request , $id){
+        try{
+            $role = Role::with('permissions' )->where('id' , $id)->first();
+            if($role){
+                return response()->json([
+                    'status' => 'success',
+                    'role' => $role
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No role Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
+    public function deleteRole($id){
         try{
             User::where('id' , $id)->delete();
             return response()->json([

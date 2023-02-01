@@ -31,6 +31,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::post('/login' , [LoginController::class, 'authenticate']);
 Route::post('/logout' , [LoginController::class, 'logout']);
 Route::get('/roles', [UsersController::class , 'getRoles']);
+Route::post('/save-role', [UsersController::class , 'saveRole']);
+Route::get('/permissions', [UsersController::class , 'getPermissions']);
+Route::get('/get-role-details/{id}', [UsersController::class , 'getRoleDetails']);
+Route::get('/delete-role', [UsersController::class , 'deleteRole']);
 Route::get('/users', [UsersController::class , 'index']);
 Route::post('/save-user', [UsersController::class , 'saveUser']);
 Route::delete('/delete-user/{id}', [UsersController::class , 'deleteUser']);
