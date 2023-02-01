@@ -25,7 +25,7 @@ export default {
                 username: '',
                 email: '',
                 password: '',
-                role: 1,
+                role: '',
                 profile: {
                     avatar: null,
                     phone_number: '',
