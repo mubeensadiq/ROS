@@ -76,6 +76,9 @@ export default {
                     Add New Role
                 </Button>
             </RouterLink>
+            <div class="hidden mx-auto md:block text-slate-500">
+                Showing All entries
+            </div>
             <div class="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="relative w-56 text-slate-500">
                     <FormInput

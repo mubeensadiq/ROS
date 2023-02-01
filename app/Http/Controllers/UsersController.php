@@ -99,13 +99,14 @@ class UsersController extends Controller
 
                 ]);
             }
-
-            $user->assignRole($request->role);
             $user->profile()->updateOrCreate(['user_id' => $request->id],[
                 'phone_number' => $request->profile['phone_number'],
                 'address' => $request->profile['address'],
                 'avatar' => $request->profile['avatar'] ?? null,
             ]);
+
+            $user->assignRole($request->role);
+
             if($request->role === 5){
                 $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
                     'cnic' => $request->rider['cnic'],
