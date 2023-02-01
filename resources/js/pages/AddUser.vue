@@ -83,7 +83,6 @@ export default {
         getAreasByCity() {
             axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
                 this.areas = response.data.areas;
-                (isset(this.areas[0]) && this.user.rider.areas.length === 0) ? this.user.rider.areas.push(this.areas[0].id) : '';
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
@@ -93,23 +92,28 @@ export default {
                 if (response.data.user !== undefined){
                     const res = response.data.user;
                     this.user = response.data.user;
-
-                    if(res.rider)
-                        this.city_id = res.rider.areas[0].area.city_id.toString();
-                    else
-                        this.city_id = this.cities[0].id.toString();
-
-                    this.getAreasByCity();
+                    this.city_id = this.cities[0].id.toString();
                     if(res.roles)
                         this.user.role = res.roles[0].id.toString();
-
-                    setTimeout(()=>{
-                        if(response.data.user.rider !== null){
-                            this.user.rider.areas.forEach((value , index) => {
-                                this.user.rider.areas[index] = value.area_id.toString();
-                            });
+                    this.getAreasByCity();
+                    if(res.rider){
+                        this.city_id = res.rider.areas[0].area.city_id.toString();
+                        setTimeout(()=>{
+                            if(response.data.user.rider !== null){
+                                this.user.rider.areas.forEach((value , index) => {
+                                    this.user.rider.areas[index] = value.area_id.toString();
+                                });
+                            }
+                        },10)
+                    }
+                    else{
+                        this.user.rider = {
+                            cnic: '',
+                            license_no: '',
+                            areas: []
                         }
-                    },10)
+                    }
+
                 }
 
             }).catch((error) => {
@@ -212,6 +216,57 @@ export default {
                 </div>
             </div>
             <!-- END: Uplaod Product -->
+            <div class="p-5 mt-5 intro-y box">
+                <div
+                    class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
+                >
+                    <div
+                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
+                    >
+                        <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
+                        User
+                        Access
+                    </div>
+                    <div class="mt-5">
+
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Role</div>
+                                        <div
+                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
+                                        >
+                                            Required
+                                        </div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="user.role"
+                                    :value="user.role"
+                                    :options="{
+                                    placeholder: 'Roles',
+                                  }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(role, index) in roles"
+                                        :key="index"
+                                        :value="role.id"
+                                    >
+                                        {{ role.name }}
+                                    </option>
+                                </TomSelect>
+                            </div>
+                        </FormInline>
+
+                    </div>
+                </div>
+            </div>
             <!-- BEGIN: Product Information -->
             <div class="p-5 mt-5 intro-y box">
                 <div
@@ -400,47 +455,13 @@ export default {
                                 />
                             </div>
                         </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Role</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <TomSelect
-                                    v-model="user.role"
-                                    :value="user.role"
-                                    :options="{
-                                    placeholder: 'Roles',
-                                  }"
-                                    class="w-full"
-                                >
-                                    <option
-                                        v-for="(role, index) in roles"
-                                        :key="index"
-                                        :value="role.id"
-                                    >
-                                        {{ role.name }}
-                                    </option>
-                                </TomSelect>
-                            </div>
-                        </FormInline>
 
                     </div>
                 </div>
             </div>
             <!-- END: Product Information -->
             <!-- BEGIN: Product Detail -->
-            <div class="p-5 mt-5 intro-y box" v-if="user.role == '2'">
+            <div class="p-5 mt-5 intro-y box" v-if="user.role === '5'">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >

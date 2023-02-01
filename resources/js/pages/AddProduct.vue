@@ -25,30 +25,30 @@ onMounted(() =>{
     getAddons();
     getCategories();
 })
-let product = reactive({
-    name : '',
-    description : '',
-    category_id : '',
-    price : 10.00,
-    stock : 1,
-    image : null,
-    min_quantity : 1,
-    max_quantity : null,
-    status : true,
-    prep_time : '45 minutes',
-    addons : []
-});
-const toast = reactive({
+let data = reactive({
+    product: {
+        name: '',
+        description: '',
+        category_id: '',
+        price: 10.00,
+        stock: 1,
+        image: null,
+        min_quantity: 1,
+        max_quantity: null,
+        status: true,
+        prep_time: '45 minutes',
+        addons: []
+    },
     toastText : '',
-    toastType : ''
+    toastType : '',
+    addons : [],
+    categories : []
 });
-let addons = reactive([]);
-let categories = reactive([]);
 const getAddons = (() => {
     axios.get('/api/addons?get=all' ).then((response) => {
         if (response.data.addons !== undefined){
-            addons = response.data.addons;
-            (isset(addons[0]) && product.addons.length === 0) ? product.addons.push(addons[0].id) : '';
+            data.addons = response.data.addons;
+            (isset(data.addons[0]) && data.product.addons.length === 0) ? data.product.addons.push(data.addons[0].id) : '';
         }
 
     }).catch((error) => {
@@ -58,8 +58,8 @@ const getAddons = (() => {
 const getCategories = (() => {
     axios.get('/api/categories?get=all' ).then((response) => {
         if (response.data.categories !== undefined){
-            categories = response.data.categories;
-            (isset(categories[0]) && product.category_id === '') ? product.category_id = categories[0].id : '';
+            data.categories = response.data.categories;
+            (isset(data.categories[0]) && data.product.category_id === '') ? data.product.category_id = data.categories[0].id : '';
         }
 
     }).catch((error) => {
@@ -69,24 +69,21 @@ const getCategories = (() => {
 const getProductDetails = ((id) => {
     axios.get('/api/get-product-details/' + id).then((response) => {
         if (response.data.product !== undefined){
-            product = response.data.product;
-            product.category_id = response.data.product.category_id.toString();
+            data.product = response.data.product;
+            data.product.category_id = response.data.product.category_id.toString();
             if(response.data.product.addons !== null){
-                product.addons.forEach((value , index) => {
-                    product.addons[index] = value.id.toString();
+                data.product.addons.forEach((value , index) => {
+                    data.product.addons[index] = value.id.toString();
                 });
             }
         }
-
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     });
 });
-const saveProduct = ((addNew = false) => {
-    axios.post('/api/save-product', product).then((response) => {
+const saveProduct = (() => {
+    axios.post('/api/save-product', data.product).then((response) => {
         showNoty(response.data.message)
-        if(!addNew)
-            return router.push('/admin/products');
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     })
@@ -103,7 +100,7 @@ const uploadImage = ((event) => {
     formData.append('path',"images/products");
     axios.post("/api/upload-image", formData, config).then((response) => {
         if (response.data.status == 'success') {
-            product.image = response.data.filename;
+            data.product.image = response.data.filename;
         }
         showNoty(response.data.message)
     }).catch( (error) => {
@@ -111,13 +108,13 @@ const uploadImage = ((event) => {
     });
 });
 const showNoty = ((message,type = 'success') => {
-    toast.toastText = message;
-    toast.toastType = type;
+    data.toastText = message;
+    data.toastType = type;
     document.getElementById("toastBtn").click();
 });
 </script>
 <template>
-    <Notification :toastText="toast.toastText" :toastType="toast.toastType" />
+    <Notification :toastText="data.toastText" :toastType="data.toastType" />
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Add Product</h2>
     </div>
@@ -156,14 +153,14 @@ const showNoty = ((message,type = 'success') => {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
-                                    v-model="product.category_id" :value="product.category_id"
+                                    v-model="data.product.category_id" :value="data.product.category_id"
                                     :options="{
                                         placeholder: 'Select Category',
                                       }"
                                     class="w-full"
                                 >
                                     <option
-                                        v-for="(category, index) in categories"
+                                        v-for="(category, index) in data.categories"
                                         :key="index"
                                         :value="category.id"
                                     >
@@ -193,8 +190,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="name"
                                     type="text"
                                     placeholder="Name"
-                                    v-model="product.name"
-                                    :value="product.name"
+                                    v-model="data.product.name"
+                                    :value="data.product.name"
                                 />
                             </div>
                         </FormInline>
@@ -218,8 +215,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="description"
                                     type="text"
                                     placeholder="Description"
-                                    v-model="product.description"
-                                    :value="product.description"
+                                    v-model="data.product.description"
+                                    :value="data.product.description"
                                 />
                             </div>
                         </FormInline>
@@ -243,8 +240,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="price"
                                     type="text"
                                     placeholder="Price"
-                                    v-model="product.price"
-                                    :value="product.price"
+                                    v-model="data.product.price"
+                                    :value="data.product.price"
                                 />
                             </div>
                         </FormInline>
@@ -268,8 +265,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="stock"
                                     type="text"
                                     placeholder="Stock"
-                                    v-model="product.stock"
-                                    :value="product.stock"
+                                    v-model="data.product.stock"
+                                    :value="data.product.stock"
                                 />
                             </div>
                         </FormInline>
@@ -293,8 +290,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="min_quantity"
                                     type="text"
                                     placeholder="Minimum Quantity"
-                                    v-model="product.min_quantity"
-                                    :value="product.min_quantity"
+                                    v-model="data.product.min_quantity"
+                                    :value="data.product.min_quantity"
                                 />
                             </div>
                         </FormInline>
@@ -318,8 +315,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="max_quantity"
                                     type="text"
                                     placeholder="Max Quantity"
-                                    v-model="product.max_quantity"
-                                    :value="product.max_quantity"
+                                    v-model="data.product.max_quantity"
+                                    :value="data.product.max_quantity"
                                 />
                             </div>
                         </FormInline>
@@ -343,8 +340,8 @@ const showNoty = ((message,type = 'success') => {
                                     id="prep_time"
                                     type="text"
                                     placeholder="Preparation Time"
-                                    v-model="product.prep_time"
-                                    :value="product.prep_time"
+                                    v-model="data.product.prep_time"
+                                    :value="data.product.prep_time"
                                 />
                             </div>
                         </FormInline>
@@ -363,8 +360,8 @@ const showNoty = ((message,type = 'success') => {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
-                                    v-model="product.addons"
-                                    :value="product.addons"
+                                    v-model="data.product.addons"
+                                    :value="data.product.addons"
                                     :options="{
                                     placeholder: 'Addons',
                                   }"
@@ -372,7 +369,7 @@ const showNoty = ((message,type = 'success') => {
                                     multiple
                                 >
                                     <option
-                                        v-for="(addon, key) in addons"
+                                        v-for="(addon, key) in data.addons"
                                         :key="key"
                                         :value="addon.id"
                                     >
@@ -404,11 +401,11 @@ const showNoty = ((message,type = 'success') => {
                                     <FormSwitch.Input
                                         id="product-status"
                                         type="checkbox"
-                                        v-model="product.status"
-                                        :checked="product.status"
+                                        v-model="data.product.status"
+                                        :checked="data.product.status"
                                     />
                                     <FormSwitch.Label htmlFor="category-status-active">
-                                        {{product.status ? 'Active' : "In Active" }}
+                                        {{data.product.status ? 'Active' : "In Active" }}
                                     </FormSwitch.Label>
                                 </FormSwitch>
                             </div>
@@ -429,14 +426,14 @@ const showNoty = ((message,type = 'success') => {
                             <div
                                 class="flex-1 w-full pt-4 mt-3 border-2 border-dashed rounded-md xl:mt-0 dark:border-darkmode-400"
                             >
-                                <div class="grid grid-cols-10 gap-5 pl-4 pr-5" v-if="product.image !== null">
+                                <div class="grid grid-cols-10 gap-5 pl-4 pr-5" v-if="data.product.image !== null">
                                     <div
                                         class="relative col-span-5 cursor-pointer md:col-span-2 h-28 image-fit zoom-in"
                                     >
                                         <img
                                             class="rounded-md"
                                             alt="Avatar"
-                                            :src="'/images/products/'+product.image"
+                                            :src="'/images/products/'+data.product.image"
                                         />
                                     </div>
                                 </div>
@@ -469,13 +466,6 @@ const showNoty = ((message,type = 'success') => {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button
-                    type="button"
-                    class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
-                    @click="saveProduct(true)"
-                >
-                    Save & Add New product
-                </Button>
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveProduct()">
                     Save
                 </Button>
