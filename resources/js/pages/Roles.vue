@@ -71,7 +71,7 @@ export default {
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'AddRole' }">
+            <RouterLink :to="{name : 'createRole' }">
                 <Button variant="primary" class="mr-2 shadow-md">
                     Add New Role
                 </Button>
