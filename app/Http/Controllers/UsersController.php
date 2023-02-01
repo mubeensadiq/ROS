@@ -172,8 +172,7 @@ class UsersController extends Controller
     public function saveRole(Request $request){
         try{
             $validator = $request->validate([
-                'name' => 'required',
-                'permissions' => 'required'
+                'name' => 'required'
             ]);
             $role = Role::updateOrCreate(['id' => $request->id],[
                 'name' => $request->name
