@@ -2,57 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
+use App\Models\Rider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class BranchesController extends Controller
+class RidersController extends Controller
 {
     public function index(Request $request){
         try{
-            $branches = Branch::with('areas');
+            $riders = Rider::with('branch')->orderBy('name','asc');
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
-                $branches = $branches->where('name' ,'like', "%$query%")
-                    ->orWhere('address' ,'like', "%$query%")
-                    ->orWhere('landmark' ,'like', "%$query%")
-                    ->orWhere('phone_number' ,'like', "%$query%");
+                $riders = $riders->where('name' ,'like', "%$query%")
+                    ->orWhere('phone_number_1' ,'like', "%$query%");
             }
-            if($request->city_id){
-                $city_id = $request->city_id;
-                $branches = $branches->whereHas('areas' , function ($q) use($city_id){
-                   $q->where('city_id' , $city_id);
-                })->get();
-            }
-            else
-                $branches = $branches->paginate(20)->appends($request->all());
+            $riders = $riders->paginate(20)->appends($request->all());
 
             return response()->json([
                 'status' => 'success',
-                'branches' => $branches
+                'riders' => $riders
             ],200);
         }
         catch (\Exception $ex){
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'branches' => [],
-                'message' => $ex->getMessage()
+                'riders' => []
             ],500);
         }
     }
-    public function getBranchDetails(Request $request , $id){
+    public function getRiderDetails(Request $request , $id){
         try{
-            $branch = Branch::with('areas')->where('id' , $id)->first();
-            if($branch){
+            $rider = Rider::with('branch.areas')->where('id' , $id)->first();
+            if($rider){
                 return response()->json([
                     'status' => 'success',
-                    'branch' => $branch
+                    'rider' => $rider
                 ],200);
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'No Branch Found'
+                'message' => 'No Rider Found'
             ],200);
 
         }
@@ -64,22 +54,21 @@ class BranchesController extends Controller
             ],500);
         }
     }
-
-    public function saveBranch(Request $request){
+    public function saveRider(Request $request){
         try{
             $request->validate([
                 'name' => 'required',
-                'address' => 'required',
-                'landmark' => 'required',
-                'areas.0' => 'required',
+                'branch_id' => 'required',
+                'phone_number_1' => 'required',
+                'nic_image' => 'required',
             ]);
-            $branch = Branch::updateOrCreate(['id' => $request->id] , [
+            Rider::updateOrCreate(['id' => $request->id],[
+                'branch_id' => $request->branch_id,
                 'name' => $request->name,
-                'address' => $request->address,
-                'landmark' => $request->landmark,
-                'phone_number' => $request->phone_number,
+                'phone_number_1' => $request->phone_number_1,
+                'phone_number_2' => $request->phone_number_2,
+                'nic_image' => $request->nic_image,
             ]);
-            $branch->areas()->sync($request->areas);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved'
@@ -94,9 +83,9 @@ class BranchesController extends Controller
         }
 
     }
-    public function deleteBranch($id){
+    public function deleteRider($id){
         try{
-            Branch::where('id' , $id)->delete();
+            Rider::where('id' , $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Deleted'

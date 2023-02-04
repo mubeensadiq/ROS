@@ -16,8 +16,8 @@ class UsersController extends Controller
     public function index(Request $request){
         try{
             $users = User::with('profile');
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $users = $users->where('first_name' ,'like', "%$query%")
                     ->orWhere('last_name' ,'like', "%$query%")
                     ->orWhere('email' ,'like', "%$query%")
@@ -106,17 +106,6 @@ class UsersController extends Controller
             ]);
 
             $user->assignRole($request->role);
-
-            if($request->role === 5){
-                $rider = $user->rider()->updateOrCreate(['user_id' => $request->id],[
-                    'cnic' => $request->rider['cnic'],
-                    'license_no' => $request->rider['license_no'],
-                ]);
-                $rider->areas()->delete();
-                foreach ($request->rider['areas'] as $area){
-                    $rider->areas()->create(['area_id'=>$area]);
-                }
-            }
             return response()->json([
                 'status' => 'success',
                 'users' => $user

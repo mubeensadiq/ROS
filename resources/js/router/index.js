@@ -3,6 +3,8 @@ import SideMenu from "../layouts/SideMenu/SideMenu.vue";
 import Dashboard from "../pages/Dashboard.vue";
 import Users from "../pages/Users.vue";
 import AddUser from "../pages/AddUser.vue";
+import Riders from "../pages/Riders.vue";
+import AddRider from "../pages/AddRider.vue";
 import Roles from "../pages/Roles.vue";
 import AddRole from "../pages/AddRole.vue";
 import Cities from "../pages/Cities.vue";
@@ -65,6 +67,21 @@ const routes = [
             path: "user/update/:id",
             name: "updateUser",
             component: AddUser,
+        },
+        {
+            path: "riders",
+            name: "riders",
+            component: Riders
+        },
+        {
+            path: "riders/create",
+            name: "createRider",
+            component: AddRider
+        },
+        {
+            path: "rider/update/:id",
+            name: "updateRider",
+            component: AddRider,
         },
         {
             path: "roles",
@@ -203,6 +220,9 @@ router.beforeEach(async (to) => {
     if (authRequired && !auth.user) {
         auth.returnUrl = to.fullPath;
         return '/login';
+    }
+    if( Permissions.indexOf(to.name) !== -1){
+        next();
     }
 });
 

@@ -20,8 +20,8 @@ class AddonsController extends Controller
                 $addons = Addon::get();
             else{
                 $addons = new Addon();
-                if(isset($request->query) && $request->query != ''){
-                    $query = $request['query'];
+                if(isset($request->search) && $request->search != ''){
+                    $query = $request['search'];
                     $addons = $addons->where('name' ,'like', "%$query%")
                         ->orWhere('title' ,'like', "%$query%")
                         ->orWhere('price' ,'like', "%$query%");

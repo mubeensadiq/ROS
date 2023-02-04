@@ -16,62 +16,74 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            branch: {
+            rider: {
+                branch_id: '',
                 name: '',
-                areas: [],
-                address: '',
-                landmark: '',
-                phone_number: '',
+                phone_number_1: '',
+                phone_number_2: '',
+                nic_image: null,
             },
-            areas: {},
+            branches: {},
+            cities: {},
             update:false,
             toastText : '',
             toastType : 'success',
-            city_id : 1
+            city_id : ''
+        }
+    },
+    watch:{
+        city_id(){
+            this.getBranches();
         }
     },
     mounted() {
-
+        this.getCities();
         if (this.$route.params.id !== undefined) {
             this.update = true
             this.$nextTick().then(() => {
-                this.getBranchDetails(this.$route.params.id);
+                this.getRiderDetails(this.$route.params.id);
             });
-        }
-        else{
-            this.getAreas();
         }
 
     },
     methods: {
-
-        getAreas() {
-            axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
-                this.areas = response.data.areas;
+        getCities() {
+            axios.get('/api/cities?get=all').then((response) => {
+                this.cities = response.data.cities;
+                if(this.city_id == '')
+                    this.city_id = this.cities[0].id;
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        async getBranchDetails(id) {
-            await axios.get('/api/get-branch-details/' + id).then((response) => {
-                if (response.data.branch !== undefined){
-                    this.branch = response.data.branch;
-                    if(response.data.branch.areas.length > 0){
-                        this.city_id = response.data.branch.areas[0].city_id;
-                        this.branch.areas.forEach((value , index) => {
-                            this.branch.areas[index] = value.id.toString();
-                        });
+        getBranches() {
+            axios.get('/api/branches', {params: {'city_id': this.city_id}}).then((response) => {
+                this.branches = response.data.branches;
+                if(!this.rider.branch_id && this.branches.length > 0){
+                    console.log("sadsads");
+                    this.rider.branch_id = this.branches[0].id;
+                }
+
+            }).catch((error) => {
+                this.showNoty(error.response.data.message, 'error')
+            });
+        },
+        async getRiderDetails(id) {
+            await axios.get('/api/get-rider-details/' + id).then((response) => {
+                if (response.data.rider !== undefined){
+                    this.rider = response.data.rider;
+                    if(response.data.rider.branch){
+                        this.city_id = this.rider.branch.areas[0].city_id.toString();
                     }
                 }
-                this.getAreas();
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
-        saveBranch() {
-            axios.post('/api/save-branch', this.branch).then((response) => {
+        saveRider() {
+            axios.post('/api/save-rider', this.rider).then((response) => {
                 this.showNoty(response.data.message)
-                return this.$router.push('/admin/branches');
+                return this.$router.push('/admin/riders');
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             })
@@ -80,14 +92,33 @@ export default {
             this.toastText = message;
             this.toastType = type;
             document.getElementById("toastBtn").click();
-        }
+        },
+        uploadCNIC(event){
+            let config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            };
+            let file = event.target.files[0];
+            let formData = new FormData();
+            formData.append('image',file);
+            formData.append('path',"images/riders");
+            axios.post("/api/upload-image", formData, config).then((response) => {
+                if (response.data.status == 'success') {
+                    this.rider.nic_image = response.data.filename;
+                }
+                this.showNoty(response.data.message)
+            }).catch( (error) => {
+                this.showNoty(error.response.data.message, 'error')
+            });
+        },
     }
 }
 </script>
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update Branch' : 'Add New Branch'}}</h2>
+        <h2 class="mr-auto text-lg font-medium">{{update ? 'Update Rider' : 'Add New Rider'}}</h2>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
@@ -103,7 +134,7 @@ export default {
                         class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
                     >
                         <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
-                        Branch
+                        Rider
                         Information
                     </div>
                     <div class="mt-5">
@@ -113,7 +144,7 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Branch Name</div>
+                                        <div class="font-medium">Rider Name</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
@@ -124,11 +155,11 @@ export default {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormInput
-                                    id="branch-name"
+                                    id="rider-name"
                                     type="text"
-                                    placeholder="Branch name"
-                                    v-model="branch.name"
-                                    :value="branch.name"
+                                    placeholder="Name"
+                                    v-model="rider.name"
+                                    :value="rider.name"
                                 />
                             </div>
                         </FormInline>
@@ -138,58 +169,7 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Branch Address</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="branch-address"
-                                    type="text"
-                                    placeholder="Branch Address"
-                                    v-model="branch.address"
-                                    :value="branch.address"
-                                />
-                            </div>
-                        </FormInline>
-
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Landmark</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="landmark"
-                                    type="text"
-                                    placeholder="Landmark"
-                                    v-model="branch.landmark"
-                                    :value="branch.landmark"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Phone Number</div>
+                                        <div class="font-medium">Phone Number 1</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
@@ -203,8 +183,8 @@ export default {
                                     id="phone-number"
                                     type="text"
                                     placeholder="Phone Number"
-                                    v-model="branch.phone_number"
-                                    :value="branch.phone_number"
+                                    v-model="rider.phone_number_1"
+                                    :value="rider.phone_number_1"
                                 />
                             </div>
                         </FormInline>
@@ -214,7 +194,7 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Areas</div>
+                                        <div class="font-medium">Phone Number 2</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
@@ -224,23 +204,113 @@ export default {
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="phone-number"
+                                    type="text"
+                                    placeholder="Phone Number 2"
+                                    v-model="rider.phone_number_2"
+                                    :value="rider.phone_number_2"
+                                />
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Cities</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
-                                    v-model="branch.areas" :value="branch.areas"
+                                    v-model="city_id" :value="city_id"
                                     :options="{
-                                        placeholder: 'Select Areas',
+                                        placeholder: 'Select City',
                                       }"
                                     class="w-full"
-                                    multiple="multiple"
                                 >
                                     <option
-                                        v-for="(area, index) in areas"
+                                        v-for="(city, index) in cities"
                                         :key="index"
-                                        :value="area.id"
+                                        :value="city.id"
                                     >
-                                        {{ area.area }}
+                                        {{ city.city }}
                                     </option>
                                 </TomSelect>
 
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Branch</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="rider.branch_id" :value="rider.branch_id"
+                                    :options="{
+                                        placeholder: 'Select Branch',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(branch, index) in branches"
+                                        :key="index"
+                                        :value="branch.id"
+                                    >
+                                        {{ branch.name }}
+                                    </option>
+                                </TomSelect>
+
+                            </div>
+                        </FormInline>
+                        <FormInline class="flex-col items-start mt-10 xl:flex-row">
+                            <FormLabel class="w-full xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">CNIC</div>
+                                        <div
+                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
+                                        >
+                                            Required
+                                        </div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div
+                                class="flex-1 w-full pt-4 mt-3 border-2 border-dashed rounded-md xl:mt-0 dark:border-darkmode-400"
+                            >
+                                <div class="grid grid-cols-10 gap-5 pl-4 pr-5" v-if="rider.nic_image !== null">
+                                    <div
+                                        class="relative col-span-5 cursor-pointer md:col-span-2 h-28 image-fit zoom-in"
+                                    >
+                                        <img
+                                            class="rounded-md"
+                                            alt="Avatar"
+                                            :src="'/images/riders/'+rider.nic_image"
+                                        />
+                                    </div>
+                                </div>
+                                <div
+                                    class="relative flex items-center justify-center px-4 pb-4 mt-5 cursor-pointer"
+                                >
+                                    <Lucide icon="Image" class="w-4 h-4 mr-2" />
+                                    <span class="mr-1 text-primary"> Upload a file </span>
+                                    or drag and drop
+                                    <FormInput
+                                        id="horizontal-form-1"
+                                        type="file"
+                                        class="absolute top-0 left-0 w-full h-full opacity-0"
+                                        @change="uploadCNIC($event)"
+                                    />
+                                </div>
                             </div>
                         </FormInline>
 
@@ -249,7 +319,7 @@ export default {
             </div>
             <!-- END: Product Information -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
-                <RouterLink :to="{name : 'branches' }">
+                <RouterLink :to="{name : 'riders' }">
                     <Button
                         type="button"
                         class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"
@@ -257,7 +327,7 @@ export default {
                         Cancel
                     </Button>
                 </RouterLink>
-                <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveBranch()">
+                <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveRider()">
                     {{ update ? 'Update' : 'Save' }}
                 </Button>
             </div>

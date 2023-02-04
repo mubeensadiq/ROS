@@ -22,10 +22,12 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+            $token = $user->createToken(config('app.name'))->plainTextToken;
             return response()->json([
                 'status' => 'success',
                 'user' => $user,
-                'profile' => Auth::user()->profile()
+                'profile' => Auth::user()->profile(),
+                'token' => $token
             ]);
         }
         else{

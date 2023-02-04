@@ -4,6 +4,7 @@ import router  from '../router';
 export const useUserStore = defineStore("user", {
     state: () => ({
         user: JSON.parse(localStorage.getItem('user')),
+        token: localStorage.getItem('user') || null,
     }),
 
     actions: {
@@ -16,8 +17,10 @@ export const useUserStore = defineStore("user", {
                 if(response.data.status === "success"){
                     let authUser = JSON.stringify(response.data.user);
                     this.user = authUser;
+                    const token = response.data.token;
                     localStorage.setItem('user', authUser);
-                    localStorage.setItem('access_token', response.data.user.api_token);
+                    localStorage.setItem('token', response.data.token);
+                    axios.defaults.headers.common["Authorization"] = "Bearer " + token;
                     router.push('/admin/products');
                 }
                 return response.data;
@@ -29,6 +32,7 @@ export const useUserStore = defineStore("user", {
         async logout() {
             const res = await axios.post("/api/logout").then((response) => {
                 localStorage.removeItem('user');
+                localStorage.removeItem('token');
                 router.push('/login');
 
             }).catch( (error) => {

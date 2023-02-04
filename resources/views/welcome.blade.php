@@ -11,4 +11,11 @@
 <body>
 <div id="app"></div>
 </body>
+<script type="text/javascript">
+    @auth
+        window.Permissions = {!! json_encode(Auth::user()->allPermissions, true) !!};
+    @else
+        window.Permissions = [];
+    @endauth
+</script>
 </html>

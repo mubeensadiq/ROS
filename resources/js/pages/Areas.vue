@@ -85,7 +85,7 @@ export default {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="search"
-                        @keypress.enter="getAreas('/api/areas?query='+search)"
+                        @keypress.enter="getAreas('/api/areas?search='+search)"
                     />
                     <Lucide
                         icon="Search"

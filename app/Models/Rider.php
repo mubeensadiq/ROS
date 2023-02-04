@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RiderAreas extends Model
+class Rider extends Model
 {
     use HasFactory;
     protected $guarded = [
@@ -13,10 +13,9 @@ class RiderAreas extends Model
         'created_at',
         'updated_at',
     ];
-    public function area(){
-        return $this->belongsTo(Area::class , 'area_id', 'id');
-    }
-    public function rider(){
-        return $this->belongsTo(RiderProfile::class , 'rider_id', 'id');
+
+    //Rider Belongs to branch
+    public function branch(){
+        return $this->belongsTo(Branch::class , 'branch_id', 'id');
     }
 }

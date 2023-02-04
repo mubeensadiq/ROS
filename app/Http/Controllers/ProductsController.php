@@ -11,8 +11,8 @@ class ProductsController extends Controller
     public function index(Request $request){
         try{
             $products = Product::with('category');
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $products = $products->where('name' ,'like', "%$query%")
                     ->orWhere('price' ,'like', "%$query%")
                     ->orWhereHas('category', function ($q) use ($query) {
@@ -69,7 +69,7 @@ class ProductsController extends Controller
                 'min_quantity' => 'required',
             ]);
             $product = Product::updateOrCreate(['id' => $request->id] , [
-                'category_id' => 2,
+                'category_id' => $request->category_id,
                 'name' => $request->name,
                 'description' => $request->description,
                 'price' => $request->price,

@@ -14,8 +14,8 @@ class AreasController extends Controller
             if(isset($request->get) && $request->get === 'all')
                 $areas = $areas->get();
             else{
-                if(isset($request->query) && $request->query != ''){
-                    $query = $request['query'];
+                if(isset($request->search) && $request->search != ''){
+                    $query = $request['search'];
                     $areas = $areas->where('area' ,'like', "%$query%")
                         ->orWhereHas('city', function ($q) use ($query) {
                             $q->where('city', 'like', "%$query%");

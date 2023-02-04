@@ -11,7 +11,7 @@ class Branch extends Model
     use HasFactory;
 
     //Branch Belongs To Area
-    public function area(){
-        return $this->belongsTo(Area::class,'area_id' , 'id');
+    public function areas(){
+        return $this->belongsToMany(Area::class);
     }
 }
