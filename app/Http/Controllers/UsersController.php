@@ -16,8 +16,8 @@ class UsersController extends Controller
     public function index(Request $request){
         try{
             $users = User::with('profile');
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $users = $users->where('first_name' ,'like', "%$query%")
                     ->orWhere('last_name' ,'like', "%$query%")
                     ->orWhere('email' ,'like', "%$query%")

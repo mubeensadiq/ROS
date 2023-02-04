@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -52,10 +53,15 @@ class User extends Authenticatable
     public function profile(){
         return $this->hasOne(UserProfile::class,'user_id');
     }
-    public function rider(){
-        return $this->hasOne(Rider::class,'user_id');
+    public function getAllPermissionsAttribute() {
+        $permissions = [];
+        foreach (Permission::all() as $permission) {
+            if (Auth::user()->can($permission->name) ) {
+                $permissions[] = $permission->name;
+            }
+        }
+        return $permissions;
     }
-
 
     protected function getFullNameAttribute()
     {

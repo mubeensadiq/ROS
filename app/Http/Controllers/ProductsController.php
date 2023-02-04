@@ -11,8 +11,8 @@ class ProductsController extends Controller
     public function index(Request $request){
         try{
             $products = Product::with('category');
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $products = $products->where('name' ,'like', "%$query%")
                     ->orWhere('price' ,'like', "%$query%")
                     ->orWhereHas('category', function ($q) use ($query) {

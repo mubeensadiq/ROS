@@ -14,8 +14,8 @@ class CitiesController extends Controller
             if(isset($request->get) && $request->get === 'all')
                 $cities = $cities->get();
             else{
-                if(isset($request->query) && $request->query != ''){
-                    $query = $request['query'];
+                if(isset($request->search) && $request->search != ''){
+                    $query = $request['search'];
                     $cities = $cities->where('city' ,'like', "%$query%");
                 }
                 $cities = $cities->paginate(20)->appends($request->all());;

@@ -10,15 +10,23 @@ class BranchesController extends Controller
 {
     public function index(Request $request){
         try{
-            $branches = new Branch();
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            $branches = Branch::with('areas');
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $branches = $branches->where('name' ,'like', "%$query%")
                     ->orWhere('address' ,'like', "%$query%")
                     ->orWhere('landmark' ,'like', "%$query%")
                     ->orWhere('phone_number' ,'like', "%$query%");
             }
-            $branches = $branches->paginate(20)->appends($request->all());
+            if($request->city_id){
+                $city_id = $request->city_id;
+                $branches = $branches->whereHas('areas' , function ($q) use($city_id){
+                   $q->where('city_id' , $city_id);
+                })->get();
+            }
+            else
+                $branches = $branches->paginate(20)->appends($request->all());
+
             return response()->json([
                 'status' => 'success',
                 'branches' => $branches

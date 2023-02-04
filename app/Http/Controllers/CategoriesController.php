@@ -18,8 +18,8 @@ class CategoriesController extends Controller
                 $categories = $categories->get();
             }
             else{
-                if(isset($request->query) && $request->query != ''){
-                    $query = $request['query'];
+                if(isset($request->search) && $request->search != ''){
+                    $query = $request['search'];
                     $categories = Category::where('name' ,'like', "%$query%")
                         ->orWhere('description' ,'like', "%$query%")
                         ->paginate(20)->appends($request->all());

@@ -74,7 +74,7 @@ const showNoty = ((message,type = 'success') => {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="data.search"
-                        @keypress.enter="getProducts('/api/products?query='+data.search)"
+                        @keypress.enter="getProducts('/api/products?search='+data.search)"
                     />
                     <Lucide
                         icon="Search"

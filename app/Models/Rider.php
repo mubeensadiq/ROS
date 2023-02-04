@@ -13,11 +13,9 @@ class Rider extends Model
         'created_at',
         'updated_at',
     ];
-    protected $table = 'rider_profile';
-    public function user(){
-        return $this->belongsTo(User::class , 'user_id', 'id');
-    }
-    public function areas(){
-        return $this->hasMany(RiderAreas::class,'rider_id' , 'id');
+
+    //Rider Belongs to branch
+    public function branch(){
+        return $this->belongsTo(Branch::class , 'branch_id', 'id');
     }
 }

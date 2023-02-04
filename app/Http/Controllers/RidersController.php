@@ -10,14 +10,13 @@ class RidersController extends Controller
 {
     public function index(Request $request){
         try{
-            $riders = Rider::orderBy('name','asc');
-            if(isset($request->query) && $request->query != ''){
-                $query = $request['query'];
+            $riders = Rider::with('branch')->orderBy('name','asc');
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
                 $riders = $riders->where('name' ,'like', "%$query%")
                     ->orWhere('phone_number_1' ,'like', "%$query%");
             }
-            else
-                $riders = $riders->paginate(20)->appends($request->all());
+            $riders = $riders->paginate(20)->appends($request->all());
 
             return response()->json([
                 'status' => 'success',
@@ -34,7 +33,7 @@ class RidersController extends Controller
     }
     public function getRiderDetails(Request $request , $id){
         try{
-            $rider = Rider::where('id' , $id)->first();
+            $rider = Rider::with('branch.areas')->where('id' , $id)->first();
             if($rider){
                 return response()->json([
                     'status' => 'success',
@@ -59,6 +58,7 @@ class RidersController extends Controller
         try{
             $request->validate([
                 'name' => 'required',
+                'branch_id' => 'required',
                 'phone_number_1' => 'required',
                 'nic_image' => 'required',
             ]);
@@ -67,7 +67,7 @@ class RidersController extends Controller
                 'name' => $request->name,
                 'phone_number_1' => $request->phone_number_1,
                 'phone_number_2' => $request->phone_number_2,
-                'nic_image' => $request->image,
+                'nic_image' => $request->nic_image,
             ]);
             return response()->json([
                 'status' => 'success',

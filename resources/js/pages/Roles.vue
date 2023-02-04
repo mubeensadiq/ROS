@@ -86,7 +86,7 @@ export default {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="search"
-                        @keypress.enter="getRoles('/api/roles?query='+search)"
+                        @keypress.enter="getRoles('/api/roles?search='+search)"
                     />
                     <Lucide
                         icon="Search"

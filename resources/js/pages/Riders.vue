@@ -10,7 +10,7 @@ import Tippy from "../base-components/Tippy";
 import {Dialog, Menu} from "../base-components/Headless";
 import Table from "../base-components/Table";
 
-let branchID = 0;
+let riderID = 0;
 
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
@@ -23,8 +23,8 @@ import {ref} from "vue";
 export default {
     data() {
         return {
-            branches: [],
-            branchID: 0,
+            riders: [],
+            riderID: 0,
             deleteConfirmationModal: false,
             toastText : '',
             toastType : 'success',
@@ -32,33 +32,25 @@ export default {
         }
     },
     mounted() {
-        this.getBranches();
+        this.getRiders();
     },
     methods: {
-        getBranches(url = '/api/branches') {
+        getRiders(url = '/api/riders') {
             axios.get(url).then((response) => {
-                this.branches = response.data.branches;
+                this.riders = response.data.riders;
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
-        },
-        searchResult() {
-            axios.get('/api/branches?search='+this.search).then((response) => {
-                this.branches = response.data.branches;
-            }).catch((error) => {
-                this.showNoty(error.response.data.message, 'error')
-            });
-
         },
         setDeleteConfirmationModal(value, id = 0) {
-            this.branchID = id;
+            this.riderID = id;
             this.deleteConfirmationModal = value;
         },
-        deleteBranch() {
-            axios.delete('/api/delete-branch/' + this.branchID).then((response) => {
+        deleteRider() {
+            axios.delete('/api/delete-rider/' + this.riderID).then((response) => {
                 if (response.data.status === 'success') {
                     this.showNoty(response.data.message)
-                    this.getBranches("/api/branches?page=" + this.branches.current_page);
+                    this.getRiders("/api/riders?page=" + this.riders.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {
@@ -77,19 +69,19 @@ export default {
 
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
-    <h2 class="mt-10 text-lg font-medium intro-y">Branches</h2>
+    <h2 class="mt-10 text-lg font-medium intro-y">riders</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'createBranch' }">
+            <RouterLink :to="{name : 'createRider' }" v-if="$can('add_rider')">
                 <Button variant="primary" class="mr-2 shadow-md">
-                    Add New Branch
+                    Add New Rider
                 </Button>
             </RouterLink>
 
             <div class="hidden mx-auto md:block text-slate-500">
-                Showing {{ branches.from }} to {{ branches.to }} of {{ branches.total }} entries
+                Showing {{ riders.from }} to {{ riders.to }} of {{ riders.total }} entries
             </div>
             <div class="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="relative w-56 text-slate-500">
@@ -98,7 +90,7 @@ export default {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="search"
-                        @keypress.enter="getBranches('/api/branches?query='+search)"
+                        @keypress.enter="getRiders('/api/riders?search='+search)"
                     />
                     <Lucide
                         icon="Search"
@@ -116,7 +108,7 @@ export default {
                             NAME
                         </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> Phone Number</Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Address</Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> Branch</Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             ACTIONS
                         </Table.Th>
@@ -124,7 +116,7 @@ export default {
                 </Table.Thead>
                 <Table.Tbody>
                     <Table.Tr
-                        v-for="(branch, index) in  branches.data"
+                        v-for="(rider, index) in  riders.data"
                         :key="index"
                         class="intro-x"
                     >
@@ -132,21 +124,21 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{ branch.name }}
+                                {{ rider.name }}
                             </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{ branch.phone_number }}
+                                {{ rider.phone_number_1 }}
                             </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-wrap">
-                                {{ branch.address }}
+                                {{ rider.branch.name }}
                             </span>
                         </Table.Td>
 
@@ -154,7 +146,7 @@ export default {
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <RouterLink :to="{name : 'editBranch', params:{'id' : branch.id} }"
+                                <RouterLink :to="{name : 'updateRider', params:{'id' : rider.id} }"
                                             class="flex items-center mr-3">
                                     <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
@@ -165,7 +157,7 @@ export default {
                                     @click="
                                         (event) => {
                                             event.preventDefault();
-                                            setDeleteConfirmationModal(true , branch.id);
+                                            setDeleteConfirmationModal(true , rider.id);
                                         }
                                     "
                                 >
@@ -184,32 +176,32 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getBranches(branches.first_page_url)">
+                <Pagination.Link @click="getRiders(riders.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4"/>
                 </Pagination.Link>
-                <Pagination.Link v-if="branches.prev_page_url" @click="getBranches(branches.prev_page_url)">
+                <Pagination.Link v-if="riders.prev_page_url" @click="getRiders(riders.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4"/>
                 </Pagination.Link>
-                <Pagination.Link v-if="branches.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link v-if="branches.prev_page_url" @click="getBranches(branches.prev_page_url)">
-                    {{ branches.current_page - 1 }}
+                <Pagination.Link v-if="riders.current_page - 1 > 1">...</Pagination.Link>
+                <Pagination.Link v-if="riders.prev_page_url" @click="getRiders(riders.prev_page_url)">
+                    {{ riders.current_page - 1 }}
                 </Pagination.Link>
-                <Pagination.Link active>{{ branches.current_page }}</Pagination.Link>
-                <Pagination.Link v-if="branches.next_page_url" @click="getBranches(branches.next_page_url)">
-                    {{ branches.current_page + 1 }}
+                <Pagination.Link active>{{ riders.current_page }}</Pagination.Link>
+                <Pagination.Link v-if="riders.next_page_url" @click="getRiders(riders.next_page_url)">
+                    {{ riders.current_page + 1 }}
                 </Pagination.Link>
-                <Pagination.Link v-if="branches.last_page - branches.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="branches.next_page_url" @click="getBranches(branches.next_page_url)">
+                <Pagination.Link v-if="riders.last_page - riders.current_page > 1">...</Pagination.Link>
+                <Pagination.Link v-if="riders.next_page_url" @click="getRiders(riders.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4"/>
                 </Pagination.Link>
-                <Pagination.Link @click="getBranches(branches.last_page_url)">
+                <Pagination.Link @click="getRiders(riders.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4"/>
                 </Pagination.Link>
             </Pagination>
             <label>Page Size</label>
             <select
                 class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0"
-                v-model="branches.per_page">
+                v-model="riders.per_page">
                 <option v-for="page in limits" :value="page">{{ page }}</option>
             </select>
         </div>
@@ -247,7 +239,7 @@ export default {
                 >
                     Cancel
                 </Button>
-                <Button @click="deleteBranch()"
+                <Button @click="deleteRider()"
                         variant="danger"
                         type="button"
                         class="w-24"

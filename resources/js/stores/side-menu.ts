@@ -17,6 +17,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
   state: (): SideMenuState => ({
     menu: [
         {
+            icon: "Home",
+            pageName: "dashboard",
+            title: "Dashboard"
+        },
+        {
             icon: "FileText",
             pageName: 'products',
             title: "Products",
@@ -36,10 +41,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: 'addons',
             title: "Addons",
         },
+
         {
-        icon: "Home",
-        pageName: "dashboard",
-        title: "Dashboard"
+            icon: "User",
+            pageName: "riders",
+            title: "Riders",
         },
         {
             icon: "User",
@@ -51,6 +57,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "roles",
             title: "Roles",
         },
+
         {
             icon: "Activity",
             pageName: "cities",
