@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('deal_products' , function(Blueprint $table){
+            $table->id();
             $table->foreignId('deal_id')
                 ->constrained('deals')
                 ->onDelete('cascade');
@@ -24,6 +25,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained();
             $table->integer('quantity');
+            $table->timestamps();
         });
     }
 

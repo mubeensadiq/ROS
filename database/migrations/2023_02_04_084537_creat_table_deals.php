@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('deals' , function(Blueprint $table){
+            $table->id();
             $table->string('name');
             $table->string('description');
             $table->string('start_date')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreignId('branch_id')
                 ->nullable()
                 ->constrained();
+            $table->timestamps();
         });
     }
 
