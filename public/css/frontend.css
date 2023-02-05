@@ -620,12 +620,197 @@ footer p {
     font-size: 24px;
 }
 
+
+
 .color-1 {
-    color: #FFA52D !important;
+    color: #FFA52D
+}
+
+.shopping-cart {
+    position: absolute;
+    z-index: 1;
+    bottom: -40px;
+    right: 30px;
+}
+
+.shopping-icon {
+    background: #FFA52D;
+    border-radius: 50%;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.shopping-cart img { 
+    position: relative;
+    right: 5px;
+    top: 5px; 
+}
+.shopping-cart span {
+    position: absolute;
+    top: 12px;
+    right: 13px;
+    background: black;
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 1;
 }
 
 @media (max-width: 767.98px) {
     .alert-msg {
         margin-top: 55px;
     }
+}
+
+
+
+/* MODAL CSS */
+.cartModal .order-image img { max-width: 120px; }
+.cartModal .order-image-separator { border: 1px dashed #000000; }
+.cartModal .order-item .item-name h6 {
+    font-weight: 600;
+    font-size: 20px;
+}
+.cartModal .order-item .item-name p, .cartModal .order-item .item-name span {
+    font-weight: 300;
+    font-size: 16px;
+}
+.cartModal .item-value {
+    font-weight: 700;
+    font-size: 20px;
+    color: #00CF64;
+}
+
+.cartModal .table>:not(caption)>*>* {
+    vertical-align: middle;
+}
+
+.cartModal .table thead tr th {
+    font-weight: 600;
+    font-size: 22px;
+}
+
+.cartModal .table tbody tr input[type=number] {
+    height: 50px;
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    padding: 5px;
+    font-weight: 400;
+    font-size: 22px;
+    text-align: center;
+}
+
+#shoppingCartModal .modal-title { 
+    font-weight: 600;
+    font-size: 60px;
+}
+
+.cartModal .table tbody tr:last-child {
+    border-color: #000;
+}
+
+#shoppingCartModal .cart-total {
+    background: #F9F9F9;
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+}
+
+#shoppingCartModal .total-label {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 0;
+}
+
+#shoppingCartModal .summary-values p {
+    font-weight: 400;
+}
+
+#shoppingCartModal .order-total span {
+    font-weight: 700;
+    font-size: 25px;
+    color: #00CF64;
+}
+
+#shoppingCartModal .cart-total h6 { 
+    font-weight: 700;
+    font-size: 26px;
+    color: #000;
+}
+
+
+
+/* Product Modal */
+/* carousel slideshow css */
+/* Hide the images by default */
+.productSlideshow {
+
+}
+
+.productSlideshow div#carouselExampleIndicators {
+    border: 1px solid #ECECEC;
+    border-radius: 30px;
+    height: 350px;
+}
+
+.productSlideshow .carousel-inner {
+    text-align: center;
+}
+.productSlideshow .carousel-item {
+    height: 350px;
+}
+
+.productSlideshow .carousel-item img {
+    height: initial;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.productSlideshow .carousel-indicators {
+    position: static;
+    overflow: scroll;
+    width: 100%;
+    margin-left: 0;
+    overflow-y: hidden;
+    height: 130px;
+    margin-right: 0;
+}
+
+.productSlideshow .carousel-indicators li {
+    width: 200px;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.productSlideshow .carousel-indicators button[data-bs-target] {
+    width: fit-content;
+    margin: 0;
+    border: 0;
+    height: auto;
+    padding: 0 2px;
+}
+
+.productSlideshow .carousel-indicators button[data-bs-target] img {
+    border: 1px solid #ECECEC;
+    border-radius: 10px;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.productSlideshow .carousel-indicators button[data-bs-target]:not(.active){
+    opacity: 0.5;
+}
+.productSlideshow .carousel-indicators {
+    position: static;
+}
+
+.star-gold { color: #FFCC33; }
+
+.productSummary .product-n-review h3 {
+    font-weight: 600;
+    font-size: 50px;
+    color: #1E1D23;
 }
