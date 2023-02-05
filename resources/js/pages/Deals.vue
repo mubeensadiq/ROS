@@ -47,7 +47,7 @@ export default {
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'createDeal' }">
+            <RouterLink v-if="$can('deals.create')" :to="{name : 'deals.create' }">
                 <Button variant="primary" class="mr-2 shadow-md">
                     Add New Deal
                 </Button>

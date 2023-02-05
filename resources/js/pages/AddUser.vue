@@ -66,8 +66,10 @@ export default {
                 if (response.data.user !== undefined){
                     const res = response.data.user;
                     this.user = response.data.user;
-                    if(res.roles)
+                    if(res.roles.length > 0)
                         this.user.role = res.roles[0].id.toString();
+                    else
+                        this.user.role = this.roles[0].id.toString();
                 }
 
             }).catch((error) => {
@@ -369,7 +371,6 @@ export default {
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
-                                            Required
                                         </div>
                                     </div>
                                 </div>

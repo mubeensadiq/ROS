@@ -129,10 +129,10 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Areas</div>
+                                        <div class="font-medium">Permissions</div>
                                     </div>
                                     <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        You can choose multiple areas for single rider.
+                                        You can choose multiple permissions for single rider.
                                     </div>
                                 </div>
                             </FormLabel>
@@ -163,7 +163,7 @@ export default {
             </div>
             <!-- END: Product Information -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
-                <RouterLink :to="{name : 'areas' }">
+                <RouterLink :to="{name : 'roles' }">
                     <Button
                         type="button"
                         class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"

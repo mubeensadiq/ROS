@@ -79,6 +79,8 @@ class ProductsController extends Controller
                 'status' => $request->status,
                 'image' => $request->image,
                 'prep_time' => $request->prep_time,
+                'city_id' => $request->city_id !== '' ? $request->city_id : null,
+                'branch_id' => $request->branch_id !== '' ? $request->branch_id : null,
             ]);
             $product->addons()->sync($request->addons);
             return response()->json([
