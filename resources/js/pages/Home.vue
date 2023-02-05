@@ -58,21 +58,21 @@ onMounted(() => {
 })
 
 const getCategories = (() => {
-    axios.get('/api/categories?get=all&status=1').then((response)=>{
+    axios.get('/categories?get=all&status=1').then((response)=>{
         data.categories = response.data.categories;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
 });
 const getDealProducts = (() => {
-    axios.get('/api/deal-products').then((response)=>{
+    axios.get('/deal-products').then((response)=>{
         data.dealProducts = response.data.products;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
 });
 const getCategoryProducts = (() => {
-    axios.get('/api/category-products').then((response)=>{
+    axios.get('/category-products').then((response)=>{
         data.categoryProducts = response.data.products;
     }).catch( (error) => {
         console.log(error.response.data.message)

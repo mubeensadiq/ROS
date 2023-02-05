@@ -69,7 +69,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /************** CATEGORIES ROUTES ************/
     Route::get('/categories', [CategoriesController::class , 'index']);
-    Route::get('/category-products', [CategoriesController::class , 'products']);
     Route::post('/save-category', [CategoriesController::class , 'saveCategory']);
     Route::get('/get-category-details/{id}', [CategoriesController::class , 'getCategoryDetails']);
     Route::delete('/delete-category/{id}', [CategoriesController::class , 'deleteCategory']);
@@ -77,7 +76,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /************** DEAL ROUTES ************/
     Route::get('/deals', [DealsController::class , 'index']);
-    Route::get('/deal-products', [DealsController::class , 'products']);
     Route::post('/save-deal', [DealsController::class , 'saveDeal']);
     Route::get('/get-deal-details/{id}', [DealsController::class , 'getDealDetails']);
     Route::delete('/delete-deal/{id}', [DealsController::class , 'deleteDeal']);
