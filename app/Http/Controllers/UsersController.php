@@ -104,8 +104,7 @@ class UsersController extends Controller
                 'address' => $request->profile['address'],
                 'avatar' => $request->profile['avatar'] ?? null,
             ]);
-
-            $user->assignRole($request->role);
+            $user->syncRoles($request->role);
             return response()->json([
                 'status' => 'success',
                 'users' => $user
@@ -121,7 +120,7 @@ class UsersController extends Controller
     }
     public function getUserDetails(Request $request , $id){
         try{
-            $user = User::with(['profile','rider.areas.area','roles'])->select(['first_name','last_name','id'])->where('id' , $id)->first();
+            $user = User::with(['profile','roles'])->select(['first_name','last_name','id'])->where('id' , $id)->first();
             if($user){
                 return response()->json([
                     'status' => 'success',

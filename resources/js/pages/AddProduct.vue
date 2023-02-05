@@ -24,12 +24,16 @@ onMounted(() =>{
     }
     getAddons();
     getCategories();
+    getCities();
+    getBranches();
 })
 let data = reactive({
     product: {
         name: '',
         description: '',
         category_id: '',
+        branch_id: '',
+        city_id: '',
         price: 10.00,
         stock: 1,
         image: null,
@@ -42,13 +46,34 @@ let data = reactive({
     toastText : '',
     toastType : '',
     addons : [],
-    categories : []
+    categories : [],
+    cities : [],
+    branches : [],
 });
 const getAddons = (() => {
     axios.get('/api/addons?get=all' ).then((response) => {
         if (response.data.addons !== undefined){
             data.addons = response.data.addons;
             (isset(data.addons[0]) && data.product.addons.length === 0) ? data.product.addons.push(data.addons[0].id) : '';
+        }
+
+    }).catch((error) => {
+        showNoty(error.response.data.message,'error')
+    });
+});
+const getBranches = (() => {
+    axios.get('/api/branches?get=all' ).then((response) => {
+        if (response.data.branches !== undefined){
+            data.branches = response.data.branches;
+        }
+    }).catch((error) => {
+        showNoty(error.response.data.message,'error')
+    });
+});
+const getCities = (() => {
+    axios.get('/api/cities?get=all' ).then((response) => {
+        if (response.data.cities !== undefined){
+            data.cities = response.data.cities;
         }
 
     }).catch((error) => {
@@ -76,6 +101,8 @@ const getProductDetails = ((id) => {
                     data.product.addons[index] = value.id.toString();
                 });
             }
+            data.product.city_id = data.product.city_id ? data.product.city_id.toString() : '';
+            data.product.branch_id = data.product.branch_id ? data.product.branch_id.toString() : '';
         }
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
@@ -377,6 +404,64 @@ const showNoty = ((message,type = 'success') => {
                                         {{ addon.name }}
                                     </option>
                                 </TomSelect>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">City</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="data.product.city_id" :value="data.product.city_id"
+                                    :options="{
+                                        placeholder: 'Select City',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(city, index) in data.cities"
+                                        :key="index"
+                                        :value="city.id"
+                                    >
+                                        {{ city.city }}
+                                    </option>
+                                </TomSelect>
+
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Branch</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="data.product.branch_id" :value="data.product.branch_id"
+                                    :options="{
+                                        placeholder: 'Select Branch',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(branch, index) in data.branches"
+                                        :key="index"
+                                        :value="branch.id"
+                                    >
+                                        {{ branch.name }}
+                                    </option>
+                                </TomSelect>
+
                             </div>
                         </FormInline>
                         <FormInline

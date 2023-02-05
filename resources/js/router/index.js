@@ -60,12 +60,12 @@ const routes = [
         },
         {
             path: "users/create",
-            name: "createUser",
+            name: "users.create",
             component: AddUser
         },
         {
             path: "user/update/:id",
-            name: "updateUser",
+            name: "users.update",
             component: AddUser,
         },
         {
@@ -75,12 +75,12 @@ const routes = [
         },
         {
             path: "riders/create",
-            name: "createRider",
+            name: "riders.create",
             component: AddRider
         },
         {
             path: "rider/update/:id",
-            name: "updateRider",
+            name: "riders.update",
             component: AddRider,
         },
         {
@@ -90,12 +90,12 @@ const routes = [
         },
         {
             path: "roles/create",
-            name: "createRole",
+            name: "roles.create",
             component: AddRole
         },
         {
             path: "role/update/:id",
-            name: "updateRole",
+            name: "roles.update",
             component: AddRole,
         },
         {
@@ -105,7 +105,12 @@ const routes = [
         },
         {
             path: "cities/update/:id",
-            name: "editCity",
+            name: "cities.update",
+            component: AddCity,
+        },
+        {
+            path: "cities/create",
+            name: "cities.create",
             component: AddCity,
         },
         {
@@ -115,12 +120,12 @@ const routes = [
         },
         {
             path: "areas/create",
-            name: "createArea",
+            name: "areas.create",
             component: AddArea,
         },
         {
             path: "areas/update/:id",
-            name: "editArea",
+            name: "areas,update",
             component: AddArea,
         },
         {
@@ -130,12 +135,12 @@ const routes = [
         },
         {
             path: "categories/create",
-            name: "createCategory",
+            name: "categories.create",
             component: AddCategory,
         },
         {
             path: "categories/update/:id",
-            name: "editCategory",
+            name: "categories.update",
             component: AddCategory,
         },
         {
@@ -145,7 +150,7 @@ const routes = [
         },
         {
             path: "deals/create",
-            name: "createDeal",
+            name: "deals.create",
             component: AddDeal,
         },
         {
@@ -155,12 +160,12 @@ const routes = [
         },
         {
             path: "branches/create",
-            name: "createBranch",
+            name: "branches.create",
             component: AddBranch,
         },
         {
             path: "branches/update/:id",
-            name: "editBranch",
+            name: "branches.update",
             component: UpdateBranch,
         },
         {
@@ -170,12 +175,12 @@ const routes = [
         },
         {
             path: "addon/create",
-            name: "createAddon",
+            name: "addons.create",
             component: AddAddon,
         },
         {
             path: "addon/update/:id",
-            name: "updateAddon",
+            name: "addons.update",
             component: AddAddon,
         },
 
@@ -186,12 +191,12 @@ const routes = [
         },
         {
             path: "products/create",
-            name: "createProduct",
+            name: "products.create",
             component: AddProduct,
         },
         {
             path: "product/update/:id",
-            name: "updateProduct",
+            name: "products.update",
             component: AddProduct,
         },
     ],
@@ -212,7 +217,7 @@ const router = createRouter({
   },
 });
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to,from ,next) => {
     // redirect to login page if not logged in and trying to access a restricted page
     const publicPages = ['/login' , '/logout','/','/confirm','/checkout'];
     const authRequired = !publicPages.includes(to.path);
@@ -221,8 +226,11 @@ router.beforeEach(async (to) => {
         auth.returnUrl = to.fullPath;
         return '/login';
     }
-    if( Permissions.indexOf(to.name) !== -1){
+    if( Permissions.indexOf(to.name) !== -1 || publicPages.includes(to.path)){
         next();
+    }
+    else{
+        next({ name: Permissions[0] });
     }
 });
 

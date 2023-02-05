@@ -67,7 +67,7 @@ onMounted(() => {
               :key="'devider-' + menuKey"
             ></Devider>
             <li v-else :key="menuKey">
-              <Menu
+              <Menu v-if="$can(menu.pageName)"
                 :class="{
                   // Animation
                   [`opacity-0 translate-x-[50px] animate-[0.4s_ease-in-out_0.1s_intro-menu] animate-fill-mode-forwards animate-delay-${

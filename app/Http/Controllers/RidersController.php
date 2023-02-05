@@ -27,7 +27,8 @@ class RidersController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'riders' => []
+                'riders' => [],
+                'message' => $ex->getMessage(),
             ],500);
         }
     }

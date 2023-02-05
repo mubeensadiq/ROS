@@ -58,7 +58,7 @@ const showNoty = ((message,type = 'success') => {
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'createProduct' }">
+            <RouterLink v-if="$can('products.create')" :to="{name : 'products.create' }">
                 <Button variant="primary" class="mr-2 shadow-md">
                     Add New Product
                 </Button>
@@ -152,12 +152,12 @@ const showNoty = ((message,type = 'success') => {
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <RouterLink :to="{name : 'updateProduct', params:{'id' : product.id} }"
+                                <RouterLink v-if="$can('products.update')" :to="{name : 'products.update', params:{'id' : product.id} }"
                                             class="flex items-center mr-3">
                                     <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
                                 </RouterLink>
-                                <a
+                                <a v-if="$can('products.remove')"
                                     class="flex items-center text-danger"
                                     href="#"
                                     @click="

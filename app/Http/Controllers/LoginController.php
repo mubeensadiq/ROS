@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 
 class LoginController extends Controller
 {
@@ -19,15 +21,25 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $token = $user->createToken(config('app.name'))->plainTextToken;
+            $permissions = [];
+            if(isset($user->roles[0]) && $user->roles[0]->name === 'Super Admin'){
+                foreach (Permission::all() as $permission) {
+                    $permissions[] = $permission->name;
+                }
+            }
+            else{
+                $permissions = $user->getPermissionsViaRoles()->pluck('name');
+            }
             return response()->json([
                 'status' => 'success',
                 'user' => $user,
+                'role' => $user->roles[0]->name ?? '',
                 'profile' => Auth::user()->profile(),
-                'token' => $token
+                'token' => $token,
+                'permissions' => $permissions ?? []
             ]);
         }
         else{
@@ -39,7 +51,10 @@ class LoginController extends Controller
     }
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        $user->tokens()->delete();
         Auth::logout();
+        Session::flush();
         return response()->json([
             'status' => 'success',
             'user' => null

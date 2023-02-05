@@ -25,7 +25,10 @@ class BranchesController extends Controller
                 })->get();
             }
             else
-                $branches = $branches->paginate(20)->appends($request->all());
+                if(isset($request->get) && $request->get === 'all')
+                    $branches = $branches->get();
+                else
+                    $branches = $branches->paginate(20)->appends($request->all());
 
             return response()->json([
                 'status' => 'success',
