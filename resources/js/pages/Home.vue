@@ -22,6 +22,9 @@ import facebook from "../../../public/images/assets/facebook.png";
 import youtube from "../../../public/images/assets/youtube.png";
 import googlePlus from "../../../public/images/assets/google-plus.png";
 import twitter from "../../../public/images/assets/twitter.png";
+import deleteIcon from "../../../public/images/assets/delete.png";
+import shoppingCartIcon from "../../../public/images/assets/shopping-cart.png";
+
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
@@ -128,6 +131,12 @@ const getCategoryProducts = (() => {
                     </div>
                 </a>
             </div>
+            <div class="shopping-cart">
+				<div class="shopping-icon" data-bs-toggle="modal" data-bs-target="#shoppingCartModal">
+					<span class="badge bg-dark rounded-circle p-2">03</span>
+					<img class="img img-responsive img-circle" :src="shoppingCartIcon" alt="">
+				</div>
+			</div>
             <div id="myCarousel" class="carousel slide my-0" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -203,7 +212,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                         </div>
@@ -216,7 +225,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -232,7 +241,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -248,7 +257,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -273,7 +282,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -289,7 +298,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                         </div>
@@ -302,7 +311,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -318,7 +327,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. 559</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag">
@@ -343,7 +352,7 @@ const getCategoryProducts = (() => {
                                 <p class="card-text">{{product.description}} </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. {{product.price}}</label>
-                                    <img :src="cartIcon" alt="">
+                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag hidden">
@@ -413,9 +422,227 @@ const getCategoryProducts = (() => {
             </div>
             <p class="mb-0">Copyright &copy; 2023 <span class="color-1">FastBurger</span>. All Rights Reserved.</p>
         </footer>
+		
+
+
+		<!-- shoppingCartModal -->
+		<div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content p-3">
+					<div class="modal-header border-0 d-flex align-items-start">
+						<h5 class="modal-title text-dark px-4" id="shoppingCartModalLabel">Add to Cart</h5>
+						<button type="button" class="btn-close border rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body cartModal">
+						<div class="row">
+							<div class="col-md-8 col-sm-12">
+								<table class="table">
+									<thead>
+									<tr>
+										<th scope="col"></th>
+										<th scope="col">Product</th>
+										<th scope="col">Price</th>
+										<th scope="col">Quantity</th>
+										<th scope="col">Subtotal</th>
+										<th scope="col"></th>
+									</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th style="width:10%;" scope="row">
+												<div class="order-image d-flex">
+													<img class="img" :src="deal1" alt="">
+													<hr class="order-image-separator">
+												</div>
+											</th>
+											<th>
+												<div class="order-item d-flex justify-content-between align-items-center w-100">
+													<div class="item-name px-3">
+														<h6 class="text-capitalize">Italian Burger</h6>
+														<span>With cheese</span>
+														<span>Bacon (Rs. 10.00)</span>
+													</div>
+													
+												</div>
+											</th>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
+										</tr>
+										<tr>
+											<th style="width:10%;" scope="row">
+												<div class="order-image d-flex">
+													<img class="img" :src="deal1" alt="">
+													<hr class="order-image-separator">
+												</div>
+											</th>
+											<th>
+												<div class="order-item d-flex justify-content-between align-items-center w-100">
+													<div class="item-name px-3">
+														<h6 class="text-capitalize">Italian Burger</h6>
+														<span>With cheese</span>
+														<span>Bacon (Rs. 10.00)</span>
+													</div>
+													
+												</div>
+											</th>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
+										</tr>
+										<tr>
+											<th style="width:10%;" scope="row">
+												<div class="order-image d-flex">
+													<img class="img" :src="deal1" alt="">
+													<hr class="order-image-separator">
+												</div>
+											</th>
+											<th>
+												<div class="order-item d-flex justify-content-between align-items-center w-100">
+													<div class="item-name px-3">
+														<h6 class="text-capitalize">Italian Burger</h6>
+														<span>With cheese</span>
+														<span>Bacon (Rs. 10.00)</span>
+													</div>
+													
+												</div>
+											</th>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
+											<td><p class="item-value mb-0">Rs. 559</p></td>
+											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
+										</tr>
+									</tbody>
+								</table>
+
+								<button class="btn btn-yellow float-end">Update cart</button>
+							</div>
+							<div class="col-md-4 col-sm-12">
+								<div class="cart-total px-3 py-4">
+									<div class="cart-summary">
+										<h6>Cart Totals</h6>
+										<div class="order-total d-flex justify-content-between">
+											<p class="total-label">Subtotal</p>
+											<span class="text-dark">Rs. 559</span>
+										</div>
+										<hr>
+										<div class="order-total d-flex justify-content-between">
+											<p class="total-label">Total</p>
+											<span>Rs. 638</span>
+										</div>
+									</div>
+									<div class="proceed-cart text-center mt-3">
+										<a href="checkout.html" class="btn btn-yellow">Proceed to checkout</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Product Modal -->
+		<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content p-3">
+					<div class="modal-header border-0 d-flex align-items-start">
+						<button type="button" class="btn-close border rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body cartModal">
+						<div class="row">
+							<div class="productSlideshow position-relative col-md-6 col-sm-12">
+								<div id="carouselExampleIndicators" class="mb-0 carousel slide" data-bs-ride="carousel">
+									<div class="carousel-inner">
+										<div class="carousel-item active">
+											<img :src="deal1" class="img" alt="...">
+										</div>
+										<div class="carousel-item">
+											<img :src="deal2" class="img" alt="...">
+										</div>
+										<div class="carousel-item">
+											<img :src="deal3" class="img" alt="...">
+										</div>
+									</div>
+									<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+										<span class="visually-hidden">Previous</span>
+									</button>
+									<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+										<span class="carousel-control-next-icon" aria-hidden="true"></span>
+										<span class="visually-hidden">Next</span>
+									</button>
+								</div>
+								<div class="carousel-indicators">
+									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"><img :src="deal1" class="d-block" alt="..."></button>
+									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"><img :src="deal2" class="d-block" alt="..."></button>
+									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"><img :src="deal3" class="d-block" alt="..."></button>
+								</div>
+							</div>
+							<div class="productSummary col-md-6 col-sm-12">
+								<div class="product-n-review">
+									<h3>ItalianBurger</h3>
+									<div class="reviews star-gold">
+										<i class="bi bi-star-fill"></i>
+										<i class="bi bi-star-fill"></i>
+										<i class="bi bi-star-fill"></i>
+										<i class="bi bi-star-half"></i>
+										<i class="bi bi-star"></i>
+									</div>
+									<p class="mb-3">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eius mod tempor incididunt ut labore et dolore magna aliqua.</p>
+									<p class="mb-2">Rs. 559</p>
+								</div>
+								<hr class="hr">
+								<div class="preferences mb-3">
+									<h6>Choose Your Preference</h6>
+									<label for=""><input type="radio" name="" id="" checked> with cheese</label>
+								</div>
+								<div class="drinks mb-3">
+									<h6>Select your Drink</h6>
+									<label for=""><input type="radio" name="" id="" checked> Pepsi</label>
+									<label for=""><input type="radio" name="" id="" > 7up</label>
+									<label for=""><input type="radio" name="" id="" > Miranda</label>
+									<label for=""><input type="radio" name="" id="" > Dew</label>
+									<label for=""><input type="radio" name="" id="" > Diet 7up</label>
+								</div>
+								<hr class="hr">
+								<div class="toppings mb-3">
+									<h6>More Topping</h6>
+									<label for=""><input type="checkbox" name="" id="" checked> Cheese (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> American Sausage (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> Bacon (Rs. 10.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> Chicken (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> Pineapple (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> German (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> Ham (Rs. 20.00)</label>
+									<label for=""><input type="checkbox" name="" id="" checked> Black olives (Rs. 20.00)</label>
+								</div>
+								<div class="instructions mb-3">
+									<h6>Special Instructions</h6>
+									<textarea class="form-control w-100" name="" id="" cols="30" rows="5"></textarea>
+								</div>
+								<hr class="hr">
+								<div class="d-flex justify-content-between">
+									<label for="">1 Italian Burger</label>
+									<span>Rs. 550</span>
+								</div>
+								<hr class="hr">
+								<div class="total-values">
+									<label for="">Total</label>
+									<span>Rs. 550</span>
+								</div>
+
+								<div class="range-add-button">
+									<input type="number" name="1" id="" value="1">
+									<button class="btn btn-yellow float-end">Add to cart</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
     </main>
-
-
-
 </template>
-
