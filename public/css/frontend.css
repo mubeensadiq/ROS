@@ -814,3 +814,54 @@ footer p {
     font-size: 50px;
     color: #1E1D23;
 }
+
+
+/* LOCATION MODAL */
+#selectLocationModal { }
+
+#selectLocationModal .modal-header img {
+    background: #484848;
+    padding: 10px;
+    border: 1px solid #d7d7d7;
+    border-radius: 15px;
+    width: 150px;
+    height: inherit;
+}
+
+#selectLocationModal .select-region h3 {
+    font-weight: 700;
+    color: #000;
+}
+
+#selectLocationModal .select-region .btn-group label {
+    color: #FFA52D;
+    border-color: #FFA52D;
+    font-weight: 600;
+}
+#selectLocationModal .select-region .btn-check:checked+.btn, #selectLocationModal .select-region .btn.active, #selectLocationModal .select-region .btn.show, #selectLocationModal .select-region .btn:first-child:active, #selectLocationModal .select-region :not(.btn-check)+.btn:active {
+    background-color: #FFA52D;
+    color: #fff;
+}
+
+#selectLocationModal .select2-container .select2-selection--single {
+    height: 40px;
+    border: 1px solid #FFA52D;
+}
+
+#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px;
+    color: #FFA52D;
+}
+
+#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__clear {
+    height: 40px;
+    color: #FFA52D;
+}
+
+#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 8px;
+}
+
+#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #FFA52D transparent transparent transparent;
+}

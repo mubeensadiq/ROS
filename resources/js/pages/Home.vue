@@ -28,6 +28,7 @@ import shoppingCartIcon from "../../../public/images/assets/shopping-cart.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
+import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 
 
 
@@ -49,6 +50,8 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
         }
     });
 
+    
+
 import _ from "lodash";
 import { ref, reactive , onMounted } from "vue";
 
@@ -58,6 +61,29 @@ onMounted(() => {
     getCategories();
    // getDealProducts();
     getCategoryProducts();
+
+    $(window).on('load', function() {
+        $('#selectLocationModal').modal('show');
+
+        $(".region-city").select2({
+            placeholder: "Select city",
+            dropdownParent: $('#selectLocationModal'),
+            width: '100%',
+            allowClear: true
+        });
+        $(".region-area").select2({
+            placeholder: "Select area",
+            dropdownParent: $('#selectLocationModal'),
+            width: '100%',
+            allowClear: true
+        });
+        $(".region-branch").select2({
+            placeholder: "Select branch",
+            dropdownParent: $('#selectLocationModal'),
+            width: '100%',
+            allowClear: true
+        });
+    });
 })
 
 const getCategories = (() => {
@@ -88,6 +114,7 @@ const getCategoryProducts = (() => {
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
     <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
@@ -422,8 +449,63 @@ const getCategoryProducts = (() => {
             </div>
             <p class="mb-0">Copyright &copy; 2023 <span class="color-1">FastBurger</span>. All Rights Reserved.</p>
         </footer>
-		
 
+
+		
+		<!-- Region Modal -->
+		<div class="modal fade" id="selectLocationModal" aria-labelledby="selectLocationModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+				<div class="modal-content p-3">
+					<div class="modal-header border-0 d-flex justify-content-center">
+						<img :src="logoUrl" class="img" alt="">
+					</div>
+					<div class="modal-body locationModal">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="select-region mb-3 bordered text-center">
+									<h3 class="text-capitalize">Please select your area</h3>
+									<div class="btn-group text-capitalize" role="group" aria-label="Basic radio toggle button group">
+										<input type="radio" class="btn-check" name="regionRadio" id="deleveryRadio" autocomplete="off" checked>
+										<label class="btn btn-outline-primary" for="deleveryRadio">Delivery</label>
+									  
+										<input type="radio" class="btn-check" name="regionRadio" id="pickupRadio" autocomplete="off">
+										<label class="btn btn-outline-primary" for="pickupRadio">Pickup</label>
+									</div>
+								</div>
+
+
+								<div class="mb-3 select-city">
+									<select class="selectable-region py-3 region-city form-control form-select w-100" name="city" id="regionCity">
+										<option value="karachi">Karachi</option>
+										<option value="lahore">Lahore</option>
+									</select>
+								</div>
+
+
+								<div class="select-area">
+									<select class="selectable-region py-3 region-area form-control form-select w-100" name="area" id="regionArea">
+										<option value="gulshan">Gulshan</option>
+										<option value="shahrahfaisal">Shahrah e Faisal</option>
+										<option value="karimabad">Karimabad</option>
+										<option value="dak-khana">Dak Khana</option>
+										<option value="johar">Gulistan e Johar</option>
+									</select>
+								</div>
+
+
+								<div class="select-branch">
+									<select class="selectable-region py-3 region-branch form-control form-select w-100" name="branch" id="regionBranch">
+										<option value="pechs">PECHS</option>
+										<option value="smchs">Sindhi Muslim (SMCHS)</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 
 		<!-- shoppingCartModal -->
 		<div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
