@@ -125,7 +125,7 @@ const routes = [
         },
         {
             path: "areas/update/:id",
-            name: "areas,update",
+            name: "areas.update",
             component: AddArea,
         },
         {

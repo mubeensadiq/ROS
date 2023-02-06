@@ -15,7 +15,7 @@ class UsersController extends Controller
 {
     public function index(Request $request){
         try{
-            $users = User::with('profile');
+            $users = User::with(['profile','roles']);
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
                 $users = $users->where('first_name' ,'like', "%$query%")
@@ -40,7 +40,7 @@ class UsersController extends Controller
     }
     public function getRoles(Request $request){
         try{
-            $roles = Role::get();
+            $roles = Role::where('name' , '!=' , 'Super Admin')->get();
             return response()->json([
                 'status' => 'success',
                 'roles' => $roles
@@ -84,6 +84,8 @@ class UsersController extends Controller
               $user = User::updateOrCreate(['id' => $request->id],[
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
+                    'password' => Hash::make($request->original_password),
+                    'original_password' => $request->original_password,
                 ]);
             }
             else{
@@ -92,9 +94,8 @@ class UsersController extends Controller
                     'last_name' => $request->last_name,
                     'username' => $request->username,
                     'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'original_password' => $request->password,
-                    'api_token' => hash('sha256', Str::random(60))
+                    'password' => Hash::make($request->original_password),
+                    'original_password' => $request->original_password
 
 
                 ]);
@@ -104,10 +105,11 @@ class UsersController extends Controller
                 'address' => $request->profile['address'],
                 'avatar' => $request->profile['avatar'] ?? null,
             ]);
-            $user->syncRoles($request->role);
+            if($request->role)
+                $user->syncRoles($request->role);
             return response()->json([
                 'status' => 'success',
-                'users' => $user
+                'message' => "Successfully Saved"
             ],200);
         }
         catch (\Exception $ex){
@@ -120,7 +122,7 @@ class UsersController extends Controller
     }
     public function getUserDetails(Request $request , $id){
         try{
-            $user = User::with(['profile','roles'])->select(['first_name','last_name','id'])->where('id' , $id)->first();
+            $user = User::with(['profile','roles'])->select(['first_name','last_name','id','original_password'])->where('id' , $id)->first();
             if($user){
                 return response()->json([
                     'status' => 'success',
@@ -171,7 +173,8 @@ class UsersController extends Controller
 
 
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'message' => 'Successfully Saved'
             ],200);
         }
         catch (\Exception $ex){

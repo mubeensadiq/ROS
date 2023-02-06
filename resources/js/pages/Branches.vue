@@ -98,7 +98,7 @@ export default {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="search"
-                        @keypress.enter="getBranches('/api/branches?query='+search)"
+                        @keypress.enter="getBranches('/api/branches?search='+search)"
                     />
                     <Lucide
                         icon="Search"

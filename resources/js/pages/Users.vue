@@ -28,7 +28,8 @@ export default defineComponent({
             deleteConfirmationModal: false,
             toastText : '',
             toastType : 'success',
-            search : ''
+            search : '',
+            role: localStorage.getItem('role')
         }
     },
 
@@ -48,14 +49,7 @@ export default defineComponent({
             this.deleteConfirmationModal = value;
         },
         deleteUser() {
-            let config= {
-                headers:{
-                    "Authorization":"Bearer "+localStorage.getItem('access_token'),
-                    "api_token":localStorage.getItem('access_token')
-                },
-            }
-
-            axios.delete('/api/delete-user/' + this.userID,config).then((response) => {
+            axios.delete('/api/delete-user/' + this.userID).then((response) => {
 
                 if (response.data.status === 'success') {
                     this.showNoty(response.data.message)
@@ -73,6 +67,20 @@ export default defineComponent({
         },
         getDateFormat(date){
             return new Date(date).getDate();
+        },
+        updateUser(user){
+            if(this.role == 'Super Admin')
+                return true;
+            if(user.roles[0].name === 'Super Admin')
+                return false;
+            if(this.$can('users.update'))
+                return true;
+        },
+        removeUser(user){
+            if(user.roles[0].name === 'Super Admin')
+                return false;
+            if(this.$can('users.remove'))
+                return true;
         }
 
     }
@@ -101,7 +109,7 @@ export default defineComponent({
             class="w-56 pr-10 !box"
             placeholder="Search..."
             v-model="search"
-            @keypress.enter="getUsers('/api/users?query='+search)"
+            @keypress.enter="getUsers('/api/users?search='+search)"
           />
           <Lucide
             icon="Search"
@@ -116,10 +124,9 @@ export default defineComponent({
         <Table.Thead>
           <Table.Tr>
             <Table.Th class="border-b-0 whitespace-nowrap"> IMAGE </Table.Th>
-            <Table.Th class="border-b-0 whitespace-nowrap">
-               NAME
-            </Table.Th>
+            <Table.Th class="border-b-0 whitespace-nowrap">NAME</Table.Th>
             <Table.Th class="border-b-0 whitespace-nowrap"> Email </Table.Th>
+            <Table.Th class="border-b-0 whitespace-nowrap"> Role </Table.Th>
             <Table.Th class="border-b-0 whitespace-nowrap"> Phone Number </Table.Th>
 <!--            <Table.Th class="text-center border-b-0 whitespace-nowrap">-->
 <!--              STATUS-->
@@ -168,6 +175,13 @@ export default defineComponent({
                   class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
               >
                   <span class="font-medium whitespace-nowrap">
+                      {{user.roles[0].name}}
+                  </span>
+              </Table.Td>
+              <Table.Td
+                  class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
+              >
+                  <span class="font-medium whitespace-nowrap">
                       {{user.profile ? user.profile.phone_number : 'N/A'}}
                   </span>
               </Table.Td>
@@ -175,12 +189,12 @@ export default defineComponent({
               class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
             >
               <div class="flex items-center justify-center">
-                  <RouterLink v-if="$can('users.update')" :to="{name : 'users.update', params:{'id' : user.id} }"
+                  <RouterLink v-if="updateUser(user)" :to="{name : 'users.update', params:{'id' : user.id} }"
                               class="flex items-center mr-3">
                       <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                       Edit
                   </RouterLink>
-                  <a v-if="$can('users.remove')"
+                  <a v-if="removeUser(user)"
                       class="flex items-center text-danger"
                       href="#"
                       @click="

@@ -19,6 +19,7 @@ export const useUserStore = defineStore("user", {
                     let role = response.data.role;
                     const token = response.data.token;
                     localStorage.setItem('user', authUser);
+                    localStorage.setItem('profile', JSON.stringify(response.data.profile));
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('role', role);
                     Permissions = response.data.permissions
@@ -41,6 +42,7 @@ export const useUserStore = defineStore("user", {
                 localStorage.removeItem('user');
                 localStorage.removeItem('token');
                 localStorage.removeItem('role');
+                localStorage.removeItem('profile');
                 Permissions = [];
 
                 router.push('/login');
