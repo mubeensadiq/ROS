@@ -50,15 +50,14 @@ export default {
                 this.getUserDetails(this.$route.params.id);
             });
         }
-        else{
-        }
     },
     watch: {},
     methods: {
         getRoles() {
             axios.get('/api/roles').then((response) => {
                 this.roles = response.data.roles;
-                this.user.role = this.roles[0].id.toString();
+                if(!this.update)
+                    this.user.role = this.roles[0].id.toString();
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
