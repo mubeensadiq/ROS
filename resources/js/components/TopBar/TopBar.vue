@@ -22,7 +22,8 @@ import {defineComponent} from "vue";
 export default defineComponent({
     data() {
         return {
-            user : useUserStore().getUser()
+            user : JSON.parse(localStorage.getItem('user')),
+            profile : JSON.parse(localStorage.getItem('profile'))
         };
     },
     methods: {
@@ -74,7 +75,7 @@ export default defineComponent({
       >
         <img
           alt="Midone Tailwind HTML Admin Template"
-          :src="user.profile && user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/profile-2.jpg'"
+          :src="profile && profile.avatar !== null ? '/images/avatar/'+profile.avatar : '/images/avatar/default.png'"
         />
       </Menu.Button>
       <Menu.Items class="w-56 mt-px text-white bg-primary">

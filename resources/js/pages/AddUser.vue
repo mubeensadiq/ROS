@@ -24,7 +24,7 @@ export default {
                 last_name: '',
                 username: '',
                 email: '',
-                password: '',
+                original_password: '',
                 role: '',
                 profile: {
                     avatar: null,
@@ -33,6 +33,8 @@ export default {
                 },
 
             },
+            role : localStorage.getItem('role'),
+            userRole : null,
             roles: [],
             update:false,
             toastText : '',
@@ -66,10 +68,8 @@ export default {
                 if (response.data.user !== undefined){
                     const res = response.data.user;
                     this.user = response.data.user;
-                    if(res.roles.length > 0)
-                        this.user.role = res.roles[0].id.toString();
-                    else
-                        this.user.role = this.roles[0].id.toString();
+                    this.userRole = res.roles[0];
+                    this.user.role = res.roles[0].id.toString();
                 }
 
             }).catch((error) => {
@@ -172,7 +172,7 @@ export default {
                 </div>
             </div>
             <!-- END: Uplaod Product -->
-            <div class="p-5 mt-5 intro-y box">
+            <div class="p-5 mt-5 intro-y box" v-if="userRole && userRole.name !== 'Super Admin' ">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
@@ -337,8 +337,8 @@ export default {
                                 />
                             </div>
                         </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0" v-if="!update"
+                        <FormInline v-if="role === 'Super Admin'"
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
@@ -355,9 +355,10 @@ export default {
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormInput
                                     id="password"
-                                    type="text"
+                                    type="password"
                                     placeholder="Password"
-                                    v-model="user.password"
+                                    v-model="user.original_password"
+                                    :value="user.original_password"
                                 />
                             </div>
                         </FormInline>
@@ -368,10 +369,6 @@ export default {
                                 <div class="text-left">
                                     <div class="flex items-center">
                                         <div class="font-medium">Address</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                        </div>
                                     </div>
                                 </div>
                             </FormLabel>

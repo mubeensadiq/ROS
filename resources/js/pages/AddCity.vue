@@ -101,7 +101,7 @@ export default {
                                 <FormInput
                                     id="area"
                                     type="text"
-                                    placeholder="Area name"
+                                    placeholder="City name"
                                     v-model="city.city"
                                     :value="city.city"
                                 />

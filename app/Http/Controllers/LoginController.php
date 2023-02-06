@@ -37,7 +37,7 @@ class LoginController extends Controller
                 'status' => 'success',
                 'user' => $user,
                 'role' => $user->roles[0]->name ?? '',
-                'profile' => Auth::user()->profile(),
+                'profile' => $user->profile,
                 'token' => $token,
                 'permissions' => $permissions ?? []
             ]);
