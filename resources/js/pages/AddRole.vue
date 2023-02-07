@@ -117,7 +117,7 @@ export default {
                                 <FormInput
                                     id="area"
                                     type="text"
-                                    placeholder="Area name"
+                                    placeholder="Role name"
                                     v-model="role.name"
                                     :value="role.name"
                                 />

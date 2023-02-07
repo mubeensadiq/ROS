@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Deal;
+use App\Models\DealProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -13,6 +14,7 @@ class DealsController extends Controller
                 $deals = Deal::orderBy('id','desc');
                 if(isset($request->status))
                     $deals = $deals->where('status' , $request->status);
+
                 $deals = $deals->get();
             }
             else{
@@ -35,7 +37,8 @@ class DealsController extends Controller
             Log::info($ex);
             return response()->json([
                 'status' => 'error',
-                'deals' => []
+                'deals' => [],
+                'message' => $ex->getMessage()
             ],500);
         }
     }
@@ -67,14 +70,27 @@ class DealsController extends Controller
             $request->validate([
                 'name' => 'required',
                 'description' => 'required',
-                'status' => 'required',
+                'price' => 'required',
+                'image' => 'required',
+                'dealProducts.*.category_id' => 'required',
+                'dealProducts.*.quantity' => 'required',
             ]);
-            Deal::updateOrCreate(['id' => $request->id],[
+            $deal = Deal::updateOrCreate(['id' => $request->id],[
                 'name' => $request->name,
                 'description' => $request->description,
                 'status' => $request->status,
                 'image' => $request->image,
+                'price' => $request->price,
             ]);
+            $deal->dealProducts()->delete();
+            foreach ($request->dealProducts as $item){
+                $deal->dealProducts()->create([
+                    'category_id' => $item['category_id'],
+                    'quantity' => $item['quantity']
+                ]);
+            }
+
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved'

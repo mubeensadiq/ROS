@@ -15,6 +15,7 @@ use App\Http\Controllers\DealsController;
 |
 */
 Route::get('/categories', [CategoriesController::class , 'index']);
+Route::get('/deals', [DealsController::class , 'index']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
 Route::get('/deal-products', [DealsController::class , 'products']);
 Route::get('/{any}',function () {

@@ -171,7 +171,7 @@ export default {
                 </div>
             </div>
             <!-- END: Uplaod Product -->
-            <div class="p-5 mt-5 intro-y box" v-if="userRole && userRole.name !== 'Super Admin' ">
+            <div class="p-5 mt-5 intro-y box">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
@@ -423,25 +423,6 @@ export default {
                 <Button variant="primary" type="button" class="w-full py-3 md:w-52" @click="saveUser()">
                     {{ update ? 'Update' : 'Save' }}
                 </Button>
-            </div>
-        </div>
-        <div class="hidden col-span-2 intro-y 2xl:block">
-            <div class="sticky top-0 pt-10">
-                <ul
-                    class="text-slate-500 relative before:content-[''] before:w-[2px] before:bg-slate-200 before:dark:bg-darkmode-600 before:h-full before:absolute before:left-0 before:z-[-1]"
-                >
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">User Information</a>
-                    </li>
-                    <li
-                        class="pl-5 mb-4 border-l-2 border-transparent dark:border-transparent"
-                    >
-                        <a href="">Rider Information</a>
-                    </li>
-                </ul>
-
             </div>
         </div>
     </div>

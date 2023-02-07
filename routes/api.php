@@ -56,7 +56,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/save-role', [UsersController::class , 'saveRole']);
     Route::get('/permissions', [UsersController::class , 'getPermissions']);
     Route::get('/get-role-details/{id}', [UsersController::class , 'getRoleDetails']);
-    Route::get('/delete-role', [UsersController::class , 'deleteRole']);
+    Route::delete('/delete-role/{id}', [UsersController::class , 'deleteRole']);
     /************** END ROLE ROUTES ************/
 
     /************** CITIES ROUTES ************/

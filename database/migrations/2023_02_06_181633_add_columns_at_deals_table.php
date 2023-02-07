@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::table('deals', function (Blueprint $table) {
             $table->string('image')->after('price');
+            $table->boolean('status')->after('image');
         });
     }
 
@@ -26,7 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('deals', function (Blueprint $table) {
-            $table->dropColumn('image');
+            $table->dropColumn(['image','status']);
         });
     }
 };
