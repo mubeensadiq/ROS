@@ -25,9 +25,9 @@ import twitter from "../../../public/images/assets/twitter.png";
 import deleteIcon from "../../../public/images/assets/delete.png";
 import shoppingCartIcon from "../../../public/images/assets/shopping-cart.png";
 
+import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
-import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
 import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 
 
