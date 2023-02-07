@@ -308,7 +308,7 @@
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app.d3c71fa9.css"
+      "assets/app.3e64fbbd.css"
     ],
     "assets": [
       "assets/logo.9a88cec5.svg",
@@ -390,7 +390,7 @@
     ]
   },
   "resources/js/app.css": {
-    "file": "assets/app.d3c71fa9.css",
+    "file": "assets/app.3e64fbbd.css",
     "src": "resources/js/app.css"
   },
   "public/images/assets/mdeal-4.png": {

@@ -834,34 +834,34 @@ footer p {
 }
 
 #selectLocationModal .select-region .btn-group label {
-    color: #FFA52D;
-    border-color: #FFA52D;
-    font-weight: 600;
+    color: #FFA52D !important;
+    border-color: #FFA52D !important;
+    font-weight: 600 !important;
 }
-#selectLocationModal .select-region .btn-check:checked+.btn, #selectLocationModal .select-region .btn.active, #selectLocationModal .select-region .btn.show, #selectLocationModal .select-region .btn:first-child:active, #selectLocationModal .select-region :not(.btn-check)+.btn:active {
-    background-color: #FFA52D;
-    color: #fff;
-}
-
-#selectLocationModal .select2-container .select2-selection--single {
-    height: 40px;
-    border: 1px solid #FFA52D;
+#selectLocationModal .select-region >>> .btn-check:checked+.btn, #selectLocationModal .select-region >>> .btn.active, #selectLocationModal .select-region >>> .btn.show, #selectLocationModal .select-region >>> .btn:first-child:active, #selectLocationModal .select-region >>> :not(.btn-check)+.btn:active {
+    background-color: #FFA52D !important;
+    color: #fff !important;
 }
 
-#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 40px;
-    color: #FFA52D;
+#selectLocationModal >>> .select2-container .select2-selection--single {
+    height: 40px !important;
+    border: 1px solid #FFA52D !important;
 }
 
-#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__clear {
-    height: 40px;
-    color: #FFA52D;
+#selectLocationModal >>> .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px !important;
+    color: #FFA52D !important;
 }
 
-#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__arrow {
-    top: 8px;
+#selectLocationModal >>> .select2-container--default .select2-selection--single .select2-selection__clear {
+    height: 40px !important;
+    color: #FFA52D !important;
 }
 
-#selectLocationModal .select2-container--default .select2-selection--single .select2-selection__arrow b {
-    border-color: #FFA52D transparent transparent transparent;
+#selectLocationModal >>> .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 8px !important;
+}
+
+#selectLocationModal >>> .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #FFA52D transparent transparent transparent !important;
 }
