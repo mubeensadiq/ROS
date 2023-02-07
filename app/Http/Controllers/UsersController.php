@@ -72,7 +72,7 @@ class UsersController extends Controller
     }
     public function saveUser(Request $request){
         try{
-            $validator = $request->validate([
+            $request->validate([
                 'first_name' => 'required',
                 'last_name' => 'required',
                 'username' => 'sometimes|required|unique:users',
@@ -162,16 +162,15 @@ class UsersController extends Controller
 
     public function saveRole(Request $request){
         try{
-            $validator = $request->validate([
+            $request->validate([
                 'name' => 'required'
             ]);
             $role = Role::updateOrCreate(['id' => $request->id],[
-                'name' => $request->name
+                'name' => $request->name,
+                'guard_name' => 'web'
             ]);
 
             $role->syncPermissions($request->permissions);
-
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved'
@@ -210,7 +209,7 @@ class UsersController extends Controller
     }
     public function deleteRole($id){
         try{
-            User::where('id' , $id)->delete();
+            Role::where('id' , $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Deleted'

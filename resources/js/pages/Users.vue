@@ -10,11 +10,14 @@ import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
 import Notification from "./Notification.vue";
-
+import dayjs from "dayjs";
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
 
-
+const dateFormat = ((date) => {
+   return dayjs(date)
+        .format("DD MMMM YYYY");
+})
 
 </script>
 <script lang="ts">
@@ -64,9 +67,6 @@ export default defineComponent({
             this.toastText = message;
             this.toastType = type;
             document.getElementById("toastBtn").click();
-        },
-        getDateFormat(date){
-            return new Date(date).getDate();
         },
         updateUser(user){
             if(this.role == 'Super Admin')
@@ -152,7 +152,7 @@ export default defineComponent({
                     alt="User Profile Image"
                     class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
                     :src="user.profile && user.profile.avatar !== null ? '/images/avatar/'+user.profile.avatar : '/images/avatar/default.png'"
-                    :content="'Added on ' + getDateFormat(user.created_at)"
+                    :content="'Uploaded at ' + dateFormat(user.created_at)"
                   />
                 </div>
               </div>

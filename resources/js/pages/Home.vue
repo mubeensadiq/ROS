@@ -50,15 +50,16 @@ import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
         }
     });
 
-    
+
 
 import _ from "lodash";
 import { ref, reactive , onMounted } from "vue";
 
 import axios from "axios";
-const data = reactive({ categories: [], dealProducts:[], categoryProducts: [] })
+const data = reactive({ categories: [],deals: [], dealProducts:[], categoryProducts: [] })
 onMounted(() => {
     getCategories();
+    getDeals();
    // getDealProducts();
     getCategoryProducts();
 
@@ -89,6 +90,13 @@ onMounted(() => {
 const getCategories = (() => {
     axios.get('/categories?get=all&status=1').then((response)=>{
         data.categories = response.data.categories;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
+const getDeals = (() => {
+    axios.get('/deals?get=all&status=1').then((response)=>{
+        data.deals = response.data.deals;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
@@ -216,6 +224,7 @@ const getCategoryProducts = (() => {
                     <img :src="back" alt="">
                 </div>
                 <ul class="list-group">
+                    <li v-for="(deal,index) in data.deals" class="" ><a :href="'#'+deal.id">{{deal.name}}</a></li>
                     <li v-for="(category,index) in data.categories" class="" ><a :href="'#'+category.id">{{category.name}}</a></li>
                 </ul>
                 <div class="ctg-forward">
@@ -451,7 +460,7 @@ const getCategoryProducts = (() => {
         </footer>
 
 
-		
+
 		<!-- Region Modal -->
 		<div class="modal fade" id="selectLocationModal" aria-labelledby="selectLocationModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
@@ -467,7 +476,7 @@ const getCategoryProducts = (() => {
 									<div class="btn-group text-capitalize" role="group" aria-label="Basic radio toggle button group">
 										<input type="radio" class="btn-check" name="regionRadio" id="deleveryRadio" autocomplete="off" checked>
 										<label class="btn btn-outline-primary" for="deleveryRadio">Delivery</label>
-									  
+
 										<input type="radio" class="btn-check" name="regionRadio" id="pickupRadio" autocomplete="off">
 										<label class="btn btn-outline-primary" for="pickupRadio">Pickup</label>
 									</div>
@@ -505,7 +514,7 @@ const getCategoryProducts = (() => {
 				</div>
 			</div>
 		</div>
-		
+
 
 		<!-- shoppingCartModal -->
 		<div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
@@ -544,7 +553,7 @@ const getCategoryProducts = (() => {
 														<span>With cheese</span>
 														<span>Bacon (Rs. 10.00)</span>
 													</div>
-													
+
 												</div>
 											</th>
 											<td><p class="item-value mb-0">Rs. 559</p></td>
@@ -566,7 +575,7 @@ const getCategoryProducts = (() => {
 														<span>With cheese</span>
 														<span>Bacon (Rs. 10.00)</span>
 													</div>
-													
+
 												</div>
 											</th>
 											<td><p class="item-value mb-0">Rs. 559</p></td>
@@ -588,7 +597,7 @@ const getCategoryProducts = (() => {
 														<span>With cheese</span>
 														<span>Bacon (Rs. 10.00)</span>
 													</div>
-													
+
 												</div>
 											</th>
 											<td><p class="item-value mb-0">Rs. 559</p></td>

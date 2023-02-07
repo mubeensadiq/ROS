@@ -49,7 +49,7 @@ const routes = [
         component: SideMenu,
         children: [
         {
-            path: "",
+            path: "home",
             name: "dashboard",
             component: Dashboard,
         },
@@ -154,6 +154,11 @@ const routes = [
             component: AddDeal,
         },
         {
+            path: "deals/update/:id",
+            name: "deals.update",
+            component: AddDeal,
+        },
+        {
             path: "branches",
             name: "branches",
             component: Branches,
@@ -219,19 +224,29 @@ const router = createRouter({
 
 router.beforeEach(async (to,from ,next) => {
     // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/login' , '/logout','/','/confirm','/checkout'];
+    const publicPages = ['/login' ,'/','/confirm','/checkout'];
     const authRequired = !publicPages.includes(to.path);
     const auth = useUserStore();
-    if (authRequired && !auth.user) {
-        auth.returnUrl = to.fullPath;
-        return '/login';
-    }
-    if( Permissions.indexOf(to.name) !== -1 || publicPages.includes(to.path)){
-        next();
+    if(authRequired){
+        if (!auth.user) {
+            auth.returnUrl = to.fullPath;
+            next({ name: 'login' });
+        }
+        if( Permissions.indexOf(to.name) !== -1 || publicPages.includes(to.path)){
+            next();
+        }
+        else{
+            next({ name: Permissions[0] });
+        }
     }
     else{
-        next({ name: Permissions[0] });
+        if(auth.user && to.name === 'login'){
+            next({ name: 'dashboard' });
+        }
+        next();
     }
+
+
 });
 
 export default router;
