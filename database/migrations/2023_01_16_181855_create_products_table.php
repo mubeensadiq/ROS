@@ -15,16 +15,10 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')
-                ->constrained('categories')
-                ->onDelete('cascade');
             $table->string('name');
             $table->longText('description');
             $table->double('price');
-            $table->integer('stock')->default(1);
-            $table->integer('min_quantity')->default(1);
-            $table->integer('max_quantity')->nullable();
-            $table->string('prep_time')->nullable();
+            $table->string('type')->default('Single');
             $table->string('image')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();

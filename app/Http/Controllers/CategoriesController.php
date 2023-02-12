@@ -110,9 +110,9 @@ class CategoriesController extends Controller
 
     public function products(){
         try{
-           $products =  Category::with('products')->whereHas('products', function ($q){
+           $products =  Category::with(['products.dealProducts','products.addons'])->whereHas('products', function ($q){
                 $q->where('status',1);
-                $q->orderBy('id','desc');
+                $q->orderBy('products.id','desc');
             })->where('status' , 1)->get();
             return response()->json([
                 'status' => 'success',

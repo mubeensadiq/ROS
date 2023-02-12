@@ -90,9 +90,8 @@ const showNoty = ((message,type = 'success') => {
                     <Table.Tr>
                         <Table.Th class="border-b-0 whitespace-nowrap"> IMAGE </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> NAME </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> Category </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> PRICE </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> STOCK </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap"> Type </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             ACTIONS
                         </Table.Th>
@@ -129,13 +128,6 @@ const showNoty = ((message,type = 'success') => {
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{ product.category.name }}
-                            </span>
-                        </Table.Td>
-                        <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <span href="" class="font-medium whitespace-nowrap">
                                 {{ product.price }}
                             </span>
                         </Table.Td>
@@ -143,7 +135,7 @@ const showNoty = ((message,type = 'success') => {
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{product.stock}}
+                                {{product.type === 'Single' ? 'Single' : 'Deal'}}
                             </span>
                         </Table.Td>
 

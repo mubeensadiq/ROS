@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import logoUrl from "../assets/images/logo.svg";
-import illustrationUrl from "../assets/images/illustration.svg";
+import logoUrl from "../../../public/images/assets/logo.png";
+import illustrationUrl from "../../../public/images/assets/logo.png";
 import { FormInput, FormCheck } from "../base-components/Form" ;
 import Button from "../base-components/Button";
 import Notification from "./Notification.vue";
@@ -54,7 +54,7 @@ export default defineComponent({
               class="w-6"
               :src="logoUrl"
             />
-            <span class="ml-3 text-lg text-white"> Day Night Pizza </span>
+            <span class="ml-3 text-lg text-white"> Fast Burger </span>
           </a>
           <div class="my-auto">
             <img
