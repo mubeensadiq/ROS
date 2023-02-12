@@ -561,7 +561,7 @@ label , h2, h3,h4,h5,h6,p,span {
 }
 
 .hr {
-    border-color: #D0D0D0 !important;
+    border-color: #155e75!important
 }
 
 .text-right {
@@ -640,10 +640,10 @@ footer p {
     cursor: pointer;
 }
 
-.shopping-cart img { 
+.shopping-cart img {
     position: relative;
     right: 5px;
-    top: 5px; 
+    top: 5px;
 }
 .shopping-cart span {
     position: absolute;
@@ -699,7 +699,7 @@ footer p {
     text-align: center;
 }
 
-#shoppingCartModal .modal-title { 
+#shoppingCartModal .modal-title {
     font-weight: 600;
     font-size: 60px;
 }
@@ -730,7 +730,7 @@ footer p {
     color: #00CF64;
 }
 
-#shoppingCartModal .cart-total h6 { 
+#shoppingCartModal .cart-total h6 {
     font-weight: 700;
     font-size: 26px;
     color: #000;

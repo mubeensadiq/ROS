@@ -8,7 +8,7 @@ import TomSelect from "tom-select";
 import _ from "lodash";
 
 const setValue = (el: TomSelectElement, props: TomSelectProps) => {
-  if (props.modelValue.length) {
+  if (props.modelValue && props.modelValue.length) {
     if (Array.isArray(props.modelValue)) {
       for (const value of props.modelValue) {
         const selectedOption = Array.from(el).find(

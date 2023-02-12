@@ -53,14 +53,37 @@ import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 
 
 import _ from "lodash";
-import { ref, reactive , onMounted } from "vue";
-
+import {ref, reactive, onMounted, watch} from "vue";
+import TomSelect from "../base-components/TomSelect";
+import {
+    FormInput,
+    FormInline,
+    FormSelect,
+    FormLabel,
+    FormHelp,
+    FormCheck,
+    InputGroup,
+    FormSwitch,
+} from "../base-components/Form";
 import axios from "axios";
-const data = reactive({ categories: [],deals: [], dealProducts:[], categoryProducts: [] })
+import Tippy from "../base-components/Tippy";
+const data = reactive({
+    cities: [],
+    areas: [],
+    categories: [],
+    deals: [],
+    dealProducts:[],
+    categoryProducts: [],
+    selectedProduct : null
+})
+const city = ref('');
+const area = ref('');
+watch(city, async (newCity) => {
+    getAreas();
+})
 onMounted(() => {
     getCategories();
-    getDeals();
-   // getDealProducts();
+    getCities();
     getCategoryProducts();
 
     $(window).on('load', function() {
@@ -94,16 +117,16 @@ const getCategories = (() => {
         console.log(error.response.data.message)
     });
 });
-const getDeals = (() => {
-    axios.get('/deals?get=all&status=1').then((response)=>{
-        data.deals = response.data.deals;
+const getCities = (() => {
+    axios.get('/cities-has-areas?get=all').then((response)=>{
+        data.cities = response.data.cities;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
 });
-const getDealProducts = (() => {
-    axios.get('/deal-products').then((response)=>{
-        data.dealProducts = response.data.products;
+const getAreas = (() =>{
+    axios.get('/areas-by-city' , {params : {'city_id' : city.value}}).then((response)=>{
+        data.areas = response.data.areas;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
@@ -114,6 +137,40 @@ const getCategoryProducts = (() => {
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
+});
+const selectProduct = ((categoryIndex, productIndex) => {
+    data.selectedProduct = data.categoryProducts[categoryIndex].products[productIndex];
+    $('#productModal').modal('toggle');
+});
+const getCategoryName = ((deal) => {
+    return data.categories.find((category) => {
+        if(category.id === deal.pivot.category_id)
+            return category.name;
+    }).name
+});
+const getCategoryDealProducts = ((deal) => {
+    let categoryProducts = data.categoryProducts.find((category) => {
+        if(category.id === deal.pivot.category_id)
+            return category.products;
+    })
+    return categoryProducts.products;
+});
+const getNumber = ((i) => {
+    let j = i % 10,
+        k = i % 100;
+    if (j == 1 && k != 11) {
+        return i + "st";
+    }
+    if (j == 2 && k != 12) {
+        return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+        return i + "rd";
+    }
+    return i + "th";
+});
+const getUnqiueNumber = (() => {
+    return Math.random();
 });
 </script>
 
@@ -224,7 +281,6 @@ const getCategoryProducts = (() => {
                     <img :src="back" alt="">
                 </div>
                 <ul class="list-group">
-                    <li v-for="(deal,index) in data.deals" class="" ><a :href="'#'+deal.id">{{deal.name}}</a></li>
                     <li v-for="(category,index) in data.categories" class="" ><a :href="'#'+category.id">{{category.name}}</a></li>
                 </ul>
                 <div class="ctg-forward">
@@ -376,19 +432,19 @@ const getCategoryProducts = (() => {
         </section>
 
 
-        <section v-for="(category , index) in data.categoryProducts" class="base-section gourmet-fries" :id="category.id">
+        <section v-for="(category , categoryIndex) in data.categoryProducts" class="base-section gourmet-fries" :id="category.id">
             <div class="container-fluid px-container">
                 <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
                 <div class="row">
                     <div v-for="(product , index) in category.products" class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
-                        <div class="card deal-card">
+                        <div class="card deal-card" @click="selectProduct(categoryIndex , index)" >
                             <div class="card-image"><img class="card-img-top" :src="'/images/products/'+product.image" alt="Card image cap"></div>
                             <div class="card-body">
                                 <h5 class="card-title">{{product.name}}</h5>
                                 <p class="card-text">{{product.description}} </p>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <label class="price-label">Rs. {{product.price}}</label>
-                                    <img data-bs-toggle="modal" data-bs-target="#productModal" :src="cartIcon" alt="">
+                                    <img :src="cartIcon" alt="">
                                 </div>
                             </div>
                             <div class="discount-tag hidden">
@@ -484,29 +540,53 @@ const getCategoryProducts = (() => {
 
 
 								<div class="mb-3 select-city">
-									<select class="selectable-region py-3 region-city form-control form-select w-100" name="city" id="regionCity">
-										<option value="karachi">Karachi</option>
-										<option value="lahore">Lahore</option>
-									</select>
+                                    <TomSelect
+                                        v-model="city" :value="city"
+                                        :options="{
+                                        placeholder: 'Select City',
+                                      }"
+                                        class="w-full"
+                                    >
+                                        <option
+                                            v-for="(city,index) in data.cities" :key="index" :value="city.id"
+                                        >
+                                            {{ city.city }}
+                                        </option>
+                                    </TomSelect>
 								</div>
 
 
-								<div class="select-area">
-									<select class="selectable-region py-3 region-area form-control form-select w-100" name="area" id="regionArea">
-										<option value="gulshan">Gulshan</option>
-										<option value="shahrahfaisal">Shahrah e Faisal</option>
-										<option value="karimabad">Karimabad</option>
-										<option value="dak-khana">Dak Khana</option>
-										<option value="johar">Gulistan e Johar</option>
-									</select>
+								<div class="mb-3 select-area">
+                                    <TomSelect
+                                        v-model="area" :value="area"
+                                        :options="{
+                                        placeholder: 'Select Area',
+                                      }"
+                                        class="w-full"
+                                    >
+                                        <option
+                                            v-for="(area,index) in data.areas" :key="index" :value="area.id"
+                                        >
+                                            {{ area.area }}
+                                        </option>
+                                    </TomSelect>
 								</div>
 
 
 								<div class="select-branch">
-									<select class="selectable-region py-3 region-branch form-control form-select w-100" name="branch" id="regionBranch">
-										<option value="pechs">PECHS</option>
-										<option value="smchs">Sindhi Muslim (SMCHS)</option>
-									</select>
+                                    <TomSelect
+                                        v-model="area" :value="area"
+                                        :options="{
+                                        placeholder: 'Select Branch',
+                                      }"
+                                        class="w-full"
+                                    >
+                                        <option
+                                            v-for="(area,index) in data.areas" :key="index" :value="area.id"
+                                        >
+                                            {{ area.area }}
+                                        </option>
+                                    </TomSelect>
 								</div>
 							</div>
 						</div>
@@ -549,8 +629,8 @@ const getCategoryProducts = (() => {
 											<th>
 												<div class="order-item d-flex justify-content-between align-items-center w-100">
 													<div class="item-name px-3">
-														<h6 class="text-capitalize">Italian Burger</h6>
-														<span>With cheese</span>
+														<h6 class="text-capitalize">asdasdasd</h6>
+														<span>asdasdsad</span>
 														<span>Bacon (Rs. 10.00)</span>
 													</div>
 
@@ -561,50 +641,7 @@ const getCategoryProducts = (() => {
 											<td><p class="item-value mb-0">Rs. 559</p></td>
 											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
 										</tr>
-										<tr>
-											<th style="width:10%;" scope="row">
-												<div class="order-image d-flex">
-													<img class="img" :src="deal1" alt="">
-													<hr class="order-image-separator">
-												</div>
-											</th>
-											<th>
-												<div class="order-item d-flex justify-content-between align-items-center w-100">
-													<div class="item-name px-3">
-														<h6 class="text-capitalize">Italian Burger</h6>
-														<span>With cheese</span>
-														<span>Bacon (Rs. 10.00)</span>
-													</div>
 
-												</div>
-											</th>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
-										</tr>
-										<tr>
-											<th style="width:10%;" scope="row">
-												<div class="order-image d-flex">
-													<img class="img" :src="deal1" alt="">
-													<hr class="order-image-separator">
-												</div>
-											</th>
-											<th>
-												<div class="order-item d-flex justify-content-between align-items-center w-100">
-													<div class="item-name px-3">
-														<h6 class="text-capitalize">Italian Burger</h6>
-														<span>With cheese</span>
-														<span>Bacon (Rs. 10.00)</span>
-													</div>
-
-												</div>
-											</th>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
-										</tr>
 									</tbody>
 								</table>
 
@@ -637,94 +674,95 @@ const getCategoryProducts = (() => {
 
 		<!-- Product Modal -->
 		<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content p-3">
 					<div class="modal-header border-0 d-flex align-items-start">
 						<button type="button" class="btn-close border rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body cartModal">
 						<div class="row">
-							<div class="productSlideshow position-relative col-md-6 col-sm-12">
-								<div id="carouselExampleIndicators" class="mb-0 carousel slide" data-bs-ride="carousel">
-									<div class="carousel-inner">
-										<div class="carousel-item active">
-											<img :src="deal1" class="img" alt="...">
-										</div>
-										<div class="carousel-item">
-											<img :src="deal2" class="img" alt="...">
-										</div>
-										<div class="carousel-item">
-											<img :src="deal3" class="img" alt="...">
-										</div>
-									</div>
-									<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-										<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-										<span class="visually-hidden">Previous</span>
-									</button>
-									<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-										<span class="carousel-control-next-icon" aria-hidden="true"></span>
-										<span class="visually-hidden">Next</span>
-									</button>
-								</div>
-								<div class="carousel-indicators">
-									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"><img :src="deal1" class="d-block" alt="..."></button>
-									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"><img :src="deal2" class="d-block" alt="..."></button>
-									<button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"><img :src="deal3" class="d-block" alt="..."></button>
-								</div>
-							</div>
-							<div class="productSummary col-md-6 col-sm-12">
-								<div class="product-n-review">
-									<h3>ItalianBurger</h3>
-									<div class="reviews star-gold">
-										<i class="bi bi-star-fill"></i>
-										<i class="bi bi-star-fill"></i>
-										<i class="bi bi-star-fill"></i>
-										<i class="bi bi-star-half"></i>
-										<i class="bi bi-star"></i>
-									</div>
-									<p class="mb-3">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eius mod tempor incididunt ut labore et dolore magna aliqua.</p>
-									<p class="mb-2">Rs. 559</p>
-								</div>
-								<hr class="hr">
-								<div class="preferences mb-3">
-									<h6>Choose Your Preference</h6>
-									<label for=""><input type="radio" name="" id="" checked> with cheese</label>
-								</div>
-								<div class="drinks mb-3">
-									<h6>Select your Drink</h6>
-									<label for=""><input type="radio" name="" id="" checked> Pepsi</label>
-									<label for=""><input type="radio" name="" id="" > 7up</label>
-									<label for=""><input type="radio" name="" id="" > Miranda</label>
-									<label for=""><input type="radio" name="" id="" > Dew</label>
-									<label for=""><input type="radio" name="" id="" > Diet 7up</label>
-								</div>
-								<hr class="hr">
-								<div class="toppings mb-3">
-									<h6>More Topping</h6>
-									<label for=""><input type="checkbox" name="" id="" checked> Cheese (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> American Sausage (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> Bacon (Rs. 10.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> Chicken (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> Pineapple (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> German (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> Ham (Rs. 20.00)</label>
-									<label for=""><input type="checkbox" name="" id="" checked> Black olives (Rs. 20.00)</label>
-								</div>
-								<div class="instructions mb-3">
-									<h6>Special Instructions</h6>
-									<textarea class="form-control w-100" name="" id="" cols="30" rows="5"></textarea>
-								</div>
-								<hr class="hr">
-								<div class="d-flex justify-content-between">
-									<label for="">1 Italian Burger</label>
-									<span>Rs. 550</span>
-								</div>
-								<hr class="hr">
-								<div class="total-values">
-									<label for="">Total</label>
-									<span>Rs. 550</span>
-								</div>
+							<div class="productSummary col-md-12 col-sm-12" v-if="data.selectedProduct">
 
+								<div class="product-n-review">
+									<h4>{{data.selectedProduct.name}}</h4>
+                                    <p class="mb-2 bold">Rs. {{data.selectedProduct.price}}</p>
+                                    <p class="mb-3">{{data.selectedProduct.description}}</p>
+								</div>
+                                <div class="text-center">
+                                    <Tippy
+                                        as="img"
+                                        alt="product Image"
+                                        class="shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                        :src="data.selectedProduct.image !== null ? '/images/products/'+data.selectedProduct.image : '/images/categories/profile-2.jpg'"
+                                        :content="data.selectedProduct.name"
+                                    />
+                                </div>
+								<hr class="hr">
+                                <template v-if="data.selectedProduct.type === 'Multiple'" v-for="(deal,dealIndex) in data.selectedProduct.deal_products">
+                                    <div class="preferences mb-3" v-if="deal.pivot.quantity > 1" v-for="(n , index) in  deal.pivot.quantity">
+                                        <h6>Select Your {{getNumber(n)}} Product Of {{getCategoryName(deal)}}</h6>
+                                        <template v-for="(cat_product,index) in getCategoryDealProducts(deal)">
+                                            <div class="flex-1 w-full mt-3 xl:mt-0 mb-3" v-if="cat_product.type === 'Single'">
+                                                <div class="flex flex-col sm:flex-row">
+                                                    <FormCheck class="mr-4">
+                                                        <FormCheck.Input
+                                                            :id="'deal-product-m1-'+n"
+                                                            type="radio"
+                                                            :name="'deal-product-m1-'+n"
+                                                        />
+                                                        <FormCheck.Label :for="'deal-product-m1-'+n">
+                                                            <div
+                                                                class="w-56 mt-1 text-xs leading-relaxed text-slate-500"
+                                                            >{{cat_product.name}}</div>
+                                                        </FormCheck.Label>
+                                                    </FormCheck>
+                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                        <Tippy
+                                                            as="img"
+                                                            alt="product Image"
+                                                            class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                                            :src="cat_product.image !== null ? '/images/products/'+cat_product.image : '/images/categories/profile-2.jpg'"
+                                                            :content="cat_product.name"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <hr class="hr">
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <div class="preferences mb-3" v-else>
+                                        <h6>Select Your Product Of {{getCategoryName(deal)}}</h6>
+                                        <template v-for="(cat_product,cat_index) in getCategoryDealProducts(deal)">
+                                            <div class="flex-1 w-full mt-3 xl:mt-0"  v-if="cat_product.type === 'Single'">
+                                                <div class="flex flex-col sm:flex-row">
+                                                    <FormCheck class="mr-4">
+                                                        <FormCheck.Input
+                                                            :id="'deal-product-q1-'+dealIndex"
+                                                            type="radio"
+                                                            :name="'deal-product-q1-'+dealIndex"
+                                                        />
+                                                        <FormCheck.Label :for="'deal-product-q1-'+dealIndex">
+                                                            <div
+                                                                class="w-56 mt-1 text-xs leading-relaxed text-slate-500"
+                                                            >{{cat_product.name}}</div>
+                                                        </FormCheck.Label>
+                                                    </FormCheck>
+                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                        <Tippy
+                                                            as="img"
+                                                            alt="product Image"
+                                                            class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                                            :src="cat_product.image !== null ? '/images/products/'+cat_product.image : '/images/categories/profile-2.jpg'"
+                                                            :content="cat_product.name"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <hr class="hr">
+                                            </div>
+
+                                        </template>
+                                    </div>
+                                </template>
 								<div class="range-add-button">
 									<input type="number" name="1" id="" value="1">
 									<button class="btn btn-yellow float-end">Add to cart</button>

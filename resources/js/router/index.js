@@ -16,8 +16,6 @@ import AddBranch from "../pages/AddBranch.vue";
 import UpdateBranch from "../pages/AddBranch.vue";
 import Categories from "../pages/Categories.vue";
 import AddCategory from "../pages/AddCategory.vue";
-import Deals from "../pages/Deals.vue";
-import AddDeal from "../pages/AddDeal.vue";
 import Addons from "../pages/Addons.vue";
 import AddAddon from "../pages/AddAddon.vue";
 import Products from "../pages/Products.vue";
@@ -144,21 +142,6 @@ const routes = [
             component: AddCategory,
         },
         {
-            path: "deals",
-            name: "deals",
-            component: Deals,
-        },
-        {
-            path: "deals/create",
-            name: "deals.create",
-            component: AddDeal,
-        },
-        {
-            path: "deals/update/:id",
-            name: "deals.update",
-            component: AddDeal,
-        },
-        {
             path: "branches",
             name: "branches",
             component: Branches,
@@ -229,7 +212,9 @@ router.beforeEach(async (to,from ,next) => {
     const auth = useUserStore();
     if(authRequired){
         if (!auth.user) {
-            auth.returnUrl = to.fullPath;
+            next({ name: 'login' });
+        }
+        if(auth.user && Permissions.length === 0){
             next({ name: 'login' });
         }
         if( Permissions.indexOf(to.name) !== -1 || publicPages.includes(to.path)){
@@ -240,9 +225,10 @@ router.beforeEach(async (to,from ,next) => {
         }
     }
     else{
-        if(auth.user && to.name === 'login'){
+        if(auth.user && to.name === 'login' && Permissions.length !== 0){
             next({ name: 'dashboard' });
         }
+
         next();
     }
 

@@ -7,12 +7,16 @@ import {
     FormLabel,
 } from "../base-components/Form";
 import TomSelect from "../base-components/TomSelect";
+import Litepicker from "../base-components/Litepicker";
+const date = ref("");
+const datepickerModalPreview = ref(false);
 import Lucide from "../base-components/Lucide";
 import Notification from "./Notification.vue";
 import {ref, reactive , onMounted, nextTick} from "vue";
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router'
 import {isset} from "../utils/helper";
+import FormSelect from "../base-components/Form/FormSelect.vue";
 const router = useRouter()
 const route = useRoute()
 onMounted(() =>{
@@ -29,19 +33,30 @@ onMounted(() =>{
 })
 let data = reactive({
     product: {
+        type:'Single',
         name: '',
         description: '',
-        category_id: '',
+        categories: [],
         branch_id: '',
         city_id: '',
-        price: 10.00,
-        stock: 1,
+        price: 500.00,
         image: null,
-        min_quantity: 1,
-        max_quantity: null,
         status: true,
-        prep_time: '45 minutes',
-        addons: []
+        addons: [],
+        deal_products:[
+            {
+                products : [],
+                quantity : 1,
+            }
+        ],
+        schedule: {
+            start_date : '',
+            end_date : '',
+            start_time : '',
+            end_time : '',
+            specific_date : '',
+            specific_day : [],
+        }
     },
     toastText : '',
     toastType : '',
@@ -49,12 +64,18 @@ let data = reactive({
     categories : [],
     cities : [],
     branches : [],
+    singleProducts : [],
+    types : ['Single','Multiple'],
+    days : [
+        {id:1 , name: 'Monday'} , {id:2 , name: 'Tuesday'} , {id:3 , name: 'Wednesday'} ,
+        {id:4 , name: 'Thursday'}, {id:5 , name: 'Friday'}, {id:6 , name: 'Saturday'},{id:7 , name: 'Sunday'}
+    ]
 });
+const types = ref(['Single','Multiple']);
 const getAddons = (() => {
     axios.get('/api/addons?get=all' ).then((response) => {
         if (response.data.addons !== undefined){
             data.addons = response.data.addons;
-            (isset(data.addons[0]) && data.product.addons.length === 0) ? data.product.addons.push(data.addons[0].id) : '';
         }
 
     }).catch((error) => {
@@ -70,6 +91,7 @@ const getBranches = (() => {
         showNoty(error.response.data.message,'error')
     });
 });
+
 const getCities = (() => {
     axios.get('/api/cities?get=all' ).then((response) => {
         if (response.data.cities !== undefined){
@@ -95,7 +117,13 @@ const getProductDetails = ((id) => {
     axios.get('/api/get-product-details/' + id).then((response) => {
         if (response.data.product !== undefined){
             data.product = response.data.product;
-            data.product.category_id = response.data.product.category_id.toString();
+            data.product.categories.forEach((value , index) => {
+                data.product.categories[index] = value.id.toString();
+            });
+            data.product.deal_products.forEach((value , index) => {
+                data.product.deal_products[index].products = [value.id.toString()];
+                data.product.deal_products[index].quantity = value.pivot.quantity;
+            });
             if(response.data.product.addons !== null){
                 data.product.addons.forEach((value , index) => {
                     data.product.addons[index] = value.id.toString();
@@ -103,10 +131,35 @@ const getProductDetails = ((id) => {
             }
             data.product.city_id = data.product.city_id ? data.product.city_id.toString() : '';
             data.product.branch_id = data.product.branch_id ? data.product.branch_id.toString() : '';
+
+            if(data.product.schedule === undefined){
+                data.product.schedule =  {
+                    start_date : '',
+                    end_date : '',
+                    start_time : '',
+                    end_time : '',
+                    specific_date : '',
+                    specific_day : [],
+                };
+
+            }
         }
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     });
+});
+
+const addMoreProducts = (() => {
+    let deal_products = data.product.deal_products;
+    let lastItem = deal_products.length-1;
+    if(deal_products[lastItem].products.length === 0){
+        return showNoty('Fill all the details of the las item first', 'error');
+    }
+    let item = {
+        products : [],
+        quantity : 1,
+    };
+    data.product.deal_products.push(item);
 });
 const saveProduct = (() => {
     axios.post('/api/save-product', data.product).then((response) => {
@@ -160,8 +213,7 @@ const showNoty = ((message,type = 'success') => {
                         class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
                     >
                         <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
-                        Product
-                        Information
+                        Product Information
                     </div>
                     <div class="mt-5">
                         <FormInline
@@ -170,7 +222,41 @@ const showNoty = ((message,type = 'success') => {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Category</div>
+                                        <div class="font-medium">Type</div>
+                                        <div
+                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
+                                        >
+                                            Required
+                                        </div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormSelect
+                                    v-model="data.product.type" :value="data.product.type"
+                                    :options="{
+                                        placeholder: 'Select Type',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(type, index) in data.types"
+                                        :key="index"
+                                        :value="type"
+                                    >
+                                        {{ type }}
+                                    </option>
+                                </FormSelect>
+
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Categories</div>
                                         <div
                                             class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
                                         >
@@ -181,11 +267,12 @@ const showNoty = ((message,type = 'success') => {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <TomSelect
-                                    v-model="data.product.category_id" :value="data.product.category_id"
+                                    v-model="data.product.categories" :value="data.product.categories"
                                     :options="{
-                                        placeholder: 'Select Category',
+                                        placeholder: 'Select Categories',
                                       }"
                                     class="w-full"
+                                    multiple="multiple"
                                 >
                                     <option
                                         v-for="(category, index) in data.categories"
@@ -273,107 +360,7 @@ const showNoty = ((message,type = 'success') => {
                                 />
                             </div>
                         </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Stock</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="stock"
-                                    type="text"
-                                    placeholder="Stock"
-                                    v-model="data.product.stock"
-                                    :value="data.product.stock"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Minimum Quantity</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="min_quantity"
-                                    type="text"
-                                    placeholder="Minimum Quantity"
-                                    v-model="data.product.min_quantity"
-                                    :value="data.product.min_quantity"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Max Quantity</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="max_quantity"
-                                    type="text"
-                                    placeholder="Max Quantity"
-                                    v-model="data.product.max_quantity"
-                                    :value="data.product.max_quantity"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Preparation Time</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="prep_time"
-                                    type="text"
-                                    placeholder="Preparation Time"
-                                    v-model="data.product.prep_time"
-                                    :value="data.product.prep_time"
-                                />
-                            </div>
-                        </FormInline>
-                        <FormInline
+                        <FormInline v-if="data.product.type === 'Single'"
                             class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >
                             <FormLabel class="xl:w-64 xl:!mr-10">
@@ -424,6 +411,7 @@ const showNoty = ((message,type = 'success') => {
                                       }"
                                     class="w-full"
                                 >
+                                    <option value="">Select City</option>
                                     <option
                                         v-for="(city, index) in data.cities"
                                         :key="index"
@@ -453,6 +441,7 @@ const showNoty = ((message,type = 'success') => {
                                       }"
                                     class="w-full"
                                 >
+                                    <option value="">Select Branch</option>
                                     <option
                                         v-for="(branch, index) in data.branches"
                                         :key="index"
@@ -543,6 +532,222 @@ const showNoty = ((message,type = 'success') => {
                 </div>
             </div>
             <!-- END: Product Information -->
+            <div class="p-5 mt-5 intro-y box" v-if="data.product.type==='Multiple'">
+                <div
+                    class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
+                >
+                    <div
+                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
+                    >
+                        <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
+                        Product Categories For Deal
+                    </div>
+                    <div class="mt-5" v-for="(product,index) in data.product.deal_products">
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Products</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="product.products" :value="product.products"
+                                    :options="{
+                                        placeholder: 'Select Categories',
+                                      }"
+                                    class="w-full"
+                                    multiple="multiple"
+                                >
+                                    <option
+                                        v-for="(category,index) in data.categories"
+                                        :key="index"
+                                        :value="category.id"
+                                    >
+                                        {{ category.name }}
+                                    </option>
+                                </TomSelect>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Quantity</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="quantity"
+                                    type="number"
+                                    placeholder="Quantity"
+                                    v-model="product.quantity"
+                                    :value="product.quantity"
+                                />
+                            </div>
+                        </FormInline>
+
+                        <div class="pt-2 mt-2 xl:ml-64 xl:pl-10 first:mt-0 first:pt-0">
+                            <Button
+                                variant="outline-secondary"
+                                class="w-full py-3 border-dashed"
+                                @click="addMoreProducts()"
+                            >
+                                <Lucide icon="Plus" class="w-4 h-4 mr-2" /> Add More Products
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 mt-5 intro-y box">
+                <div
+                    class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
+                >
+                    <div
+                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
+                    >
+                        <Lucide icon="ChevronDown" class="w-4 h-4 mr-2"/>
+                        Product Schedule
+                    </div>
+                    <div class="mt-5">
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Start Date</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <Preview.Panel>
+                                    <Litepicker
+                                        v-model="data.product.schedule.start_date"
+                                        placeholder="Start Date"
+                                        :options="{
+                                            autoApply: true,
+                                            showWeekNumbers: true,
+                                            dropdowns: {
+                                                minYear: 1990,
+                                                maxYear: null,
+                                                months: true,
+                                                years: true,
+                                            },
+                                        }"
+                                    />
+                                </Preview.Panel>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">End Date</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <Preview.Panel>
+                                    <Litepicker
+                                        v-model="data.product.schedule.end_date"
+                                        :value="data.product.schedule.end_date"
+                                        placeholder="End Date"
+                                        :options="{
+                                            autoApply: true,
+                                            showWeekNumbers: true,
+                                            dropdowns: {
+                                                minYear: 1990,
+                                                maxYear: null,
+                                                months: true,
+                                                years: true,
+                                            },
+                                        }"
+                                    />
+                                </Preview.Panel>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Days</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="data.product.schedule.specific_day" :value="data.product.schedule.specific_day"
+                                    :options="{
+                                        placeholder: 'Select Days',
+                                      }"
+                                    class="w-full"
+                                    multiple="multiple"
+                                >
+                                    <option
+                                        v-for="(day,index) in data.days"
+                                        :key="index"
+                                        :value="day.name"
+                                    >
+                                        {{ day.name }}
+                                    </option>
+                                </TomSelect>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Start Time</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="start_time"
+                                    type="time"
+                                    placeholder="start time"
+                                    v-model="data.product.schedule.start_time"
+                                    :value="data.product.schedule.start_time"
+                                />
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">End Time</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="end_time"
+                                    type="time"
+                                    placeholder="end time"
+                                    v-model="data.product.schedule.end_time"
+                                    :value="data.product.schedule.end_time"
+                                />
+                            </div>
+                        </FormInline>
+                    </div>
+                </div>
+            </div>
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
                 <RouterLink :to="{name : 'products' }">
                     <Button

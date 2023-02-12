@@ -6,7 +6,12 @@ import {
     FormLabel,
     FormSwitch,
 } from "../base-components/Form";
+import TomSelect from "../base-components/TomSelect";
+import Litepicker from "../base-components/Litepicker";
+const date = ref("");
+const datepickerModalPreview = ref(false);
 import Notification from "./Notification.vue";
+import {ref} from "vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
@@ -18,14 +23,19 @@ export default {
                 name: '',
                 description: '',
                 status: true,
-                image: null,
+                image: null
             },
             toastText : '',
             toastType : 'success',
-            update:false
+            update:false,
+            cities : [],
+            branches : [],
+
         }
     },
     mounted() {
+        this.getBranches();
+        this.getCities();
         if (this.$route.params.id !== undefined) {
             this.update = true;
             this.$nextTick().then(() => {
@@ -34,6 +44,24 @@ export default {
         }
     },
     methods: {
+        getBranches(){
+            axios.get('/api/branches?get=all' ).then((response) => {
+                if (response.data.branches !== undefined){
+                    this.branches = response.data.branches;
+                }
+            }).catch((error) => {
+                this.showNoty(error.response.data.message,'error')
+            });
+        },
+        getCities(){
+            axios.get('/api/cities?get=all' ).then((response) => {
+                if (response.data.cities !== undefined){
+                    this.cities = response.data.cities;
+                }
+            }).catch((error) => {
+                this.showNoty(error.response.data.message,'error')
+            });
+        },
         getCategoryDetails(id) {
             axios.get('/api/get-category-details/' + id).then((response) => {
                 if (response.data.category !== undefined){
@@ -178,7 +206,6 @@ export default {
                                         id="category-status-active"
                                         type="checkbox"
                                         v-model="category.status"
-                                        :value="category.status === 1"
                                     />
                                     <FormSwitch.Label htmlFor="category-status-active">
                                         Active
@@ -228,11 +255,12 @@ export default {
                                 </div>
                             </div>
                         </FormInline>
-
                     </div>
                 </div>
             </div>
-            <!-- END: Product Information -->
+            <!-- END: Deal Information -->
+
+            <!-- END: Deal Information -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
                 <RouterLink :to="{name : 'categories' }">
                     <Button

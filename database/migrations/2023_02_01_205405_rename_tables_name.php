@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::dropIfExists('rider_areas');
         Schema::dropIfExists('rider_profile');
         Schema::table('branches', function (Blueprint $table) {
-            $table->dropForeign('branches_area_id_foreign');
-            $table->dropColumn('area_id');
+            $table->dropConstrainedForeignId('area_id');
         });
     }
 
