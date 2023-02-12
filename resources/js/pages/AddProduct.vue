@@ -132,7 +132,7 @@ const getProductDetails = ((id) => {
             data.product.city_id = data.product.city_id ? data.product.city_id.toString() : '';
             data.product.branch_id = data.product.branch_id ? data.product.branch_id.toString() : '';
 
-            if(data.product.schedule === undefined){
+            if(data.product.schedule === null){
                 data.product.schedule =  {
                     start_date : '',
                     end_date : '',
@@ -606,7 +606,7 @@ const showNoty = ((message,type = 'success') => {
                 </div>
             </div>
 
-            <div class="p-5 mt-5 intro-y box">
+            <div class="p-5 mt-5 intro-y box" v-if="data.product.schedule">
                 <div
                     class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
                 >
