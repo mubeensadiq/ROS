@@ -143,6 +143,15 @@ const getProductDetails = ((id) => {
                 };
 
             }
+            if(data.product.deal_products.length === 0){
+                data.product.deal_products = [
+                    {
+                        products : [],
+                        quantity : 1,
+                    }
+                ];
+
+            }
         }
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
