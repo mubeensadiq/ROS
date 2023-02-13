@@ -70,43 +70,34 @@ import Tippy from "../base-components/Tippy";
 const data = reactive({
     cities: [],
     areas: [],
+    branches: [],
     categories: [],
     deals: [],
     dealProducts:[],
     categoryProducts: [],
-    selectedProduct : null
+    selectedProduct : null,
+    locationType: 'Delivery'
 })
 const city = ref('');
 const area = ref('');
+const branch = ref('');
 watch(city, async (newCity) => {
     getAreas();
+    getBranches();
+})
+watch(city, async (newCity) => {
+    getAreas();
+    getBranches();
+})
+watch(area, async(val) => {
+    getCategoryProducts();
+    $('#selectLocationModal').modal('hide');
 })
 onMounted(() => {
     getCategories();
     getCities();
-    getCategoryProducts();
-
     $(window).on('load', function() {
         $('#selectLocationModal').modal('show');
-
-        $(".region-city").select2({
-            placeholder: "Select city",
-            dropdownParent: $('#selectLocationModal'),
-            width: '100%',
-            allowClear: true
-        });
-        $(".region-area").select2({
-            placeholder: "Select area",
-            dropdownParent: $('#selectLocationModal'),
-            width: '100%',
-            allowClear: true
-        });
-        $(".region-branch").select2({
-            placeholder: "Select branch",
-            dropdownParent: $('#selectLocationModal'),
-            width: '100%',
-            allowClear: true
-        });
     });
 })
 
@@ -116,6 +107,10 @@ const getCategories = (() => {
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
+});
+const chanageLocationType = ((event) => {
+    data.locationType = event.target.value;
+    console.log(data.locationType);
 });
 const getCities = (() => {
     axios.get('/cities-has-areas?get=all').then((response)=>{
@@ -131,8 +126,15 @@ const getAreas = (() =>{
         console.log(error.response.data.message)
     });
 });
+const getBranches = (() =>{
+    axios.get('/branches-by-city' , {params : {'city_id' : city.value}}).then((response)=>{
+        data.branches = response.data.branches;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
 const getCategoryProducts = (() => {
-    axios.get('/category-products').then((response)=>{
+    axios.get('/category-products' , {params : {'city_id' : city.value , 'branch_id' : branch.value}}).then((response)=>{
         data.categoryProducts = response.data.products;
     }).catch( (error) => {
         console.log(error.response.data.message)
@@ -169,8 +171,17 @@ const getNumber = ((i) => {
     }
     return i + "th";
 });
-const getUnqiueNumber = (() => {
-    return Math.random();
+const showProduct = ((product) => {
+    console.log(city.value , branch.value);
+    if(!product.city_id && !product.branch_id)
+        return true;
+    if(product.city_id && city.value == product.city_id)
+        return true;
+    if(product.branch_id && branch.value == product.branch_id)
+        return true;
+
+    return false;
+
 });
 </script>
 
@@ -291,30 +302,35 @@ const getUnqiueNumber = (() => {
     </section>
 
     <main>
-        <section v-for="(category , categoryIndex) in data.categoryProducts" class="base-section gourmet-fries" :id="category.id">
-            <div class="container-fluid px-container">
-                <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
-                <div class="row">
-                    <div v-for="(product , index) in category.products" class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
-                        <div class="card deal-card" @click="selectProduct(categoryIndex , index)" >
-                            <div class="card-image"><img class="card-img-top" :src="'/images/products/'+product.image" alt="Card image cap"></div>
-                            <div class="card-body">
-                                <h5 class="card-title">{{product.name}}</h5>
-                                <p class="card-text">{{product.description}} </p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <label class="price-label">Rs. {{product.price}}</label>
-                                    <img :src="cartIcon" alt="">
+        <template v-for="(category , categoryIndex) in data.categoryProducts">
+            <section v-if="category.products && category.products.length > 0" class="base-section gourmet-fries"   :id="category.id">
+                <div class="container-fluid px-container">
+                    <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
+                    <div class="row">
+                        <template v-for="(product , index) in category.products">
+                            <div v-if="showProduct(product)" class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
+                                <div class="card deal-card" @click="selectProduct(categoryIndex , index)" >
+                                    <div class="card-image"><img class="card-img-top" :src="'/images/products/'+product.image" alt="Card image cap"></div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{product.name}}</h5>
+                                        <p class="card-text">{{product.description}} </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <label class="price-label">Rs. {{product.price}}</label>
+                                            <img :src="cartIcon" alt="">
+                                        </div>
+                                    </div>
+                                    <div class="discount-tag hidden">
+                                        <label>10%<br><span>OFF</span></label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="discount-tag hidden">
-                                <label>10%<br><span>OFF</span></label>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- /.row -->
-            </div><!-- /.row -->
-        </section>
+                        </template>
 
+                    </div><!-- /.row -->
+                </div><!-- /.row -->
+            </section>
+
+        </template>
 
         <section class="base-section location-section">
             <div class="container-fluid px-container location-container">
@@ -377,7 +393,7 @@ const getUnqiueNumber = (() => {
 
 
 		<!-- Region Modal -->
-		<div class="modal fade" id="selectLocationModal" aria-labelledby="selectLocationModalLabel" aria-hidden="true">
+		<div class="modal fade" id="selectLocationModal" data-keyboard="false" data-backdrop="static">
 			<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content p-3">
 					<div class="modal-header border-0 d-flex justify-content-center">
@@ -389,10 +405,10 @@ const getUnqiueNumber = (() => {
 								<div class="select-region mb-3 bordered text-center">
 									<h3 class="text-capitalize">Please select your area</h3>
 									<div class="btn-group text-capitalize" role="group" aria-label="Basic radio toggle button group">
-										<input type="radio" class="btn-check" name="regionRadio" id="deleveryRadio" autocomplete="off" checked>
+										<input @change="chanageLocationType($event)" type="radio" class="btn-check" name="regionRadio" id="deleveryRadio" autocomplete="off" checked value="Delivery">
 										<label class="btn btn-outline-primary" for="deleveryRadio">Delivery</label>
 
-										<input type="radio" class="btn-check" name="regionRadio" id="pickupRadio" autocomplete="off">
+										<input @change="chanageLocationType($event)" type="radio" class="btn-check" name="regionRadio" id="pickupRadio" autocomplete="off" value="Pickup">
 										<label class="btn btn-outline-primary" for="pickupRadio">Pickup</label>
 									</div>
 								</div>
@@ -415,7 +431,7 @@ const getUnqiueNumber = (() => {
 								</div>
 
 
-								<div class="mb-3 select-area">
+								<div class="mb-3 select-area" v-if="data.locationType === 'Delivery' ">
                                     <TomSelect
                                         v-model="area" :value="area"
                                         :options="{
@@ -432,18 +448,18 @@ const getUnqiueNumber = (() => {
 								</div>
 
 
-								<div class="select-branch">
+								<div class="select-branch" v-if="data.locationType === 'Pickup' ">
                                     <TomSelect
-                                        v-model="area" :value="area"
+                                        v-model="branch" :value="branch"
                                         :options="{
                                         placeholder: 'Select Branch',
                                       }"
                                         class="w-full"
                                     >
                                         <option
-                                            v-for="(area,index) in data.areas" :key="index" :value="area.id"
+                                            v-for="(branch,index) in data.branches" :key="index" :value="branch.id"
                                         >
-                                            {{ area.area }}
+                                            {{ branch.name }}
                                         </option>
                                     </TomSelect>
 								</div>

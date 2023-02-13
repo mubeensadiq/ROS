@@ -12,6 +12,7 @@ import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
 import axios from 'axios';
+import {isset} from "../utils/helper";
 
 export default {
     data() {
@@ -24,14 +25,15 @@ export default {
                 phone_number: '',
             },
             areas: {},
+            cities: {},
             update:false,
             toastText : '',
             toastType : 'success',
-            city_id : 1
+            city_id : ''
         }
     },
     mounted() {
-
+        this.getCities();
         if (this.$route.params.id !== undefined) {
             this.update = true
             this.$nextTick().then(() => {
@@ -43,8 +45,21 @@ export default {
         }
 
     },
+    watch:{
+       city_id:function (val) {
+           this.getAreas();
+       }
+    },
     methods: {
-
+        getCities() {
+            axios.get('/cities-has-areas?get=all').then((response)=>{
+                this.cities = response.data.cities;
+                if (this.$route.params.id == undefined)
+                    this.city_id = isset(response.data.cities[0]) ? response.data.cities[0].id.toString() : '';
+            }).catch( (error) => {
+                console.log(error.response.data.message)
+            });
+        },
         getAreas() {
             axios.get('/api/areas-by-city', {params: {'city_id': this.city_id}}).then((response) => {
                 this.areas = response.data.areas;
@@ -206,6 +221,35 @@ export default {
                                     v-model="branch.phone_number"
                                     :value="branch.phone_number"
                                 />
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Cities</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="city_id" :value="city_id"
+                                    :options="{
+                                        placeholder: 'Select City',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(city, index) in cities"
+                                        :key="index"
+                                        :value="city.id"
+                                    >
+                                        {{ city.city }}
+                                    </option>
+                                </TomSelect>
+
                             </div>
                         </FormInline>
                         <FormInline

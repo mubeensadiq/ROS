@@ -24,7 +24,6 @@ class ProductsController extends Controller
                 $products = $products->where('type' , $request->type)->get();
             }
             else{
-
                 $products = $products->paginate(20)->appends($request->all());
             }
             return response()->json([
@@ -121,11 +120,21 @@ class ProductsController extends Controller
     }
     public function deleteProduct($id){
         try{
-            Product::where('id' , $id)->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Successfully Deleted'
-            ],200);
+            $product = Product::where('id',$id)->first();
+            if($product){
+                $product->dealProducts()->detach();
+                $product->delete();
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Successfully Deleted'
+                ],200);
+            }
+            else{
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No Product Found'
+                ],500);
+            }
         }
         catch (\Exception $ex){
             Log::info($ex);

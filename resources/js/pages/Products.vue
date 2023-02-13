@@ -37,7 +37,7 @@ const deleteProduct = (()=> {
         if (response.data.status === 'success') {
             showNoty(response.data.message)
             getProducts("/api/products?page=" + data.products.current_page);
-            this.deleteConfirmationModal = false;
+            data.deleteConfirmationModal = false;
         }
     }).catch((error) => {
         showNoty(error.response.data.message, 'error')
@@ -201,7 +201,7 @@ const showNoty = ((message,type = 'success') => {
     </div>
     <!-- BEGIN: Delete Confirmation Modal -->
     <Dialog
-        :open="deleteConfirmationModal"
+        :open="data.deleteConfirmationModal"
         @close="
       () => {
         setDeleteConfirmationModal(false);
