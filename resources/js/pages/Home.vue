@@ -93,6 +93,10 @@ watch(area, async(val) => {
     getCategoryProducts();
     $('#selectLocationModal').modal('hide');
 })
+watch(branch, async(val) => {
+    getCategoryProducts();
+    $('#selectLocationModal').modal('hide');
+})
 onMounted(() => {
     getCategories();
     getCities();
