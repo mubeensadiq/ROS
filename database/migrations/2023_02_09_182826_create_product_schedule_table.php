@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('product_schedule', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')
-                ->nullable()
-                ->constrained();
+                ->constrained('products')
+                ->onDelete('cascade');
             $table->string('start_date')->nullable();
             $table->string('end_date')->nullable();
             $table->string('start_time')->nullable();

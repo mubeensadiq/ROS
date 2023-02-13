@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DealsController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\AreasController;
+use App\Http\Controllers\BranchesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,7 @@ use App\Http\Controllers\AreasController;
 Route::get('/categories', [CategoriesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);
 Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
+Route::get('/branches-by-city', [BranchesController::class , 'getBranchesByCity']);
 Route::get('/deals', [DealsController::class , 'index']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
 Route::get('/deal-products', [DealsController::class , 'products']);

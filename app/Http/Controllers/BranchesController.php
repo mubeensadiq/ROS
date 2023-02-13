@@ -44,6 +44,25 @@ class BranchesController extends Controller
             ],500);
         }
     }
+    public function getBranchesByCity(Request $request){
+        try{
+            $branches = Branch::whereHas('areas',function ($q) use($request) {
+                $q->where('city_id' , $request->city_id);
+            })->get();
+            return response()->json([
+                'status' => 'success',
+                'branches' => $branches
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'branches' => [],
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
     public function getBranchDetails(Request $request , $id){
         try{
             $branch = Branch::with('areas')->where('id' , $id)->first();
