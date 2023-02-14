@@ -138,7 +138,7 @@ const getBranches = (() =>{
     });
 });
 const getCategoryProducts = (() => {
-    axios.get('/category-products' , {params : {'city_id' : city.value , 'branch_id' : branch.value}}).then((response)=>{
+    axios.get('/category-products' , {params : {'area_id' : area.value , 'branch_id' : branch.value}}).then((response)=>{
         data.categoryProducts = response.data.products;
     }).catch( (error) => {
         console.log(error.response.data.message)
@@ -312,7 +312,7 @@ const showProduct = ((product) => {
                     <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
                     <div class="row">
                         <template v-for="(product , index) in category.products">
-                            <div v-if="showProduct(product)" class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
+                            <div class="col-lg-3 col-md-6 col-xs-12 mb-5 d-flex justify-content-center">
                                 <div class="card deal-card" @click="selectProduct(categoryIndex , index)" >
                                     <div class="card-image"><img class="card-img-top" :src="'/images/products/'+product.image" alt="Card image cap"></div>
                                     <div class="card-body">

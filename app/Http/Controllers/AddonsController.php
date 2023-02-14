@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Addon;
+use App\Models\AddonCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -16,18 +17,19 @@ class AddonsController extends Controller
     public function index(Request $request)
     {
         try{
-            if(isset($request->get) && $request->get === 'all')
-                $addons = Addon::get();
+            $addons = Addon::with('category');
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
+                $addons = $addons->where('name' ,'like', "%$query%")
+                    ->orWhere('price' ,'like', "%$query%");
+            }
+            if(isset($request->get) && $request->get === 'all'){
+                $addons = $addons->orderBy('name','asc')->get();
+            }
             else{
-                $addons = new Addon();
-                if(isset($request->search) && $request->search != ''){
-                    $query = $request['search'];
-                    $addons = $addons->where('name' ,'like', "%$query%")
-                        ->orWhere('title' ,'like', "%$query%")
-                        ->orWhere('price' ,'like', "%$query%");
-                }
                 $addons = $addons->paginate(20)->appends($request->all());
             }
+
 
 
             return response()->json([
@@ -55,16 +57,16 @@ class AddonsController extends Controller
     {
         try{
             $validator = $request->validate([
-                'title' => 'required',
                 'name' => 'required',
                 'price' => 'required',
+                'addon_category_id' => 'required',
             ]);
             Addon::updateOrCreate(['id' => $request->id],[
-                'title' => $request->title,
                 'name' => $request->name,
                 'price' => $request->price,
                 'required' => $request->required,
                 'image' => $request->image,
+                'addon_category_id' => $request->addon_category_id,
             ]);
             return response()->json([
                 'status' => 'success',
@@ -105,6 +107,101 @@ class AddonsController extends Controller
     public function deleteAddon($id){
         try{
             Addon::where('id' , $id)->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully Deleted'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+    }
+
+    /*** ADDON CATEGORY FUNCTIONS ***/
+
+    public function addonCategories(Request $request){
+        try{
+            $categories = AddonCategory::with('addons');
+            if(isset($request->search) && $request->search != ''){
+                $query = $request['search'];
+                $categories = $categories->where('name' ,'like', "%$query%")
+                    ->orWhere('title' ,'like', "%$query%");
+            }
+            if(isset($request->get) && $request->get === 'all'){
+                $categories = $categories->orderBy('name','asc')->get();
+            }
+            else{
+                $categories = $categories->orderBy('name','asc')->paginate(20)->appends($request->all());
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'categories' => $categories
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'categories' => [],
+                'message'=>$ex->getMessage()
+            ],500);
+        }
+    }
+    public function getAddonCategoryDetails(Request $request , $id){
+        try{
+            $category = AddonCategory::where('id' , $id)->first();
+            if($category){
+                return response()->json([
+                    'status' => 'success',
+                    'category' => $category
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No Addon Category Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
+    public function saveAddonCategory(Request $request){
+        try{
+            $request->validate([
+                'name' => 'required',
+                'title' => 'required'
+            ]);
+            AddonCategory::updateOrCreate(['id' => $request->id],[
+                'name' => $request->name,
+                'title' => $request->title,
+            ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully Saved'
+            ],200);
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage()
+            ],500);
+        }
+
+    }
+    public function deleteAddonCategory($id){
+        try{
+            AddonCategory::where('id' , $id)->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Deleted'

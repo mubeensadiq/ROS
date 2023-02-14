@@ -6,7 +6,7 @@ import {
     FormSwitch,
     FormLabel,
 } from "../base-components/Form";
-import Lucide from "../base-components/Lucide";
+import TomSelect from "../base-components/TomSelect";
 import Notification from "./Notification.vue";
 </script>
 <script lang="ts">
@@ -20,14 +20,17 @@ export default {
                 name: '',
                 price: 0,
                 required: false,
-                image: null
+                image: null,
+                addon_category_id: '',
             },
+            addonCategories:[],
             toastText : '',
             toastType : 'success',
             update:false
         }
     },
     mounted() {
+
         if (this.$route.params.id !== undefined) {
             this.update = true
             this.$nextTick().then(() => {
@@ -37,13 +40,25 @@ export default {
                 },1000)
             });
         }
+        this.getAddonCategories();
 
     },
     methods: {
+        getAddonCategories() {
+            axios.get('/api/addon-categories?get=all').then((response) => {
+                if (response.data.categories !== undefined){
+                    this.addonCategories = response.data.categories;
+                }
+
+            }).catch((error) => {
+                this.showNoty(error.response.data.message,'error')
+            });
+        },
         getAddonDetails(id) {
             axios.get('/api/get-addon-details/' + id).then((response) => {
                 if (response.data.addon !== undefined){
                     this.addon = response.data.addon;
+                    this.addon.addon_category_id = response.data.addon_category_id.toString();
                 }
 
             }).catch((error) => {
@@ -114,23 +129,27 @@ export default {
                             <FormLabel class="xl:w-64 xl:!mr-10">
                                 <div class="text-left">
                                     <div class="flex items-center">
-                                        <div class="font-medium">Title</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
+                                        <div class="font-medium">Addon Category</div>
                                     </div>
                                 </div>
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormInput
-                                    id="title"
-                                    type="text"
-                                    placeholder="Title"
-                                    v-model="addon.title"
-                                    :value="addon.title"
-                                />
+                                <TomSelect
+                                    v-model="addon.addon_category_id" :value="addon.addon_category_id"
+                                    :options="{
+                                        placeholder: 'Select Addon Category',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(category, index) in addonCategories"
+                                        :key="index"
+                                        :value="category.id"
+                                    >
+                                        {{ category.name }}
+                                    </option>
+                                </TomSelect>
+
                             </div>
                         </FormInline>
                         <FormInline
@@ -181,39 +200,6 @@ export default {
                                     v-model="addon.price"
                                     :value="addon.price"
                                 />
-                            </div>
-                        </FormInline>
-
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Required</div>
-                                        <div
-                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
-                                        >
-                                            Required
-                                        </div>
-                                    </div>
-                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
-                                        If the addon is required, then it must be bought with the product
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <FormSwitch>
-                                    <FormSwitch.Input
-                                        id="addon-required"
-                                        type="checkbox"
-                                        v-model="addon.required"
-                                        :checked="addon.required"
-                                    />
-                                    <FormSwitch.Label htmlFor="category-status-active">
-                                        {{addon.required ? 'Yes' : "No" }}
-                                    </FormSwitch.Label>
-                                </FormSwitch>
                             </div>
                         </FormInline>
                         <FormInline class="flex-col items-start mt-10 xl:flex-row">

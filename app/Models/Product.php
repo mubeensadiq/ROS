@@ -14,17 +14,15 @@ class Product extends Model
     public function category(){
         return $this->belongsTo(Category::class,'category_id' , 'id');
     }
-
-    public function addons()
-    {
-        return $this->belongsToMany(Addon::class, 'product_addons');
-    }
     //Products Belongs To Categories
     public function categories(){
         return $this->belongsToMany(Category::class);
     }
-    public function dealProducts(){
-        return $this->belongsToMany(Category::class,'deal_products' )->withPivot('quantity');
+    public function addon_category_product(){
+        return $this->hasMany(AddonCategoryProduct::class);
+    }
+    public function branch_product(){
+        return $this->belongsToMany(Branch::class,'branch_product' )->withPivot('price');
     }
     public function schedule(){
         return $this->hasOne(ProductSchedule::class );
