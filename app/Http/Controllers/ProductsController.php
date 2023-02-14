@@ -42,7 +42,7 @@ class ProductsController extends Controller
     }
     public function getProductDetails(Request $request , $id){
         try{
-            $product = Product::with(['categories' , 'addons' , 'dealProducts','schedule'])->where('id' , $id)->first();
+            $product = Product::with(['categories' , 'addon_category_product.addons' , 'branch_product','schedule'])->where('id' , $id)->first();
             if($product){
                 return response()->json([
                     'status' => 'success',
@@ -79,21 +79,18 @@ class ProductsController extends Controller
                 'status' => $request->status,
                 'image' => $request->image,
                 'type' => $request->type,
-                'city_id' => $request->city_id !== '' ? $request->city_id : null,
-                'branch_id' => $request->branch_id !== '' ? $request->branch_id : null,
             ]);
-            if($request->type === 'Single')
-            $product->addons()->sync($request->addons);
             $product->categories()->sync($request->categories);
-
-            if($request->type === 'Multiple'){
-                $product->dealProducts()->detach();
-                foreach ($request->deal_products as $dealProduct){
-                        foreach ($dealProduct['products']  as $deal){
-                        $product->dealProducts()->attach($deal , ['quantity' => $dealProduct['quantity']]);
-                    }
-
+            $product->branch_product()->detach();
+            foreach ($request->branch_product as $p_branch){
+                foreach ($p_branch['branches']  as $branch){
+                    $product->branch_product()->attach($branch , ['price' => $p_branch['price']]);
                 }
+            }
+            $product->addon_category_product()->delete();
+            foreach ($request->addon_category_product as $product_addon){
+              $addon_cat_prod =  $product->addon_category_product()->create(['addon_category_id' => $product_addon['addonCategory'],'quantity' => $product_addon['quantity'] , 'required' => $product_addon['required']]);
+                $addon_cat_prod->addons()->sync($product_addon['addons']);
             }
             ProductSchedule::updateOrCreate(['product_id' => $product->id],[
                 'start_date' => $request->schedule['start_date'],
@@ -122,7 +119,6 @@ class ProductsController extends Controller
         try{
             $product = Product::where('id',$id)->first();
             if($product){
-                $product->dealProducts()->detach();
                 $product->delete();
                 return response()->json([
                     'status' => 'success',

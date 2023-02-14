@@ -9,6 +9,8 @@ import Roles from "../pages/Roles.vue";
 import AddRole from "../pages/AddRole.vue";
 import Cities from "../pages/Cities.vue";
 import AddCity from "../pages/AddCity.vue";
+import AddonCategories from "../pages/AddonCategories.vue";
+import AddAddonCategories from "../pages/AddAddonCategory.vue";
 import Areas from "../pages/Areas.vue";
 import AddArea from "../pages/AddArea.vue";
 import Branches from "../pages/Branches.vue";
@@ -140,6 +142,21 @@ const routes = [
             path: "categories/update/:id",
             name: "categories.update",
             component: AddCategory,
+        },
+        {
+            path: "addon/categories",
+            name: "addon.categories",
+            component: AddonCategories,
+        },
+        {
+            path: "addon/categories/create",
+            name: "addon.categories.create",
+            component: AddAddonCategories,
+        },
+        {
+            path: "addon/categories/update/:id",
+            name: "addon.categories.update",
+            component: AddAddonCategories,
         },
         {
             path: "branches",

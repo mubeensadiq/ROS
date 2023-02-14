@@ -9,10 +9,6 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
-const deleteConfirmationModal = ref(false);
-const setDeleteConfirmationModal = (value: boolean) => {
-    deleteConfirmationModal.value = value;
-};
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
 import Notification from "./Notification.vue";
@@ -22,8 +18,8 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            addons: [],
-            addonID: 0,
+            categories: [],
+            categoryID: 0,
             deleteConfirmationModal: false,
             toastText : '',
             toastType : 'success',
@@ -31,25 +27,25 @@ export default {
         }
     },
     mounted() {
-        this.getAddons();
+        this.getCategories();
     },
     methods : {
-        getAddons(url = '/api/addons'){
+        getCategories(url = '/api/addon-categories'){
             axios.get(url).then((response)=>{
-                this.addons = response.data.addons;
+                this.categories = response.data.categories;
             }).catch( (error) => {
                 this.showNoty(error.response.data.message, 'error')
             });
         },
         setDeleteConfirmationModal(value, id = 0) {
-            this.addonID = id;
+            this.categoryID = id;
             this.deleteConfirmationModal = value;
         },
         deleteCategory() {
-            axios.delete('/api/delete-addon/' + this.addonID).then((response) => {
+            axios.delete('/api/delete-addon-category/' + this.categoryID).then((response) => {
                 if (response.data.status === 'success') {
                     this.showNoty(response.data.message)
-                    this.getAddons("/api/addons?page=" + this.addons.current_page);
+                    this.getCategories("/api/addon-categories?page=" + this.categories.current_page);
                     this.deleteConfirmationModal = false;
                 }
             }).catch((error) => {
@@ -68,18 +64,19 @@ export default {
 
 <template>
     <Notification :toastText="toastText" :toastType="toastType" />
-    <h2 class="mt-10 text-lg font-medium intro-y">Addons</h2>
+    <h2 class="mt-10 text-lg font-medium intro-y">Categories</h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div
             class="flex flex-wrap items-center col-span-12 mt-2 intro-y sm:flex-nowrap"
         >
-            <RouterLink :to="{name : 'addons.create' }" v-if="$can('addons.create')">
+            <RouterLink v-if="$can('addon.categories.create')" :to="{name : 'addon.categories.create' }">
                 <Button variant="primary" class="mr-2 shadow-md">
-                    Add New Addon
+                    Add New Category
                 </Button>
             </RouterLink>
+
             <div class="hidden mx-auto md:block text-slate-500">
-                Showing {{addons.from}} to {{ addons.to }} of {{ addons.total }} entries
+                Showing {{categories.from}} to {{ categories.to }} of {{ categories.total }} entries
             </div>
             <div class="w-full mt-3 sm:w-auto sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="relative w-56 text-slate-500">
@@ -88,7 +85,7 @@ export default {
                         class="w-56 pr-10 !box"
                         placeholder="Search..."
                         v-model="search"
-                        @keypress.enter="getAddons('/api/addons?search='+search)"
+                        @keypress.enter="getCategories('/api/addon-categories?search='+search)"
                     />
                     <Lucide
                         icon="Search"
@@ -102,12 +99,12 @@ export default {
             <Table class="border-spacing-y-[10px] border-separate -mt-2">
                 <Table.Thead>
                     <Table.Tr>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> IMAGE </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> CATEGORY </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> PRICE </Table.Th>
+                        <Table.Th class="border-b-0 whitespace-nowrap">
+                            Title
+                        </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             ACTIONS
                         </Table.Th>
@@ -115,63 +112,40 @@ export default {
                 </Table.Thead>
                 <Table.Tbody>
                     <Table.Tr
-                        v-for="(addon, index) in  addons.data"
+                        v-for="(category, index) in  categories.data"
                         :key="index"
                         class="intro-x"
                     >
                         <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md w-40 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <div class="flex">
-                                <div class="w-10 h-10 image-fit zoom-in">
-                                    <Tippy
-                                        as="img"
-                                        alt="Addon Image"
-                                        class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                        :src="addon.image !== null ? '/images/addons/'+addon.image : '/images/categories/profile-2.jpg'"
-                                    />
-                                </div>
-                            </div>
-                        </Table.Td>
-                        <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{ addon.name }}
+                                {{ category.name }}
                             </span>
                         </Table.Td>
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
                         >
                             <span href="" class="font-medium whitespace-nowrap">
-                                {{ addon.category.name }}
+                                {{ category.title }}
                             </span>
                         </Table.Td>
-                        <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <span href="" class="font-medium whitespace-nowrap">
-                                {{addon.price}}
-                            </span>
-                        </Table.Td>
-
-
                         <Table.Td
                             class="first:rounded-l-md last:rounded-r-md w-56 bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b] py-0 relative before:block before:w-px before:h-8 before:bg-slate-200 before:absolute before:left-0 before:inset-y-0 before:my-auto before:dark:bg-darkmode-400"
                         >
                             <div class="flex items-center justify-center">
-                                <RouterLink v-if="$can('addons.update')" :to="{name : 'addons.update', params:{'id' : addon.id} }"
+                                <RouterLink v-if="$can('categories.update')" :to="{name : 'categories.update', params:{'id' : category.id} }"
                                             class="flex items-center mr-3">
                                     <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Edit
                                 </RouterLink>
-                                <a v-if="$can('addons.remove')"
-                                    class="flex items-center text-danger"
-                                    href="#"
-                                    @click="
+                                <a v-if="$can('categories.remove')"
+                                   class="flex items-center text-danger"
+                                   href="#"
+                                   @click="
                                         (event) => {
                                             event.preventDefault();
-                                            setDeleteConfirmationModal(true , addon.id);
+                                            setDeleteConfirmationModal(true , category.id);
                                         }
                                     "
                                 >
@@ -190,26 +164,26 @@ export default {
             class="flex flex-wrap items-center col-span-12 intro-y sm:flex-row sm:flex-nowrap"
         >
             <Pagination class="w-full sm:w-auto sm:mr-auto">
-                <Pagination.Link @click="getAddons(addons.first_page_url)">
+                <Pagination.Link @click="getCategories(categories.first_page_url)">
                     <Lucide icon="ChevronsLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="addons.prev_page_url" @click="getAddons(addons.prev_page_url)">
+                <Pagination.Link v-if="categories.prev_page_url" @click="getCategories(categories.prev_page_url)">
                     <Lucide icon="ChevronLeft" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link v-if="addons.current_page - 1 > 1">...</Pagination.Link>
-                <Pagination.Link  v-if="addons.prev_page_url" @click="getAddons(addons.prev_page_url)">{{addons.current_page - 1}}</Pagination.Link>
-                <Pagination.Link active>{{addons.current_page}}</Pagination.Link>
-                <Pagination.Link  v-if="addons.next_page_url" @click="getAddons(addons.next_page_url)">{{addons.current_page + 1}}</Pagination.Link>
-                <Pagination.Link v-if="addons.last_page - addons.current_page > 1">...</Pagination.Link>
-                <Pagination.Link v-if="addons.next_page_url" @click="getAddons(addons.next_page_url)">
+                <Pagination.Link v-if="categories.current_page - 1 > 1">...</Pagination.Link>
+                <Pagination.Link  v-if="categories.prev_page_url" @click="getCategories(categories.prev_page_url)">{{categories.current_page - 1}}</Pagination.Link>
+                <Pagination.Link active>{{categories.current_page}}</Pagination.Link>
+                <Pagination.Link  v-if="categories.next_page_url" @click="getCategories(categories.next_page_url)">{{categories.current_page + 1}}</Pagination.Link>
+                <Pagination.Link v-if="categories.last_page - categories.current_page > 1">...</Pagination.Link>
+                <Pagination.Link v-if="categories.next_page_url" @click="getCategories(categories.next_page_url)">
                     <Lucide icon="ChevronRight" class="w-4 h-4" />
                 </Pagination.Link>
-                <Pagination.Link @click="getAddons(addons.last_page_url)">
+                <Pagination.Link @click="getCategories(categories.last_page_url)">
                     <Lucide icon="ChevronsRight" class="w-4 h-4" />
                 </Pagination.Link>
             </Pagination>
             <label>Page Size</label>
-            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="addons.per_page">
+            <select class="disabled:bg-slate-100 disabled:cursor-not-allowed disabled:dark:bg-darkmode-800/50 [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 w-20 mt-3 !box sm:mt-0" v-model="categories.per_page">
                 <option v-for="page in limits" :value="page">{{page}}</option>
             </select>
         </div>
@@ -247,11 +221,11 @@ export default {
                 >
                     Cancel
                 </Button>
-                <Button
-                    variant="danger"
-                    type="button"
-                    class="w-24"
-                    ref="deleteButtonRef"
+                <Button  @click="deleteCategory()"
+                         variant="danger"
+                         type="button"
+                         class="w-24"
+                         ref="deleteButtonRef"
                 >
                     Delete
                 </Button>

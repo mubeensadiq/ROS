@@ -74,6 +74,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/delete-category/{id}', [CategoriesController::class , 'deleteCategory']);
     /************** END CATEGORIES ROUTES ************/
 
+
+
     /************** DEAL ROUTES ************/
     Route::get('/deals', [DealsController::class , 'index']);
     Route::post('/save-deal', [DealsController::class , 'saveDeal']);
@@ -95,6 +97,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/get-branch-details/{id}', [BranchesController::class , 'getBranchDetails']);
     Route::delete('/delete-branch/{id}', [BranchesController::class , 'deleteBranch']);
     /************** END BRANCH ROUTES ************/
+
+    /************** ADDON CATEGORIES ROUTES ************/
+    Route::get('/addon-categories', [AddonsController::class , 'addonCategories']);
+    Route::post('/save-addon-category', [AddonsController::class , 'saveAddonCategory']);
+    Route::get('/get-addon-category-details/{id}', [AddonsController::class , 'getAddonCategoryDetails']);
+    Route::delete('/delete-addon-category/{id}', [AddonsController::class , 'deleteAddonCategory']);
+    /************** END CATEGORIES ROUTES ************/
 
     /************** ADDON ROUTES ************/
     Route::get('/addons', [AddonsController::class , 'index']);

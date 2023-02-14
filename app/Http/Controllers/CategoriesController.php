@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -110,26 +111,30 @@ class CategoriesController extends Controller
 
     public function products(Request $request){
         try{
-           $categories =  Category::with(['products.dealProducts','products.addons'])->whereHas('products', function ($q) use($request) {
+           $categories =  Category::with(['products.categories' , 'products.addon_category_product.addons'])->whereHas('products', function ($q) use($request) {
                 $q->where('status',1);
                 $q->orderBy('products.id','desc');
             })->where('status' , 1)->get();
-           foreach ($categories as $cat_index => $category){
-               foreach ($category->products as $index => $product){
-                   if(!$product->city_id)
-                       continue;
-                   else{
-                       if($product->city_id != $request->city_id){
-                           unset($categories[$cat_index]['products'][$index]);
-                       }
-                   }
-                   if($request->branch_id !== ''){
-                       if($product->branch_id != $request->branch_id){
-                           unset($categories[$cat_index]['products'][$index]);
-                       }
-                   }
-               }
-           }
+            foreach ($categories as $cat_index => $category){
+                foreach ($category->products as $index => $product){
+                    $p_branches = $product->branch_product()->pluck('branch_id')->toArray();
+                    if(count($p_branches) == 0)
+                        continue;
+                    if(!empty($request->area_id) && count($p_branches) > 0){
+                        $areas = Area::whereHas('branches',function($q) use($p_branches){
+                            $q->whereIn('branches.id' , $p_branches);
+                        })->pluck('id')->toArray();
+                        if(!in_array((int)$request->area_id , $areas)){
+                            unset($categories[$cat_index]['products'][$index]);
+                        }
+                    }
+                    if(!empty($request->branch_id) && count($p_branches) > 0){
+                        if(!in_array((int)$request->branch_id , $p_branches)){
+                            unset($categories[$cat_index]['products'][$index]);
+                        }
+                    }
+                }
+            }
 
             return response()->json([
                 'status' => 'success',
