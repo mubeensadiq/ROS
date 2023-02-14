@@ -398,7 +398,7 @@ const showProduct = ((product) => {
 
 		<!-- Region Modal -->
 		<div class="modal fade" id="selectLocationModal" data-keyboard="false" data-backdrop="static">
-			<div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+			<div class="modal-dialog modal-md modal-dialog-centered">
 				<div class="modal-content p-3">
 					<div class="modal-header border-0 d-flex justify-content-center">
 						<img :src="logoUrl" class="img" alt="">
