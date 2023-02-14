@@ -577,68 +577,36 @@ const showProduct = ((product) => {
                                     />
                                 </div>
 								<hr class="hr">
-                                <template v-if="data.selectedProduct.type === 'Multiple'" v-for="(deal,dealIndex) in data.selectedProduct.deal_products">
-                                    <div class="preferences mb-3" v-if="deal.pivot.quantity > 1" v-for="(n , index) in  deal.pivot.quantity">
-                                        <h6>Select Your {{getNumber(n)}} Product Of {{getCategoryName(deal)}}</h6>
-                                        <template v-for="(cat_product,index) in getCategoryDealProducts(deal)">
-                                            <div class="flex-1 w-full mt-3 xl:mt-0 mb-3" v-if="cat_product.type === 'Single'">
+                                <template v-for="(cat_product,a_c_p_index) in data.selectedProduct.addon_category_product">
+                                    <div class="preferences mb-3" v-if="cat_product.addons.length > 0">
+                                        <h6>{{cat_product.addons[0].category.title}}</h6>
+                                        <template v-for="(addon,index) in cat_product.addons">
+                                            <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row">
                                                     <FormCheck class="mr-4">
                                                         <FormCheck.Input
-                                                            :id="'deal-product-m1-'+n"
+                                                            :id="'deal-product-m1-'+a_c_p_index"
                                                             type="radio"
-                                                            :name="'deal-product-m1-'+n"
+                                                            :name="'deal-product-m1-'+a_c_p_index"
                                                         />
                                                         <FormCheck.Label :for="'deal-product-m1-'+n">
                                                             <div
                                                                 class="w-56 mt-1 text-xs leading-relaxed text-slate-500"
-                                                            >{{cat_product.name}}</div>
+                                                            >{{addon.name}}</div>
                                                         </FormCheck.Label>
                                                     </FormCheck>
-                                                    <div class="w-10 h-10 image-fit zoom-in">
+                                                    <div class="w-15 h-12 image-fit zoom-in">
                                                         <Tippy
                                                             as="img"
                                                             alt="product Image"
-                                                            class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                                            :src="cat_product.image !== null ? '/images/products/'+cat_product.image : '/images/categories/profile-2.jpg'"
-                                                            :content="cat_product.name"
+                                                            class=" shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                                            :src="addon.image !== null ? '/images/addons/'+addon.image : '/images/categories/profile-2.jpg'"
+                                                            :content="addon.name"
                                                         />
                                                     </div>
                                                 </div>
                                                 <hr class="hr">
                                             </div>
-                                        </template>
-                                    </div>
-                                    <div class="preferences mb-3" v-else>
-                                        <h6>Select Your Product Of {{getCategoryName(deal)}}</h6>
-                                        <template v-for="(cat_product,cat_index) in getCategoryDealProducts(deal)">
-                                            <div class="flex-1 w-full mt-3 xl:mt-0"  v-if="cat_product.type === 'Single'">
-                                                <div class="flex flex-col sm:flex-row">
-                                                    <FormCheck class="mr-4">
-                                                        <FormCheck.Input
-                                                            :id="'deal-product-q1-'+dealIndex"
-                                                            type="radio"
-                                                            :name="'deal-product-q1-'+dealIndex"
-                                                        />
-                                                        <FormCheck.Label :for="'deal-product-q1-'+dealIndex">
-                                                            <div
-                                                                class="w-56 mt-1 text-xs leading-relaxed text-slate-500"
-                                                            >{{cat_product.name}}</div>
-                                                        </FormCheck.Label>
-                                                    </FormCheck>
-                                                    <div class="w-10 h-10 image-fit zoom-in">
-                                                        <Tippy
-                                                            as="img"
-                                                            alt="product Image"
-                                                            class="rounded-full shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                                            :src="cat_product.image !== null ? '/images/products/'+cat_product.image : '/images/categories/profile-2.jpg'"
-                                                            :content="cat_product.name"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <hr class="hr">
-                                            </div>
-
                                         </template>
                                     </div>
                                 </template>
