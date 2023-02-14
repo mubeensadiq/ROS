@@ -568,7 +568,9 @@ label , h2, h3,h4,h5,h6,p,span {
     text-align: right;
 }
 
-
+.w-15{
+    width:4rem;
+}
 .voucher-input input {
     border: 1px solid #D0D0D0;
     border-radius: 6px;
