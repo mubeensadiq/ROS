@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Area;
+use App\Models\Branch;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -117,24 +118,39 @@ class CategoriesController extends Controller
             })->where('status' , 1)->get();
             foreach ($categories as $cat_index => $category){
                 foreach ($category->products as $index => $product){
-                    $p_branches = $product->branch_product()->pluck('branch_id')->toArray();
-                    if(count($p_branches) == 0)
+                    $p_branches_ids = $product->branch_product()->pluck('branch_id')->toArray();
+                    if(count($p_branches_ids) == 0)
                         continue;
-                    if(!empty($request->area_id) && count($p_branches) > 0){
-                        $areas = Area::whereHas('branches',function($q) use($p_branches){
-                            $q->whereIn('branches.id' , $p_branches);
-                        })->pluck('id')->toArray();
-                        if(!in_array((int)$request->area_id , $areas)){
+                    if(!empty($request->area_id) && count($p_branches_ids) > 0){
+                        $areas = Area::with('branches')->whereHas('branches',function($q) use($p_branches_ids){
+                            $q->whereIn('branches.id' , $p_branches_ids);
+                        })->get();
+                        $area_ids = $areas->pluck('id')->toArray();
+                        $area_id = (int)$request->area_id;
+                        if(in_array($area_id , $area_ids)){
+                            $branch = Branch::with(['areas','products'])->whereHas('areas', function ($q) use($area_id){
+                                $q->where('areas.id',$area_id);
+                            })->first();
+                            $b_product = $branch->products->find($product->id);
+                            if($b_product){
+                                $categories[$cat_index]['products'][$index]['price'] = $b_product->pivot->price;
+                            }
+                        }
+                        if(!in_array((int)$request->area_id , $area_ids)){
                             unset($categories[$cat_index]['products'][$index]);
                         }
+
+
                     }
-                    if(!empty($request->branch_id) && count($p_branches) > 0){
-                        if(!in_array((int)$request->branch_id , $p_branches)){
+                    if(!empty($request->branch_id) && count($p_branches_ids) > 0){
+                        if(!in_array((int)$request->branch_id , $p_branches_ids)){
                             unset($categories[$cat_index]['products'][$index]);
                         }
                     }
                 }
             }
+
+
 
             return response()->json([
                 'status' => 'success',

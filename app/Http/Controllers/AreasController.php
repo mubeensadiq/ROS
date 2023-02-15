@@ -83,7 +83,8 @@ class AreasController extends Controller
         try{
             $validator = $request->validate([
                 'area' => 'required',
-                'city_id' => 'required'
+                'city_id' => 'required',
+                'postal_code' => 'required',
             ]);
             $area = Area::updateOrCreate(['id' => $request->id],[
                 'area' => $request->area,
