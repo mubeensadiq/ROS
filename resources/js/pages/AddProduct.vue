@@ -140,7 +140,6 @@ const getProductDetails = ((id) => {
                 data.product.branch_product[index].price = value.pivot.price;
             });
             data.product.addon_category_product.forEach((value , index) => {
-                console.log(value);
                 data.product.addon_category_product[index].addonCategory = value.addon_category_id;
                 data.product.addon_category_product[index].quantity = value.quantity;
                 data.product.addon_category_product[index].required = value.required === 1 ? true : false;
@@ -179,6 +178,15 @@ const getProductDetails = ((id) => {
                         quantity : 1,
                         required: false,
                         categoryAddons:[]
+                    }
+                ];
+
+            }
+            if(data.product.branch_product.length === 0){
+                data.product.branch_product = [
+                    {
+                        branches : [],
+                        price: 0
                     }
                 ];
 
