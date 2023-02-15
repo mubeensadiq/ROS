@@ -14,4 +14,9 @@ class Branch extends Model
     public function areas(){
         return $this->belongsToMany(Area::class);
     }
+
+    //Branch Belongs To Area
+    public function products(){
+        return $this->belongsToMany(Product::class)->withPivot('price');
+    }
 }
