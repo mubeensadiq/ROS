@@ -100,8 +100,9 @@ watch(branch, async(val) => {
 onMounted(() => {
     getCategories();
     getCities();
+    getCategoryProducts();
     $(window).on('load', function() {
-        $('#selectLocationModal').modal('show');
+        //$('#selectLocationModal').modal('show');
     });
 })
 
@@ -114,7 +115,6 @@ const getCategories = (() => {
 });
 const chanageLocationType = ((event) => {
     data.locationType = event.target.value;
-    console.log(data.locationType);
 });
 const getCities = (() => {
     axios.get('/cities-has-areas?get=all').then((response)=>{
@@ -194,7 +194,6 @@ const showProduct = ((product) => {
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
     <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://getbootstrap.com/docs/5.3/examples/carousel/carousel.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
@@ -203,6 +202,11 @@ const showProduct = ((product) => {
     <link rel="manifest" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/manifest.json">
     <link rel="mask-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
     <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600' rel='stylesheet' as="style" type='text/css'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu">
     <section id="mainHeaderSection">
         <div class="container-fluid p-0">
             <div class="alert-msg text-light">FREE Delivery On Orders Above <span>Rs. 2000</span></div>
@@ -308,7 +312,7 @@ const showProduct = ((product) => {
     <main>
         <template v-for="(category , categoryIndex) in data.categoryProducts">
             <section v-if="category.products && category.products.length > 0" class="base-section gourmet-fries"   :id="category.id">
-                <div class="container-fluid px-container">
+                <div class="container px-container">
                     <h3 class="section-title text-uppercase text-center">{{category.name}}</h3>
                     <div class="row">
                         <template v-for="(product , index) in category.products">
@@ -397,7 +401,7 @@ const showProduct = ((product) => {
 
 
 		<!-- Region Modal -->
-		<div class="modal fade" id="selectLocationModal" data-keyboard="false" data-backdrop="static">
+		<div class="modal fade" id="selectLocationModal" data-bs-backdrop="static" data-bs-keyboard="false">
 			<div class="modal-dialog modal-md modal-dialog-centered">
 				<div class="modal-content p-3">
 					<div class="modal-header border-0 d-flex justify-content-center">
@@ -552,26 +556,27 @@ const showProduct = ((product) => {
 		</div>
 
 		<!-- Product Modal -->
-		<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal in" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-md" role="document">
 				<div class="modal-content p-3">
-					<div class="modal-header border-0 d-flex align-items-start">
-						<button type="button" class="btn-close border rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
+                    <div class="outside-close">
+                        <button type="button" class="close" data-bs-dismiss="modal">
+                            <span style="display: none;">Close</span>×</button>
+                    </div>
 					<div class="modal-body cartModal">
 						<div class="row">
 							<div class="productSummary col-md-12 col-sm-12" v-if="data.selectedProduct">
 
 								<div class="product-n-review">
-									<h4>{{data.selectedProduct.name}}</h4>
-                                    <p class="mb-2 bold">Rs. {{data.selectedProduct.price}}</p>
+									<h4>{{data.selectedProduct.name}} <span v-if="data.selectedProduct.required" class="required-label">Required</span></h4>
+                                    <p class="mb-2 bold price-label">Rs. {{data.selectedProduct.price}}</p>
                                     <p class="mb-3">{{data.selectedProduct.description}}</p>
 								</div>
-                                <div class="text-center">
+                                <div class="p-2">
                                     <Tippy
                                         as="img"
                                         alt="product Image"
-                                        class="shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                        class="w-100 shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
                                         :src="data.selectedProduct.image !== null ? '/images/products/'+data.selectedProduct.image : '/images/categories/profile-2.jpg'"
                                         :content="data.selectedProduct.name"
                                     />
@@ -579,7 +584,7 @@ const showProduct = ((product) => {
 								<hr class="hr">
                                 <template v-for="(cat_product,a_c_p_index) in data.selectedProduct.addon_category_product">
                                     <div class="preferences mb-3" v-if="cat_product.addons.length > 0">
-                                        <h6>{{cat_product.addons[0].category.title}}</h6>
+                                        <h6 class="addon-cat-title">{{cat_product.addons[0].category.title}}</h6>
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row">
@@ -589,9 +594,9 @@ const showProduct = ((product) => {
                                                             type="radio"
                                                             :name="'deal-product-m1-'+a_c_p_index"
                                                         />
-                                                        <FormCheck.Label :for="'deal-product-m1-'+n">
+                                                        <FormCheck.Label :for="'deal-product-m1-'+a_c_p_index">
                                                             <div
-                                                                class="w-56 mt-1 text-xs leading-relaxed text-slate-500"
+                                                                class="text-md leading-relaxed text-slate-500"
                                                             >{{addon.name}}</div>
                                                         </FormCheck.Label>
                                                     </FormCheck>
@@ -611,7 +616,7 @@ const showProduct = ((product) => {
                                     </div>
                                 </template>
 								<div class="range-add-button">
-									<input type="number" name="1" id="" value="1">
+									<input type="number" name="1" id="" value="1" class="prod-qty">
 									<button class="btn btn-yellow float-end">Add to cart</button>
 								</div>
 							</div>

@@ -523,9 +523,9 @@ const showNoty = ((message,type = 'success') => {
                             </FormLabel>
                             <div class="flex-1 w-full mt-3 xl:mt-0">
                                 <FormInput
-                                    id="quantity"
+                                    id="price"
                                     type="number"
-                                    placeholder="Quantity"
+                                    placeholder="Price"
                                     v-model="b_product.price"
                                     :value="b_product.price"
                                 />
