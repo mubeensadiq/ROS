@@ -557,17 +557,20 @@ const showProduct = ((product) => {
 		<!-- Product Modal -->
 		<div class="modal in" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-md" role="document">
-				<div class="modal-content p-3">
+				<div class="modal-content p-3" v-if="data.selectedProduct">
                     <div class="outside-close">
                         <button type="button" class="close" data-bs-dismiss="modal">
                             <span style="display: none;">Close</span>×</button>
                     </div>
+                    <div class="modal-header">
+                        <h4>{{data.selectedProduct.name}} </h4>
+                    </div>
 					<div class="modal-body cartModal">
 						<div class="row">
-							<div class="productSummary col-md-12 col-sm-12" v-if="data.selectedProduct">
+							<div class="productSummary col-md-12 col-sm-12">
 
 								<div class="product-n-review">
-									<h4>{{data.selectedProduct.name}} </h4>
+
                                     <p class="mb-2 bold price-label">Rs. {{data.selectedProduct.price}}</p>
                                     <p class="mb-3">{{data.selectedProduct.description}}</p>
 								</div>
@@ -619,13 +622,32 @@ const showProduct = ((product) => {
                                         </template>
                                     </div>
                                 </template>
-								<div class="range-add-button">
-									<input type="number" name="1" id="" value="1" class="prod-qty">
-									<button class="btn btn-yellow float-end">Add to cart</button>
-								</div>
+
 							</div>
 						</div>
 					</div>
+                    <div class="modal-footer">
+                        <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
+                            <div class="flex flex-col sm:flex-row">
+                                <div class="w-25 counter d-inline-flex mr-5">
+                                    <button type="button" class="sober-icon-box btn btn-secondary">
+                                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg>
+                                    </button>
+                                    <input type="tel" class="quantity-box form-control" value="1">
+                                    <button type="button" class="sober-icon-box btn btn-secondary">
+                                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg>
+                                    </button>
+                                </div>
+                                <div class="cart-count w-75">
+                                    <div class="d-flex m-0 justify-content-center">
+                                        <div class="add-to-cart text-center">Add To Cart
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
 				</div>
 			</div>
 		</div>

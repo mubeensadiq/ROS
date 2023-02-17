@@ -903,7 +903,56 @@ footer p {
     font-family: 'Poppins', sans-serif !important;
 }
 #productModal .modal-md{
-    max-width: 700px !important;
+    max-width: 600px !important;
+}
+#productModal .modal-header{
+    height: 3em;
+}
+#productModal .modal-body{
+    height: 400px;
+    overflow-y: auto;
+    padding: 0 var(--bs-modal-padding);
+}
+.modal-footer .counter {
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+    padding: 0.3rem 0.25rem;
+}
+.modal-footer .counter .sober-icon-box {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    flex: 0 0 14px;
+    padding: 5px 9px;
+    text-align: center;
+    transition: background-color .25s ease;
+}
+.modal-footer .counter .quantity-box {
+    border: 0;
+    height: 34px;
+    padding: 5px;
+    text-align: center;
+}
+.svg-inline--fa {
+    display: inline-block;
+    height: 1em;
+    overflow: visible;
+    vertical-align: -0.125em;
+}
+.modal-footer .cart-count {
+    background-color: #FFA52D;
+    border-radius: 0.4rem;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.75rem 0.25rem;
+}
+.modal-footer .cart-count .add-to-cart {
+    font-size: .9rem;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .required-label{
     font-family: 'Poppins', sans-serif !important;
