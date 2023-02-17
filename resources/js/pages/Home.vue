@@ -578,7 +578,7 @@ const showProduct = ((product) => {
                                     <Tippy
                                         as="img"
                                         alt="product Image"
-                                        class="w-100 shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                        class="w-100"
                                         :src="data.selectedProduct.image !== null ? '/images/products/'+data.selectedProduct.image : '/images/categories/profile-2.jpg'"
                                         :content="data.selectedProduct.name"
                                     />
@@ -603,11 +603,10 @@ const showProduct = ((product) => {
                                                         </FormCheck.Label>
 
                                                     </FormCheck>
-                                                    <div class="w-15 h-12 image-fit zoom-in">
+                                                    <div class="addon-image image-fit zoom-in">
                                                         <Tippy
                                                             as="img"
                                                             alt="product Image"
-                                                            class=" shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
                                                             :src="addon.image !== null ? '/images/addons/'+addon.image : '/images/categories/profile-2.jpg'"
                                                             :content="addon.name"
                                                         />

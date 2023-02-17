@@ -817,17 +817,7 @@ footer p {
 }
 
 .star-gold { color: #FFCC33; }
-.productSummary .product-n-review h4 {
-    font-weight: 600;
-    font-size: 21px;
-    color: #1E1D23;
-    font-family: 'Poppins', sans-serif !important;
-}
-.productSummary .product-n-review .price-label {
-    font-weight: 600;
-    font-size: 18px;
-    color: #1E1D23;
-}
+
 .outside-close .close {
     float: right;
     font-size: 25px;
@@ -912,6 +902,32 @@ footer p {
     height: 400px;
     overflow-y: auto;
     padding: 0 var(--bs-modal-padding);
+}
+.addon-image{
+    align-items: center;
+    border-radius: 0.32rem;
+    display: flex;
+    flex-shrink: 0;
+    height: 64px;
+    justify-content: center;
+    margin: 0 10px 0 auto;
+    margin-bottom: -0.75rem!important;
+    margin-top: -0.75rem!important;
+    object-fit: cover;
+    object-position: top;
+    overflow: hidden;
+    width: 64px;
+}
+#productModal .modal-header h4 {
+    font-weight: 600;
+    font-size: 21px;
+    color: #1E1D23;
+    font-family: 'Poppins', sans-serif !important;
+}
+.productSummary .product-n-review .price-label {
+    font-weight: 600;
+    font-size: 18px;
+    color: #1E1D23;
 }
 .modal-footer .counter {
     border: 1px solid #ccc;
