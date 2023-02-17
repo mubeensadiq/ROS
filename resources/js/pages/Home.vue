@@ -100,9 +100,8 @@ watch(branch, async(val) => {
 onMounted(() => {
     getCategories();
     getCities();
-    getCategoryProducts();
     $(window).on('load', function() {
-        //$('#selectLocationModal').modal('show');
+        $('#selectLocationModal').modal('show');
     });
 })
 
