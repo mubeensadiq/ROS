@@ -587,7 +587,7 @@ const showProduct = ((product) => {
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row">
-                                                    <FormCheck class="mr-10">
+                                                    <FormCheck class="mr-10 w-75">
                                                         <FormCheck.Input
                                                             :id="'deal-product-m1-'+a_c_p_index"
                                                             type="radio"
@@ -598,6 +598,7 @@ const showProduct = ((product) => {
                                                                 class="text-md leading-relaxed text-slate-500"
                                                             >{{addon.name}}</div>
                                                         </FormCheck.Label>
+
                                                     </FormCheck>
                                                     <div class="w-15 h-12 image-fit zoom-in">
                                                         <Tippy
@@ -608,7 +609,10 @@ const showProduct = ((product) => {
                                                             :content="addon.name"
                                                         />
                                                     </div>
-                                                    <span v-if="addon.price > 0" class="addon-price">Rs {{addon.price}}</span>
+
+                                                    <div class="w-35" v-if="addon.price > 0" >
+                                                        <span class="addon-price">Rs {{addon.price}}</span>
+                                                    </div>
                                                 </div>
                                                 <hr class="hr">
                                             </div>

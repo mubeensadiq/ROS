@@ -575,6 +575,9 @@ label , h2, h3,h4,h5,h6,p,span {
 .w-15{
     width:4rem;
 }
+.w-35{
+    width:35%;
+}
 .voucher-input input {
     border: 1px solid #D0D0D0;
     border-radius: 6px;
@@ -912,11 +915,11 @@ footer p {
 }
 .addon-price{
     font-family: 'Poppins', sans-serif !important;
-    margin-left: 18rem;
     padding: 0.3rem;
     font-size: 14px;
     font-weight: bold;
     line-height: 2rem;
+    float: right;
 }
 .btn-yellow{
     font-family: 'Poppins', sans-serif !important;
