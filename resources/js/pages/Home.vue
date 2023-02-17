@@ -100,8 +100,9 @@ watch(branch, async(val) => {
 onMounted(() => {
     getCategories();
     getCities();
+    getCategoryProducts();
     $(window).on('load', function() {
-        $('#selectLocationModal').modal('show');
+       // $('#selectLocationModal').modal('show');
     });
 })
 
@@ -567,7 +568,7 @@ const showProduct = ((product) => {
 							<div class="productSummary col-md-12 col-sm-12" v-if="data.selectedProduct">
 
 								<div class="product-n-review">
-									<h4>{{data.selectedProduct.name}} <span v-if="data.selectedProduct.required" class="required-label">Required</span></h4>
+									<h4>{{data.selectedProduct.name}} </h4>
                                     <p class="mb-2 bold price-label">Rs. {{data.selectedProduct.price}}</p>
                                     <p class="mb-3">{{data.selectedProduct.description}}</p>
 								</div>
@@ -583,11 +584,11 @@ const showProduct = ((product) => {
 								<hr class="hr">
                                 <template v-for="(cat_product,a_c_p_index) in data.selectedProduct.addon_category_product">
                                     <div class="preferences mb-3" v-if="cat_product.addons.length > 0">
-                                        <h6 class="addon-cat-title">{{cat_product.addons[0].category.title}}</h6>
+                                        <h6 class="addon-cat-title">{{cat_product.addons[0].category.title}}<span v-if="cat_product.required" class="required-label">Required</span></h6>
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row">
-                                                    <FormCheck class="mr-4">
+                                                    <FormCheck class="mr-10">
                                                         <FormCheck.Input
                                                             :id="'deal-product-m1-'+a_c_p_index"
                                                             type="radio"
@@ -608,6 +609,7 @@ const showProduct = ((product) => {
                                                             :content="addon.name"
                                                         />
                                                     </div>
+                                                    <span v-if="addon.price > 0" class="addon-price">Rs {{addon.price}}</span>
                                                 </div>
                                                 <hr class="hr">
                                             </div>

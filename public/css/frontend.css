@@ -898,7 +898,6 @@ footer p {
 }
 .preferences .leading-relaxed{
     font-family: 'Poppins', sans-serif !important;
-    width: 25rem;
 }
 #productModal .modal-md{
     max-width: 700px !important;
@@ -907,6 +906,17 @@ footer p {
     font-family: 'Poppins', sans-serif !important;
     float: right;
     background: #FFCC33;
+    padding: 0.3rem;
+    font-size: 12px;
+    border-radius: 5px;
+}
+.addon-price{
+    font-family: 'Poppins', sans-serif !important;
+    margin-left: 18rem;
+    padding: 0.3rem;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 2rem;
 }
 .btn-yellow{
     font-family: 'Poppins', sans-serif !important;
