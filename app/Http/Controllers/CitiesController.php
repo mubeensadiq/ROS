@@ -78,11 +78,14 @@ class CitiesController extends Controller
 
     public function saveCity(Request $request){
         try{
-            $validator = $request->validate([
+             $request->validate([
                 'city' => 'required',
+                'tax_amount' => 'numeric',
             ]);
-            $area = City::updateOrCreate(['id' => $request->id],[
-                'city' => $request->city
+            City::updateOrCreate(['id' => $request->id],[
+                'city' => $request->city,
+                'tax_type' => $request->tax_type,
+                'tax_amount' => (int)$request->tax_amount
             ]);
             return response()->json([
                 'status' => 'success',

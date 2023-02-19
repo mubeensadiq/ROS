@@ -33,6 +33,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
         },
         {
             icon: "FileText",
+            pageName: "discounts",
+            title: "Discounts",
+        },
+        {
+            icon: "FileText",
             pageName: "addon.categories",
             title: "Addon Categories",
         },

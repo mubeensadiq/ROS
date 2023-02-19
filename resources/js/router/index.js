@@ -21,12 +21,13 @@ import AddCategory from "../pages/AddCategory.vue";
 import Addons from "../pages/Addons.vue";
 import AddAddon from "../pages/AddAddon.vue";
 import Products from "../pages/Products.vue";
-import ProductGrid from "../pages/ProductGrid.vue";
 import AddProduct from "../pages/AddProduct.vue";
 import Login from "../pages/Login.vue";
 import Home from "../pages/Home.vue";
 import Confirmation from "../pages/Confirmation.vue";
 import Checkout from "../pages/Checkout.vue";
+import Discounts from "../pages/Discounts.vue";
+import AddDiscount from "../pages/AddDiscount.vue";
 import { useUserStore } from "../stores/users";
 const routes = [
     {
@@ -203,6 +204,21 @@ const routes = [
             path: "product/update/:id",
             name: "products.update",
             component: AddProduct,
+        },
+        {
+            path: "discounts",
+            name: "discounts",
+            component: Discounts,
+        },
+        {
+            path: "discount/update/:id",
+            name: "discounts.update",
+            component: AddDiscount,
+        },
+        {
+            path: "discount/create",
+            name: "discounts.create",
+            component: AddDiscount,
         },
     ],
   },

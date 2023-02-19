@@ -11,6 +11,7 @@ use App\Http\Controllers\DealsController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\AddonsController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\RidersController;
 use App\Http\Controllers\ImageController;
 
@@ -36,6 +37,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/get-product-details/{id}', [ProductsController::class , 'getProductDetails']);
     Route::delete('/delete-product/{id}', [ProductsController::class , 'deleteProduct']);
     /************** END PRODUCT ROUTES ************/
+
+    /************** DISCOUNT ROUTES ************/
+    Route::get('/discounts', [DiscountsController::class , 'index']);
+    Route::post('/save-discount', [DiscountsController::class , 'saveDiscount']);
+    Route::get('/get-discount-details/{id}', [DiscountsController::class , 'getDiscountDetails']);
+    Route::delete('/delete-discount/{id}', [DiscountsController::class , 'deleteDiscount']);
+    /************** END DISCOUNT ROUTES ************/
 
     /************** USER ROUTES ************/
     Route::get('/users', [UsersController::class , 'index']);

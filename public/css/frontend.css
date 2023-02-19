@@ -910,7 +910,7 @@ footer p {
     flex-shrink: 0;
     height: 64px;
     justify-content: center;
-    margin: 0 10px 0 auto;
+    margin: 0 10px 0 0;
     margin-bottom: -0.75rem!important;
     margin-top: -0.75rem!important;
     object-fit: cover;

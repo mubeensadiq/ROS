@@ -3,7 +3,7 @@ import Button from "../base-components/Button";
 import {
     FormInput,
     FormInline,
-    FormSelect,
+        FormSelect,
     FormLabel,
 } from "../base-components/Form";
 import Lucide from "../base-components/Lucide";

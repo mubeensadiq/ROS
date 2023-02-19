@@ -9,13 +9,6 @@ import banner1 from "../../../public/images/assets/banner1.png";
 import back from "../../../public/images/assets/back.png";
 import fwd from "../../../public/images/assets/fwd.png";
 import deal1 from "../../../public/images/assets/deal-1.png";
-import deal2 from "../../../public/images/assets/deal-2.png";
-import deal3 from "../../../public/images/assets/deal-3.png";
-import deal4 from "../../../public/images/assets/deal-4.png";
-import mdeal1 from "../../../public/images/assets/mdeal-1.png";
-import mdeal2 from "../../../public/images/assets/mdeal-2.png";
-import mdeal3 from "../../../public/images/assets/mdeal-3.png";
-import mdeal4 from "../../../public/images/assets/mdeal-4.png";
 import cartIcon from "../../../public/images/assets/cart-icon.png";
 import location from "../../../public/images/assets/location.png";
 import facebook from "../../../public/images/assets/facebook.png";
@@ -56,14 +49,8 @@ import _ from "lodash";
 import {ref, reactive, onMounted, watch} from "vue";
 import TomSelect from "../base-components/TomSelect";
 import {
-    FormInput,
-    FormInline,
     FormSelect,
-    FormLabel,
-    FormHelp,
     FormCheck,
-    InputGroup,
-    FormSwitch,
 } from "../base-components/Form";
 import axios from "axios";
 import Tippy from "../base-components/Tippy";
@@ -427,7 +414,7 @@ const showProduct = ((product) => {
                                         :options="{
                                         placeholder: 'Select City',
                                       }"
-                                        class="w-full"
+                                        class="w-full bg-transparent"
                                     >
                                         <option
                                             v-for="(city,index) in data.cities" :key="index" :value="city.id"
@@ -444,7 +431,7 @@ const showProduct = ((product) => {
                                         :options="{
                                         placeholder: 'Select Area',
                                       }"
-                                        class="w-full"
+                                        class="w-full bg-transparent"
                                     >
                                         <option
                                             v-for="(area,index) in data.areas" :key="index" :value="area.id"

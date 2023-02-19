@@ -17,11 +17,14 @@ export default {
     data() {
         return {
             city: {
-                city: ''
+                city: '',
+                tax_type : 'Non-GST',
+                tax_amount : 0
             },
             update:false,
             toastText : '',
-            toastType : 'success'
+            toastType : 'success',
+            taxTypes : ['Non-GST' , 'Inclusive Tax' , 'Exclusive Tax']
         }
     },
     mounted() {
@@ -107,6 +110,54 @@ export default {
                                 />
                             </div>
                         </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Tax Type</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="city.tax_type" :value="city.tax_type"
+                                    :options="{
+                                        placeholder: 'Select Tax Type',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(type, index) in taxTypes"
+                                        :key="index"
+                                        :value="type"
+                                    >
+                                        {{ type }}
+                                    </option>
+                                </TomSelect>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium"> Tax Amount (In Percent)</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="tax_amount"
+                                    type="text"
+                                    placeholder="Tax Amount"
+                                    v-model="city.tax_amount"
+                                    :value="city.tax_amount"
+                                />
+                            </div>
+                        </FormInline>
 
 
                     </div>
@@ -114,7 +165,7 @@ export default {
             </div>
             <!-- END: Product Information -->
             <div class="flex flex-col justify-end gap-2 mt-5 md:flex-row">
-                <RouterLink :to="{name : 'areas' }">
+                <RouterLink :to="{name : 'cities' }">
                     <Button
                         type="button"
                         class="w-full py-3 border-slate-300 dark:border-darkmode-400 text-slate-500 md:w-52"

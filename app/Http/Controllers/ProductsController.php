@@ -24,6 +24,9 @@ class ProductsController extends Controller
                 $products = $products->where('type' , $request->type)->get();
             }
             else{
+                if(isset($request->get) && $request->get == 'all')
+                    $products = $products->get();
+                else
                 $products = $products->paginate(20)->appends($request->all());
             }
             return response()->json([
