@@ -16,7 +16,7 @@ class DiscountsController extends Controller
     public function index(Request $request)
     {
         try{
-            $discounts = Discount::with('products','categories','cities','branches');
+            $discounts = Discount::with(['products','categories','cities','branches']);
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
                 $discounts = $discounts->where('name' ,'like', "%$query%")
@@ -87,7 +87,7 @@ class DiscountsController extends Controller
     }
     public function getDiscountDetails(Request $request , $id){
         try{
-            $discount = Discount::where('id' , $id)->first();
+            $discount = Discount::with(['products','categories','cities','branches'])->where('id' , $id)->first();
             if($discount){
                 return response()->json([
                     'status' => 'success',

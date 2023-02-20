@@ -16,11 +16,11 @@ interface InputProps extends InputHTMLAttributes {
 }
 
 interface InputEmit {
-  (e: "update:modelValue", value: string|boolean): void;
+  (e: "update:modelValue", value: boolean): void;
 }
 
 const props = defineProps<InputProps>();
-
+console.log(props);
 const attrs = useAttrs();
 
 const computedClass = computed(() =>
@@ -43,6 +43,7 @@ const emit = defineEmits<InputEmit>();
 watch(localValue, () => {
   emit("update:modelValue", localValue.value);
 });
+
 </script>
 
 <template>

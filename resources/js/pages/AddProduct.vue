@@ -13,7 +13,7 @@ const date = ref("");
 const datepickerModalPreview = ref(false);
 import Lucide from "../base-components/Lucide";
 import Notification from "./Notification.vue";
-import {ref, reactive , onMounted, nextTick} from "vue";
+import {ref, reactive , onMounted,onUpdated, nextTick} from "vue";
 import axios from 'axios';
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
@@ -26,15 +26,24 @@ onMounted(() =>{
     if (route.params.id !== undefined) {
         nextTick().then(() => {
             getProductDetails(route.params.id);
+            data.update = true;
         });
+    }
+    else{
+        data.loading = false;
     }
 
 })
+onUpdated(() => {
+});
+const iconColor = "#ffffff";
 let data = reactive({
     product: {
         type:'Single',
         name: '',
         description: '',
+        tax_applicable: true,
+        discount : null,
         categories: [],
         branch_product: [
             {
@@ -64,6 +73,8 @@ let data = reactive({
             specific_day : [],
         }
     },
+    loading : true,
+    update : false,
     toastText : '',
     toastType : '',
     categories : [],
@@ -128,13 +139,15 @@ const getCategoryAddons = ((p_a_index) => {;
            return category;
     }).addons;
 });
-const getProductDetails = ((id) => {
-    axios.get('/api/get-product-details/' + id).then((response) => {
+const getProductDetails = (async (id) => {
+   await axios.get('/api/get-product-details/' + id).then((response) => {
         if (response.data.product !== undefined){
             data.product = response.data.product;
             data.product.categories.forEach((value , index) => {
                 data.product.categories[index] = value.id.toString();
             });
+            data.product.status = data.product.status === 1;
+            data.product.tax_applicable = data.product.tax_applicable === 1;
             data.product.branch_product.forEach((value , index) => {
                 data.product.branch_product[index].branches = [value.id.toString()];
                 data.product.branch_product[index].price = value.pivot.price;
@@ -142,16 +155,12 @@ const getProductDetails = ((id) => {
             data.product.addon_category_product.forEach((value , index) => {
                 data.product.addon_category_product[index].addonCategory = value.addon_category_id;
                 data.product.addon_category_product[index].quantity = value.quantity;
-                data.product.addon_category_product[index].required = value.required === 1 ? true : false;
+                data.product.addon_category_product[index].required = value.required === 1;
                 data.product.addon_category_product[index].addons = value.addons;
 
                 data.product.addon_category_product[index].addons.forEach((addon, a_index) => {
                     data.product.addon_category_product[index].addons[a_index] = addon.id.toString();
                 })
-                console.log(data.addonCategories.find((category) => {
-                    if(category.id == data.product.addon_category_product[index].addonCategory)
-                        return category;
-                }));
                 data.product.addon_category_product[index].categoryAddons =  data.addonCategories.find((category) => {
                     if(category.id == data.product.addon_category_product[index].addonCategory)
                         return category;
@@ -168,7 +177,12 @@ const getProductDetails = ((id) => {
                     specific_date : '',
                     specific_day : [],
                 };
-
+            }
+            else{
+                if(data.product.schedule.start_date === null)
+                    data.product.schedule.start_date = '';
+                if(data.product.schedule.end_date === null)
+                    data.product.schedule.end_date = '';
             }
             if(data.product.addon_category_product.length === 0){
                 data.product.addon_category_product = [
@@ -196,6 +210,7 @@ const getProductDetails = ((id) => {
         console.log(error);
         showNoty(error.response.data.message,'error')
     });
+   data.loading = false
 });
 
 const addMoreProducts = (() => {
@@ -264,12 +279,12 @@ const showNoty = ((message,type = 'success') => {
 <template>
     <Notification :toastText="data.toastText" :toastType="data.toastType" />
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Add Product</h2>
+        <h2 class="mr-auto text-lg font-medium">{{data.update ? 'Update Product' : 'Add New Product'}}</h2>
     </div>
-    <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
+    <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6" >
         <!-- BEGIN: Notification -->
         <!-- BEGIN: Notification -->
-        <div class="col-span-11 intro-y 2xl:col-span-9">
+        <div class="col-span-11 intro-y 2xl:col-span-9" v-if="!data.loading">
 
             <!-- BEGIN: Product Information -->
             <div class="p-5 mt-5 intro-y box">
@@ -415,14 +430,63 @@ const showNoty = ((message,type = 'success') => {
                                 <FormSwitch>
                                     <FormSwitch.Input
                                         id="product-status"
+                                        name="status"
                                         type="checkbox"
                                         v-model="data.product.status"
                                         :checked="data.product.status"
+                                        :value="data.product.status"
                                     />
-                                    <FormSwitch.Label htmlFor="category-status-active">
+                                    <FormSwitch.Label htmlFor="product-status">
                                         {{data.product.status ? 'Active' : "In Active" }}
                                     </FormSwitch.Label>
                                 </FormSwitch>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Tax Applicable</div>
+                                    </div>
+                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                        If the tax is applicable, then it must be active
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormSwitch>
+                                    <FormSwitch.Input
+                                        id="tax_applicable"
+                                        type="checkbox"
+                                        v-model="data.product.tax_applicable"
+                                        :checked="data.product.tax_applicable"
+                                    />
+                                    <FormSwitch.Label htmlFor="category-status-active">
+                                        {{data.product.tax_applicable ? 'Yes' : "No" }}
+                                    </FormSwitch.Label>
+                                </FormSwitch>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Discount (In Percent)</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="discount"
+                                    type="text"
+                                    placeholder="Discount"
+                                    v-model="data.product.discount"
+                                    :value="data.product.discount"
+                                />
                             </div>
                         </FormInline>
                         <FormInline class="flex-col items-start mt-10 xl:flex-row">

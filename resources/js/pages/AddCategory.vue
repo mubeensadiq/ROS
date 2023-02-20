@@ -25,6 +25,7 @@ export default {
                 status: true,
                 image: null
             },
+            loading:true,
             toastText : '',
             toastType : 'success',
             update:false,
@@ -41,6 +42,9 @@ export default {
             this.$nextTick().then(() => {
                 this.getCategoryDetails(this.$route.params.id);
             });
+        }
+        else{
+            this.loading = false;
         }
     },
     methods: {
@@ -62,11 +66,13 @@ export default {
                 this.showNoty(error.response.data.message,'error')
             });
         },
-        getCategoryDetails(id) {
-            axios.get('/api/get-category-details/' + id).then((response) => {
+        async getCategoryDetails(id) {
+            await axios.get('/api/get-category-details/' + id).then((response) => {
                 if (response.data.category !== undefined){
                     this.category = response.data.category;
+                    this.category.status = this.category.status === 1;
                 }
+                this.loading = false;
 
             }).catch((error) => {
                 this.showNoty(error.response.data.message, 'error')
@@ -116,7 +122,7 @@ export default {
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
         <!-- BEGIN: Notification -->
-        <div class="col-span-11 intro-y 2xl:col-span-9">
+        <div class="col-span-11 intro-y 2xl:col-span-9" v-if="!loading">
 
             <!-- BEGIN: Product Information -->
             <div class="p-5 mt-5 intro-y box">
@@ -206,9 +212,10 @@ export default {
                                         id="category-status-active"
                                         type="checkbox"
                                         v-model="category.status"
+                                        :checked="category.status"
                                     />
                                     <FormSwitch.Label htmlFor="category-status-active">
-                                        Active
+                                        {{ category.status ? 'Active' : 'InActive' }}
                                     </FormSwitch.Label>
                                 </FormSwitch>
                             </div>

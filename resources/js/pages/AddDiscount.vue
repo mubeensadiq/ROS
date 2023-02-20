@@ -31,7 +31,8 @@ export default {
             discounts:['OverAll' , 'Cities' , 'Branches' , 'Categories' , 'Products'],
             toastText : '',
             toastType : 'success',
-            update:false
+            update:false,
+            loading:true
         }
     },
     mounted() {
@@ -47,6 +48,9 @@ export default {
                     this.discount.required = this.discount.required === 1 ?  true : false;
                 },1000)
             });
+        }
+        else{
+            this.loading = false;
         }
     },
     methods: {
@@ -86,15 +90,39 @@ export default {
                 this.showNoty(error.response.data.message,'error')
             });
         },
-        getDiscountDetails(id) {
-            axios.get('/api/get-discount-details/' + id).then((response) => {
+        async getDiscountDetails(id) {
+            await axios.get('/api/get-discount-details/' + id).then((response) => {
                 if (response.data.discount !== undefined){
                     this.discount = response.data.discount;
+                    this.discount.status = this.discount.status ===1;
+                    this.discount.discountable = [];
+                    if(response.data.discount.products.length > 0){
+                        response.data.discount.products.forEach((value , index) => {
+                            this.discount.discountable[index] = value.id.toString();
+                        });
+                    }
+                    if(response.data.discount.branches.length > 0){
+                        response.data.discount.branches.forEach((value , index) => {
+                            this.discount.discountable[index] = value.id.toString();
+                        });
+                    }
+                    if(response.data.discount.categories.length > 0){
+                        response.data.discount.categories.forEach((value , index) => {
+                            this.discount.discountable[index] = value.id.toString();
+                        });
+                    }
+                    if(response.data.discount.cities.length > 0){
+                        response.data.discount.cities.forEach((value , index) => {
+                            this.discount.discountable[index] = value.id.toString();
+                        });
+                    }
+
                 }
 
             }).catch((error) => {
                 this.showNoty(error.response.data.message,'error')
             });
+            this.loading = false;
         },
         saveDiscount() {
             axios.post('/api/save-discount', this.discount).then((response) => {
@@ -120,7 +148,7 @@ export default {
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6">
         <!-- BEGIN: Notification -->
         <!-- BEGIN: Notification -->
-        <div class="col-span-11 intro-y 2xl:col-span-9">
+        <div class="col-span-11 intro-y 2xl:col-span-9" v-if="!loading">
 
             <!-- BEGIN: Product Information -->
             <div class="p-5 mt-5 intro-y box">
@@ -208,6 +236,38 @@ export default {
                                     v-model="discount.value"
                                     :value="discount.value"
                                 />
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Status</div>
+                                        <div
+                                            class="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md"
+                                        >
+                                            Required
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 text-xs leading-relaxed text-slate-500">
+                                        If the status is active, then it will be displayed in menu.
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormSwitch>
+                                    <FormSwitch.Input
+                                        id="discount-status-active"
+                                        type="checkbox"
+                                        v-model="discount.status"
+                                        :checked="discount.status"
+                                    />
+                                    <FormSwitch.Label htmlFor="discount-status-active">
+                                        {{ discount.status ? 'Active' : 'InActive' }}
+                                    </FormSwitch.Label>
+                                </FormSwitch>
                             </div>
                         </FormInline>
                         <FormInline

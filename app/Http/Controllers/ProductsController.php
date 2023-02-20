@@ -82,6 +82,8 @@ class ProductsController extends Controller
                 'status' => $request->status,
                 'image' => $request->image,
                 'type' => $request->type,
+                'tax_applicable' => $request->tax_applicable,
+                'discount' => $request->discount,
             ]);
             $product->categories()->sync($request->categories);
             $product->branch_product()->detach();
