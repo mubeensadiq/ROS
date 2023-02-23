@@ -46,6 +46,7 @@ import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 
 
 import _ from "lodash";
+import Notification from "./Notification.vue";
 import {ref, reactive, onMounted, watch} from "vue";
 import TomSelect from "../base-components/TomSelect";
 import {
@@ -54,16 +55,23 @@ import {
 } from "../base-components/Form";
 import axios from "axios";
 import Tippy from "../base-components/Tippy";
+import {isset} from "../utils/helper";
 const data = reactive({
     cities: [],
     areas: [],
     branches: [],
     categories: [],
     deals: [],
+    cart:[],
+    temporaryItem:{
+
+    },
     dealProducts:[],
     categoryProducts: [],
     selectedProduct : null,
-    locationType: 'Delivery'
+    locationType: 'Delivery',
+    toastText: '',
+    toastType: 'success',
 })
 const city = ref('');
 const area = ref('');
@@ -77,7 +85,6 @@ watch(city, async (newCity) => {
     getBranches();
 })
 watch(area, async(val) => {
-    getCategoryProducts();
     $('#selectLocationModal').modal('hide');
 })
 watch(branch, async(val) => {
@@ -87,8 +94,10 @@ watch(branch, async(val) => {
 onMounted(() => {
     getCategories();
     getCities();
+    getCategoryProducts();
+
     $(window).on('load', function() {
-        $('#selectLocationModal').modal('show');
+       // $('#selectLocationModal').modal('show');
     });
 })
 
@@ -132,46 +141,122 @@ const getCategoryProducts = (() => {
 });
 const selectProduct = ((categoryIndex, productIndex) => {
     data.selectedProduct = data.categoryProducts[categoryIndex].products[productIndex];
+    data.temporaryItem.id = data.categoryProducts[categoryIndex].products[productIndex].id;
+    data.temporaryItem.name = data.categoryProducts[categoryIndex].products[productIndex].name;
+    data.temporaryItem.price = data.categoryProducts[categoryIndex].products[productIndex].price;
+    data.temporaryItem.addons = [];
     $('#productModal').modal('toggle');
 });
-const getCategoryName = ((deal) => {
-    return data.categories.find((category) => {
-        if(category.id === deal.pivot.category_id)
-            return category.name;
-    }).name
+const addIntoItem = ((addon,cat_index,type,quantity,index) => {
+    addon.quantity = quantity
+    if(type === 'single'){
+        data.temporaryItem.addons[cat_index] = addon;
+        data.temporaryItem.addons[cat_index].quantity = quantity;
+    }
+    else{
+        let addonQtyElement = $('#addon-qty'+cat_index+'-'+addon.id);
+        let addonQtyVal = parseInt(addonQtyElement.val());
+        if(addonQtyVal > quantity)
+            addonQtyElement.val(quantity);
+
+        addon.quantity = parseInt(addonQtyElement.val());
+        if(data.temporaryItem.addons[cat_index] !== undefined){
+            if($('#deal-product-' +cat_index+index).is(":checked"))
+                data.temporaryItem.addons[cat_index].push(addon);
+            else
+                data.temporaryItem.addons[cat_index].pop(addon);
+        }
+
+        else
+            data.temporaryItem.addons[cat_index] = [addon];
+
+
+
+    }
+
+    console.log("temporary")
+    console.log(data.temporaryItem)
 });
-const getCategoryDealProducts = ((deal) => {
-    let categoryProducts = data.categoryProducts.find((category) => {
-        if(category.id === deal.pivot.category_id)
-            return category.products;
+const manageAddonCounter = ((index , addon , type) => {
+
+    let tempAddon =  data.temporaryItem.addons[index];
+    let addonQtyElement = $('#addon-qty'+index+'-'+addon.id);
+    let addonQtyVal = parseInt(addonQtyElement.val());
+    if(type === 'minus' && addonQtyVal > 1){
+        addonQtyVal -= 1;
+        addonQtyElement.val(addonQtyVal);
+    }
+    if(type === 'add'){
+        addonQtyVal += 1;
+        addonQtyElement.val(addonQtyVal);
+    }
+    if(tempAddon !== undefined){
+        tempAddon.find((add , index) => {
+            if(addon.id === add.id){
+                addon.quantity = addonQtyVal;
+            }
+        })
+    }
+});
+const getQuantity = ((index) => {
+    console.log("getQuantity");
+    let tempAddon =  data.temporaryItem.addons[index];
+    let quantity = 0;
+
+    console.log(quantity);
+    tempAddon.forEach((addon) => {
+       quantity += addon.quantity;
+    });
+    console.log(quantity);
+    return quantity;
+});
+const changeAddonQuantity = ((index , addon) => {
+    console.log("addon");
+
+
+});
+const addToCart = ( async() => {
+    let validateCart = true;
+    let message = "";
+    await data.selectedProduct.addon_category_product.forEach((addon , index) => {
+        if(addon.required && data.temporaryItem.addons[index] == undefined ){
+            message = addon.addons[0].category.title + " is required";
+            validateCart = false;
+            return false;
+        }
+        if(addon.quantity > 1){
+            if(data.temporaryItem.addons[index] !== undefined){
+                if(data.temporaryItem.addons[index].length == 0){
+                    message = addon.addons[0].category.title + " is required";
+                    validateCart = false;
+                    return false;
+                }
+                let addedQuantity =  getQuantity(index);
+                if(addedQuantity !== addon.quantity){
+                    message = "Please check the quantity of " + addon.addons[0].category.title;
+                    validateCart = false;
+                    return false;
+                }
+            }
+        }
     })
-    return categoryProducts.products;
-});
-const getNumber = ((i) => {
-    let j = i % 10,
-        k = i % 100;
-    if (j == 1 && k != 11) {
-        return i + "st";
+    console.log(data.cart);
+    if(!validateCart){
+        showNoty(message,'error');
     }
-    if (j == 2 && k != 12) {
-        return i + "nd";
+    if(validateCart){
+        data.temporaryItem.quantity = 1;
+        data.cart.push(data.temporaryItem);
+        data.temporaryItem = {};
+        data.selectedProduct = null;
+        $('#productModal').modal('toggle');
     }
-    if (j == 3 && k != 13) {
-        return i + "rd";
-    }
-    return i + "th";
-});
-const showProduct = ((product) => {
-    console.log(city.value , branch.value);
-    if(!product.city_id && !product.branch_id)
-        return true;
-    if(product.city_id && city.value == product.city_id)
-        return true;
-    if(product.branch_id && branch.value == product.branch_id)
-        return true;
 
-    return false;
-
+});
+const showNoty = ((message,type = 'success') => {
+    data.toastText = message;
+    data.toastType = type;
+    document.getElementById("toastBtn").click();
 });
 </script>
 
@@ -296,6 +381,7 @@ const showProduct = ((product) => {
     </section>
 
     <main>
+        <Notification :toastText="data.toastText" :toastType="data.toastType" />
         <template v-for="(category , categoryIndex) in data.categoryProducts">
             <section v-if="category.products && category.products.length > 0" class="base-section gourmet-fries"   :id="category.id">
                 <div class="container px-container">
@@ -576,31 +662,58 @@ const showProduct = ((product) => {
                                         <h6 class="addon-cat-title">{{cat_product.addons[0].category.title}}<span v-if="cat_product.required" class="required-label">Required</span></h6>
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
-                                                <div class="flex flex-col sm:flex-row">
-                                                    <FormCheck class="mr-10 w-75">
+                                                <div class="flex flex-col sm:flex-row cart-counter">
+                                                    <FormCheck class="w-50" v-if="cat_product.quantity === 1">
                                                         <FormCheck.Input
-                                                            :id="'deal-product-m1-'+a_c_p_index"
+                                                            :id="'deal-product-'+a_c_p_index+index"
                                                             type="radio"
-                                                            :name="'deal-product-m1-'+a_c_p_index"
+                                                            :name="'deal-product-'+a_c_p_index"
+                                                            :value="addon.id"
+                                                            @change="addIntoItem(addon, a_c_p_index , 'single',cat_product.quantity,index)"
                                                         />
-                                                        <FormCheck.Label :for="'deal-product-m1-'+a_c_p_index">
+                                                        <FormCheck.Label :for="'deal-product-'+a_c_p_index+index">
                                                             <div
                                                                 class="text-md leading-relaxed text-slate-500"
                                                             >{{addon.name}}</div>
                                                         </FormCheck.Label>
 
                                                     </FormCheck>
-                                                    <div class="addon-image image-fit zoom-in">
-                                                        <Tippy
+                                                    <FormCheck class="w-50" v-if="cat_product.quantity > 1">
+                                                        <FormCheck.Input
+                                                            :id="'deal-product-'+a_c_p_index+index"
+                                                            type="checkbox"
+                                                            :name="'deal-product-'+a_c_p_index"
+                                                            :value="addon.id"
+                                                            @change="addIntoItem(addon, a_c_p_index , 'multiple',cat_product.quantity,index)"
+                                                        />
+                                                        <FormCheck.Label :for="'deal-product-'+a_c_p_index+index">
+                                                            <div
+                                                                class="text-md leading-relaxed text-slate-500"
+                                                            >{{addon.name}}</div>
+                                                        </FormCheck.Label>
+
+                                                    </FormCheck>
+
+                                                    <div  :class="addon.image ? 'w-15 addon-image image-fit zoom-in' : 'w-15 addon-image' ">
+                                                        <Tippy v-if="addon.image"
                                                             as="img"
                                                             alt="product Image"
                                                             :src="addon.image !== null ? '/images/addons/'+addon.image : '/images/categories/profile-2.jpg'"
                                                             :content="addon.name"
                                                         />
                                                     </div>
+                                                    <div v-if="cat_product.quantity > 1" class="w-25 counter d-inline-flex mr-5">
+                                                        <button type="button" class="sober-icon-box btn btn-secondary" @click="manageAddonCounter(a_c_p_index,addon , 'minus')">
+                                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg>
+                                                        </button>
+                                                        <input type="tel" class="quantity-box form-control" value="1" :id="'addon-qty'+a_c_p_index+'-'+addon.id" @blur="changeAddonQuantity(a_c_p_index,addon)">
+                                                        <button type="button" class="sober-icon-box btn btn-secondary" @click="manageAddonCounter(a_c_p_index,addon , 'add')">
+                                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg>
+                                                        </button>
+                                                    </div>
 
-                                                    <div class="w-35" v-if="addon.price > 0" >
-                                                        <span class="addon-price">Rs {{addon.price}}</span>
+                                                    <div class="w-35">
+                                                        <span class="addon-price" v-if="addon.price > 0">Rs {{addon.price}}</span>
                                                     </div>
                                                 </div>
                                                 <hr class="hr">
@@ -614,7 +727,7 @@ const showProduct = ((product) => {
 					</div>
                     <div class="modal-footer">
                         <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
-                            <div class="flex flex-col sm:flex-row">
+                            <div class="flex flex-col sm:flex-row cart-counter">
                                 <div class="w-25 counter d-inline-flex mr-5">
                                     <button type="button" class="sober-icon-box btn btn-secondary">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg>
@@ -624,7 +737,7 @@ const showProduct = ((product) => {
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg>
                                     </button>
                                 </div>
-                                <div class="cart-count w-75">
+                                <div class="cart-count w-75" @click="addToCart()">
                                     <div class="d-flex m-0 justify-content-center">
                                         <div class="add-to-cart text-center">Add To Cart
                                         </div>

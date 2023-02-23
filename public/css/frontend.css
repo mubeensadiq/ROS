@@ -327,7 +327,6 @@ label , h2, h3,h4,h5,h6,p,span {
 
 .card-image {
     margin: 18px;
-    background: #FFF6DC;
     border-radius: 30px;
     height: 320px;
     display: flex;
@@ -929,12 +928,12 @@ footer p {
     font-size: 18px;
     color: #1E1D23;
 }
-.modal-footer .counter {
+.cart-counter .counter {
     border: 1px solid #ccc;
     border-radius: 0.4rem;
     padding: 0.3rem 0.25rem;
 }
-.modal-footer .counter .sober-icon-box {
+.cart-counter .counter .sober-icon-box {
     align-items: center;
     background: transparent;
     border: 0;
@@ -946,7 +945,7 @@ footer p {
     text-align: center;
     transition: background-color .25s ease;
 }
-.modal-footer .counter .quantity-box {
+.cart-counter .counter .quantity-box {
     border: 0;
     height: 34px;
     padding: 5px;
@@ -958,14 +957,14 @@ footer p {
     overflow: visible;
     vertical-align: -0.125em;
 }
-.modal-footer .cart-count {
+.cart-counter .cart-count {
     background-color: #FFA52D;
     border-radius: 0.4rem;
     color: #fff;
     cursor: pointer;
     padding: 0.75rem 0.25rem;
 }
-.modal-footer .cart-count .add-to-cart {
+.cart-counter .cart-count .add-to-cart {
     font-size: .9rem;
     -webkit-user-select: none;
     user-select: none;

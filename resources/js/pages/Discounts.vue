@@ -27,6 +27,7 @@ export default {
     },
     mounted() {
         this.getDiscounts();
+
     },
     methods : {
         getDiscounts(url = '/api/discounts'){
