@@ -22,10 +22,15 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
+import Notification from "./Notification.vue";
+import {onMounted, reactive, ref, watch} from "vue";
+import TomSelect from "../base-components/TomSelect";
+import {FormCheck,} from "../base-components/Form";
+import axios from "axios";
+import Tippy from "../base-components/Tippy";
 
 
-
-    $.fn.isInViewport = function() {
+$.fn.isInViewport = function() {
         var elementTop = $(this).offset().top;
         var elementBottom = elementTop + $(this).outerHeight();
 
@@ -44,18 +49,6 @@ import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
     });
 
 
-
-import _ from "lodash";
-import Notification from "./Notification.vue";
-import {ref, reactive, onMounted, watch} from "vue";
-import TomSelect from "../base-components/TomSelect";
-import {
-    FormSelect,
-    FormCheck,
-} from "../base-components/Form";
-import axios from "axios";
-import Tippy from "../base-components/Tippy";
-import {isset} from "../utils/helper";
 const data = reactive({
     cities: [],
     areas: [],
@@ -144,6 +137,7 @@ const selectProduct = ((categoryIndex, productIndex) => {
     data.temporaryItem.id = data.categoryProducts[categoryIndex].products[productIndex].id;
     data.temporaryItem.name = data.categoryProducts[categoryIndex].products[productIndex].name;
     data.temporaryItem.price = data.categoryProducts[categoryIndex].products[productIndex].price;
+    data.temporaryItem.image = data.categoryProducts[categoryIndex].products[productIndex].image;
     data.temporaryItem.addons = [];
     $('#productModal').modal('toggle');
 });
@@ -166,16 +160,9 @@ const addIntoItem = ((addon,cat_index,type,quantity,index) => {
             else
                 data.temporaryItem.addons[cat_index].pop(addon);
         }
-
         else
             data.temporaryItem.addons[cat_index] = [addon];
-
-
-
     }
-
-    console.log("temporary")
-    console.log(data.temporaryItem)
 });
 const manageAddonCounter = ((index , addon , type) => {
 
@@ -210,10 +197,18 @@ const getQuantity = ((index) => {
     console.log(quantity);
     return quantity;
 });
-const changeAddonQuantity = ((index , addon) => {
-    console.log("addon");
+const manageProductCounter = ((type) => {
 
-
+    let productQtyElement = $('#product-quantity');
+    let productQtyVal = parseInt(productQtyElement.val());
+    if(type === 'minus' && productQtyVal > 1){
+        productQtyVal -= 1;
+        productQtyElement.val(productQtyVal);
+    }
+    if(type === 'add'){
+        productQtyVal += 1;
+        productQtyElement.val(productQtyVal);
+    }
 });
 const addToCart = ( async() => {
     let validateCart = true;
@@ -240,18 +235,22 @@ const addToCart = ( async() => {
             }
         }
     })
-    console.log(data.cart);
     if(!validateCart){
         showNoty(message,'error');
     }
     if(validateCart){
-        data.temporaryItem.quantity = 1;
+        let productQtyElement = $('#product-quantity');
+        data.temporaryItem.quantity = parseInt(productQtyElement.val());
         data.cart.push(data.temporaryItem);
         data.temporaryItem = {};
         data.selectedProduct = null;
+        console.log(data.cart);
         $('#productModal').modal('toggle');
     }
 
+});
+const removeItem = ((index) => {
+    data.cart.splice(index , 1);
 });
 const showNoty = ((message,type = 'success') => {
     data.toastText = message;
@@ -315,7 +314,7 @@ const showNoty = ((message,type = 'success') => {
             </div>
             <div class="shopping-cart">
 				<div class="shopping-icon" data-bs-toggle="modal" data-bs-target="#shoppingCartModal">
-					<span class="badge bg-dark rounded-circle p-2">03</span>
+					<span class="badge bg-dark rounded-circle p-2">{{data.cart.length}}</span>
 					<img class="img img-responsive img-circle" :src="shoppingCartIcon" alt="">
 				</div>
 			</div>
@@ -554,7 +553,7 @@ const showNoty = ((message,type = 'success') => {
 		<!-- shoppingCartModal -->
 		<div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-				<div class="modal-content p-3">
+				<div class="modal-content p-3 border-r-20">
 					<div class="modal-header border-0 d-flex align-items-start">
 						<h5 class="modal-title text-dark px-4" id="shoppingCartModalLabel">Add to Cart</h5>
 						<button type="button" class="btn-close border rounded-circle" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -567,37 +566,43 @@ const showNoty = ((message,type = 'success') => {
 									<tr>
 										<th scope="col"></th>
 										<th scope="col">Product</th>
-										<th scope="col">Price</th>
+										<th scope="col" style="width:15%">Price</th>
 										<th scope="col">Quantity</th>
 										<th scope="col">Subtotal</th>
 										<th scope="col"></th>
 									</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<th style="width:10%;" scope="row">
+										<tr v-for="(cart,index) in data.cart">
+											<td>
 												<div class="order-image d-flex">
-													<img class="img" :src="deal1" alt="">
+													<img class="img" :src="cart.image !== null ? '/images/products/'+cart.image : '/images/categories/profile-2.jpg'" alt="">
 													<hr class="order-image-separator">
 												</div>
-											</th>
-											<th>
+											</td>
+											<td>
 												<div class="order-item d-flex justify-content-between align-items-center w-100">
 													<div class="item-name px-3">
-														<h6 class="text-capitalize">asdasdasd</h6>
-														<span>asdasdsad</span>
-														<span>Bacon (Rs. 10.00)</span>
+														<h6 class="text-capitalize">{{cart.name}}</h6>
+														<p v-for="addon in cart.addons">
+                                                            <template  v-if="Array.isArray(addon)">
+                                                                <span v-for="item in addon">{{item.quantity}} x {{item.name}} <span v-if="addon.price > 0">Rs({{item.price}})</span> <br/></span>
+                                                            </template>
+                                                            <template v-else>
+                                                                {{addon.name}} <span v-if="addon.price > 0">Rs({{addon.price}})</span>
+                                                            </template>
+
+                                                        </p>
 													</div>
 
 												</div>
-											</th>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td style="width:10%;"><input type="number" class="w-100" placeholder="0"></td>
-											<td><p class="item-value mb-0">Rs. 559</p></td>
-											<td><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
-										</tr>
-
-									</tbody>
+											</td>
+											<td><p class="item-value mb-0">Rs. {{cart.price}}</p></td>
+											<td style="width:15%;"><input type="number" class="w-100" placeholder="0" :min="1" :value="cart.quantity" /></td>
+											<td><p class="item-value mb-0">Rs. {{ cart.price * cart.quantity }}</p></td>
+											<td @click="removeItem(index)"><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
+                                        </tr>
+                                    </tbody>
 								</table>
 
 								<button class="btn btn-yellow float-end">Update cart</button>
@@ -729,11 +734,11 @@ const showNoty = ((message,type = 'success') => {
                         <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                             <div class="flex flex-col sm:flex-row cart-counter">
                                 <div class="w-25 counter d-inline-flex mr-5">
-                                    <button type="button" class="sober-icon-box btn btn-secondary">
+                                    <button type="button" class="sober-icon-box btn btn-secondary" @click="manageProductCounter('minus')">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg>
                                     </button>
-                                    <input type="tel" class="quantity-box form-control" value="1">
-                                    <button type="button" class="sober-icon-box btn btn-secondary">
+                                    <input type="tel" class="quantity-box form-control" value="1" id="product-quantity">
+                                    <button type="button" class="sober-icon-box btn btn-secondary" @click="manageProductCounter('add')">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg>
                                     </button>
                                 </div>
