@@ -6,6 +6,7 @@ use App\Http\Controllers\DealsController;
 use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\AreasController;
 use App\Http\Controllers\BranchesController;
+use App\Http\Controllers\DiscountsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +22,8 @@ Route::get('/categories', [CategoriesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);
 Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
 Route::get('/branches-by-city', [BranchesController::class , 'getBranchesByCity']);
-Route::get('/deals', [DealsController::class , 'index']);
+Route::get('/discount/{id?}', [DiscountsController::class , 'getDiscountDetails']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
-Route::get('/deal-products', [DealsController::class , 'products']);
 Route::get('/{any}',function () {
     return view('welcome');
 })->where('any', '.*');

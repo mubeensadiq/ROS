@@ -8,7 +8,6 @@ import banner from "../../../public/images/assets/banner.png";
 import banner1 from "../../../public/images/assets/banner1.png";
 import back from "../../../public/images/assets/back.png";
 import fwd from "../../../public/images/assets/fwd.png";
-import deal1 from "../../../public/images/assets/deal-1.png";
 import cartIcon from "../../../public/images/assets/cart-icon.png";
 import location from "../../../public/images/assets/location.png";
 import facebook from "../../../public/images/assets/facebook.png";
@@ -54,33 +53,29 @@ const data = reactive({
     areas: [],
     branches: [],
     categories: [],
-    deals: [],
     cart:[],
-    temporaryItem:{
-
-    },
-    dealProducts:[],
+    temporaryItem:{ },
+    discount : {},
     categoryProducts: [],
     selectedProduct : null,
     locationType: 'Delivery',
     toastText: '',
     toastType: 'success',
 })
-const city = ref('');
-const area = ref('');
-const branch = ref('');
+const city = ref(localStorage.getItem('city') ?? '');
+const area = ref(localStorage.getItem('area') ?? '');
+const branch = ref(localStorage.getItem('branch') ?? '');
 watch(city, async (newCity) => {
-    getAreas();
-    getBranches();
-})
-watch(city, async (newCity) => {
+    localStorage.setItem('city' , city.value)
     getAreas();
     getBranches();
 })
 watch(area, async(val) => {
+    localStorage.setItem('area' , area.value)
     $('#selectLocationModal').modal('hide');
 })
 watch(branch, async(val) => {
+    localStorage.setItem('branch' , branch.value)
     getCategoryProducts();
     $('#selectLocationModal').modal('hide');
 })
@@ -88,9 +83,13 @@ onMounted(() => {
     getCategories();
     getCities();
     getCategoryProducts();
-
+    getDiscount();
+    let cart = localStorage.getItem('cart');
+    if(cart)
+        data.cart = JSON.parse(cart);
     $(window).on('load', function() {
-       // $('#selectLocationModal').modal('show');
+        if(localStorage.getItem('city') === null)
+            $('#selectLocationModal').modal('show');
     });
 })
 
@@ -121,6 +120,13 @@ const getAreas = (() =>{
 const getBranches = (() =>{
     axios.get('/branches-by-city' , {params : {'city_id' : city.value}}).then((response)=>{
         data.branches = response.data.branches;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
+const getDiscount = (() =>{
+    axios.get('/discount').then((response)=>{
+        data.discount = response.data.discount;
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
@@ -186,15 +192,15 @@ const manageAddonCounter = ((index , addon , type) => {
     }
 });
 const getQuantity = ((index) => {
-    console.log("getQuantity");
     let tempAddon =  data.temporaryItem.addons[index];
     let quantity = 0;
-
-    console.log(quantity);
     tempAddon.forEach((addon) => {
+        console.log(addon);
        quantity += addon.quantity;
+        if(addon.price > 0){
+            data.temporaryItem.price += addon.price;
+        }
     });
-    console.log(quantity);
     return quantity;
 });
 const manageProductCounter = ((type) => {
@@ -214,14 +220,15 @@ const addToCart = ( async() => {
     let validateCart = true;
     let message = "";
     await data.selectedProduct.addon_category_product.forEach((addon , index) => {
-        if(addon.required && data.temporaryItem.addons[index] == undefined ){
+        let item = data.temporaryItem.addons[index];
+        if(addon.required && item == undefined ){
             message = addon.addons[0].category.title + " is required";
             validateCart = false;
             return false;
         }
         if(addon.quantity > 1){
-            if(data.temporaryItem.addons[index] !== undefined){
-                if(data.temporaryItem.addons[index].length == 0){
+            if(item !== undefined){
+                if(item.length == 0){
                     message = addon.addons[0].category.title + " is required";
                     validateCart = false;
                     return false;
@@ -234,6 +241,10 @@ const addToCart = ( async() => {
                 }
             }
         }
+        if(addon.quantity == 1 && item && item.price > 0){
+            console.log(addon);
+            data.temporaryItem.price += item.price;
+        }
     })
     if(!validateCart){
         showNoty(message,'error');
@@ -244,13 +255,74 @@ const addToCart = ( async() => {
         data.cart.push(data.temporaryItem);
         data.temporaryItem = {};
         data.selectedProduct = null;
-        console.log(data.cart);
         $('#productModal').modal('toggle');
     }
 
 });
 const removeItem = ((index) => {
     data.cart.splice(index , 1);
+});
+const updateCart = (() => {
+    data.cart.forEach((cart , index) => {
+        let productQtyElement = $('#cart-quantity-'+index);
+        cart.quantity = parseInt(productQtyElement.val());
+    })
+    localStorage.setItem('cart' , JSON.stringify(data.cart))
+});
+const getTotal = (() => {
+   let price = 0;
+   data.cart.forEach((cart , index) => {
+      price += cart.price*cart.quantity
+   });
+   return price;
+});
+const updateQuantity = (() => {
+    let productQtyElement = $('#product-quantity');
+    let value = parseInt(productQtyElement.val());
+    if(value < 1)
+        productQtyElement.val(1);
+});
+const hasDiscount = ((product) => {
+    let discount = false;
+    if(data.discount){
+        if(data.discount.discount_on === 'OverAll'){
+            discount = true;
+            return true;
+        }
+        if(data.discount.discount_on === 'Products'){
+            data.discount.products.forEach((discount_product , index) => {
+                console.log(product.id , discount_product.id);
+                if(product.id == discount_product.id){
+                    discount = true;
+                    return true;
+                }
+
+            });
+        }
+        if(data.discount.discount_on === 'Categories'){
+            data.discount.categories.forEach((discount_category , index) => {
+                product.categories.forEach((category ,cat_index) => {
+                    if(category.id == discount_category.id){
+                        discount = true;
+                        return true;
+                    }
+                })
+            });
+        }
+        if(data.discount.discount_on === 'Cities'){
+            data.discount.cities.forEach((discount_cities , index) => {
+                if(localStorage.getItem('city') == discount_cities.id){
+                    discount = true;
+                    return true;
+                }
+
+            });
+        }
+    }
+
+    console.log(discount , product);
+
+    return discount;
 });
 const showNoty = ((message,type = 'success') => {
     data.toastText = message;
@@ -398,8 +470,9 @@ const showNoty = ((message,type = 'success') => {
                                             <img :src="cartIcon" alt="">
                                         </div>
                                     </div>
-                                    <div class="discount-tag hidden">
-                                        <label>10%<br><span>OFF</span></label>
+                                    <div class="discount-tag" v-if="hasDiscount(product)">
+                                        <label v-if="data.discount.type === 'percentage'">{{data.discount.value}}%<br><span>OFF</span></label>
+                                        <label v-if="data.discount.type === 'price'" class="price-tag">Rs. {{data.discount.value}}<br><span>OFF</span></label>
                                     </div>
                                 </div>
                             </div>
@@ -582,7 +655,7 @@ const showNoty = ((message,type = 'success') => {
 											</td>
 											<td>
 												<div class="order-item d-flex justify-content-between align-items-center w-100">
-													<div class="item-name px-3">
+													<div class="item-name">
 														<h6 class="text-capitalize">{{cart.name}}</h6>
 														<p v-for="addon in cart.addons">
                                                             <template  v-if="Array.isArray(addon)">
@@ -598,27 +671,26 @@ const showNoty = ((message,type = 'success') => {
 												</div>
 											</td>
 											<td><p class="item-value mb-0">Rs. {{cart.price}}</p></td>
-											<td style="width:15%;"><input type="number" class="w-100" placeholder="0" :min="1" :value="cart.quantity" /></td>
+											<td style="width:15%;"><input type="number" class="w-100" placeholder="0" :min="1" v-model="cart.quantity" :id="'cart-quantity-'+index" /></td>
 											<td><p class="item-value mb-0">Rs. {{ cart.price * cart.quantity }}</p></td>
 											<td @click="removeItem(index)"><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
                                         </tr>
                                     </tbody>
 								</table>
-
-								<button class="btn btn-yellow float-end">Update cart</button>
+                                <button class="btn btn-yellow float-end" @click="updateCart()">Update cart</button>
 							</div>
 							<div class="col-md-4 col-sm-12">
 								<div class="cart-total px-3 py-4">
 									<div class="cart-summary">
 										<h6>Cart Totals</h6>
-										<div class="order-total d-flex justify-content-between">
+										<div class="order-total d-flex justify-content-between mt-5">
 											<p class="total-label">Subtotal</p>
-											<span class="text-dark">Rs. 559</span>
+											<span class="text-dark">Rs. {{ getTotal() }}</span>
 										</div>
-										<hr>
-										<div class="order-total d-flex justify-content-between">
+										<hr class="hr">
+										<div class="order-total d-flex justify-content-between mt-3">
 											<p class="total-label">Total</p>
-											<span>Rs. 638</span>
+											<span>Rs. {{ getTotal() }}</span>
 										</div>
 									</div>
 									<div class="proceed-cart text-center mt-3">
@@ -737,7 +809,7 @@ const showNoty = ((message,type = 'success') => {
                                     <button type="button" class="sober-icon-box btn btn-secondary" @click="manageProductCounter('minus')">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="minus" class="svg-inline--fa fa-minus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg>
                                     </button>
-                                    <input type="tel" class="quantity-box form-control" value="1" id="product-quantity">
+                                    <input type="tel" class="quantity-box form-control" value="1" id="product-quantity" @blur="updateQuantity()">
                                     <button type="button" class="sober-icon-box btn btn-secondary" @click="manageProductCounter('add')">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg>
                                     </button>

@@ -85,9 +85,12 @@ class DiscountsController extends Controller
             ],500);
         }
     }
-    public function getDiscountDetails(Request $request , $id){
+    public function getDiscountDetails(Request $request , $id = null){
         try{
-            $discount = Discount::with(['products','categories','cities','branches'])->where('id' , $id)->first();
+            if($id)
+                $discount = Discount::with(['products','categories','cities','branches'])->where('id' , $id)->first();
+            else
+                $discount = Discount::with(['products','categories','cities','branches'])->where('status' , '=',1)->orderBy('id' , 'desc')->first();
             if($discount){
                 return response()->json([
                     'status' => 'success',
@@ -96,7 +99,8 @@ class DiscountsController extends Controller
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'No discount Found'
+                'message' => 'No Discount Found',
+                'discount' => []
             ],200);
 
         }
@@ -105,6 +109,7 @@ class DiscountsController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $ex->getMessage(),
+                'discount' => []
             ],500);
         }
     }

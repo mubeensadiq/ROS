@@ -390,7 +390,12 @@ label , h2, h3,h4,h5,h6,p,span {
     text-align: right;
     color: #fff !important;
 }
-
+.discount-tag .price-tag {
+    font-size: 26px;
+    line-height: 20px;
+    text-align: right;
+    color: #fff !important;
+}
 .discount-tag span {
     font-size: 16px;
     color: #fff !important;
@@ -615,7 +620,7 @@ footer p {
 
 
 .color-1 {
-    color: #FFA52D
+    color: #FFA52D !important;
 }
 
 .shopping-cart {
@@ -626,7 +631,7 @@ footer p {
 }
 
 .shopping-icon {
-    background: #FFA52D;
+    background: #FFA52D !important;
     border-radius: 50%;
     padding: 20px;
     cursor: pointer;
@@ -656,16 +661,16 @@ footer p {
 
 /* MODAL CSS */
 .cartModal .order-image img { max-width: 80px; }
-.cartModal .order-item { border-left: 1px dotted #000000; padding: 0px 4px;}
+.cartModal .order-image { border-right: 1px dotted #000000; padding: 0px 4px;}
 .cartModal .order-item .item-name h6 {
     font-family: 'Poppins', sans-serif !important;
     font-weight: 600;
-    font-size: 17px;
+    font-size: 15px;
 }
 .cartModal .order-item .item-name p, .cartModal .order-item .item-name span {
     font-family: 'Poppins', sans-serif !important;
     font-weight: 300;
-    font-size: 14px;
+    font-size: 12px;
     margin-bottom: 3px;
 }
 .cartModal .item-value {
@@ -722,9 +727,10 @@ footer p {
 }
 
 #shoppingCartModal .total-label {
-    font-weight: 700;
-    font-size: 20px;
+    font-weight: 600;
+    font-size: 16px;
     margin-bottom: 0;
+    font-family: 'Poppins', sans-serif !important;
 }
 
 #shoppingCartModal .summary-values p {
@@ -733,17 +739,20 @@ footer p {
 
 #shoppingCartModal .order-total span {
     font-weight: 700;
-    font-size: 25px;
+    font-size: 18px;
     color: #00CF64;
 }
 
 #shoppingCartModal .cart-total h6 {
-    font-weight: 700;
-    font-size: 26px;
+    font-weight: 900;
+    font-size: 20px;
     color: #000;
+    font-family: 'Poppins', sans-serif !important;
 }
 
-
+.text-dark{
+    color:#000 !important;
+}
 
 /* Product Modal */
 /* carousel slideshow css */
