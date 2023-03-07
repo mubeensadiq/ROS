@@ -222,20 +222,20 @@ const addToCart = ( async() => {
     await data.selectedProduct.addon_category_product.forEach((addon , index) => {
         let item = data.temporaryItem.addons[index];
         if(addon.required && item == undefined ){
-            message = addon.addons[0].category.title + " is required";
+            message = addon.category.title + " is required";
             validateCart = false;
             return false;
         }
         if(addon.quantity > 1){
             if(item !== undefined){
                 if(item.length == 0){
-                    message = addon.addons[0].category.title + " is required";
+                    message = addon.category.title + " is required";
                     validateCart = false;
                     return false;
                 }
                 let addedQuantity =  getQuantity(index);
                 if(addedQuantity !== addon.quantity){
-                    message = "Please check the quantity of " + addon.addons[0].category.title;
+                    message = "Please check the quantity of " + addon.category.title;
                     validateCart = false;
                     return false;
                 }
