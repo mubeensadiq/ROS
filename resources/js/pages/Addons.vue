@@ -9,10 +9,7 @@ import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
-const deleteConfirmationModal = ref(false);
-const setDeleteConfirmationModal = (value: boolean) => {
-    deleteConfirmationModal.value = value;
-};
+
 const deleteButtonRef = ref(null);
 const limits = pageLimits();
 import Notification from "./Notification.vue";
