@@ -45,7 +45,7 @@ export default {
             this.addonID = id;
             this.deleteConfirmationModal = value;
         },
-        deleteCategory() {
+        deleteAddon() {
             axios.delete('/api/delete-addon/' + this.addonID).then((response) => {
                 if (response.data.status === 'success') {
                     this.showNoty(response.data.message)
@@ -244,6 +244,7 @@ export default {
                     type="button"
                     class="w-24"
                     ref="deleteButtonRef"
+                    @click="deleteAddon()"
                 >
                     Delete
                 </Button>
