@@ -115,7 +115,7 @@ class CategoriesController extends Controller
            $categories =  Category::with(['products.categories' , 'products.addon_category_product.addons.category'])->whereHas('products', function ($q) use($request) {
                 $q->where('status',1);
                 $q->orderBy('products.id','desc');
-            })->where('status' , 1)->get();
+            })->orderBy('id','desc')->where('status' , 1)->get();
             foreach ($categories as $cat_index => $category){
                 foreach ($category->products as $index => $product){
                     $p_branches_ids = $product->branch_product()->pluck('branch_id')->toArray();
