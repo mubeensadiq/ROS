@@ -95,7 +95,7 @@ class ProductsController extends Controller
             }
             $product->addon_category_product()->delete();
             foreach ($request->addon_category_product as $product_addon){
-                if(isset($product_addon['addonCategory'])){
+                if(isset($product_addon['addons']) && count($product_addon['addons']) > 0){
                     $addon_cat_prod =  $product->addon_category_product()->create(['addon_category_id' => $product_addon['addonCategory'],'quantity' => $product_addon['quantity'] , 'required' => $product_addon['required']]);
                     $addon_cat_prod->addons()->sync($product_addon['addons']);
                 }

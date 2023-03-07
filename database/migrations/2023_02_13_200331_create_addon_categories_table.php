@@ -20,11 +20,6 @@ return new class extends Migration
             $table->string('title');
             $table->timestamps();
         });
-        Schema::table('addons', function (Blueprint $table){
-            $table->foreignId('addon_category_id')
-                ->constrained('addon_categories')
-                ->onDelete('cascade');
-        });
     }
 
     /**
@@ -36,8 +31,5 @@ return new class extends Migration
     {
 
         Schema::dropIfExists('addon_categories');
-        Schema::table('addons', function (Blueprint $table){
-            $table->dropConstrainedForeignId('addon_category_id');
-        });
     }
 };

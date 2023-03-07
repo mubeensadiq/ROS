@@ -261,6 +261,8 @@ const addToCart = ( async() => {
 });
 const removeItem = ((index) => {
     data.cart.splice(index , 1);
+    localStorage.setItem('cart' , JSON.stringify(data.cart))
+
 });
 const updateCart = (() => {
     data.cart.forEach((cart , index) => {
@@ -319,9 +321,6 @@ const hasDiscount = ((product) => {
             });
         }
     }
-
-    console.log(discount , product);
-
     return discount;
 });
 const showNoty = ((message,type = 'success') => {
@@ -736,7 +735,7 @@ const showNoty = ((message,type = 'success') => {
 								<hr class="hr">
                                 <template v-for="(cat_product,a_c_p_index) in data.selectedProduct.addon_category_product">
                                     <div class="preferences mb-3" v-if="cat_product.addons.length > 0">
-                                        <h6 class="addon-cat-title">{{cat_product.addons[0].category.title}}<span v-if="cat_product.required" class="required-label">Required</span></h6>
+                                        <h6 class="addon-cat-title">{{cat_product.category.title}}<span v-if="cat_product.required" class="required-label">Required</span></h6>
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row cart-counter">

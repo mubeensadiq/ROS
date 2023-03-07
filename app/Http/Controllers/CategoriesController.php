@@ -112,7 +112,7 @@ class CategoriesController extends Controller
 
     public function products(Request $request){
         try{
-           $categories =  Category::with(['products.categories' , 'products.addon_category_product.addons.category'])->whereHas('products', function ($q) use($request) {
+           $categories =  Category::with(['products.categories' , 'products.addon_category_product.addons','products.addon_category_product.category'])->whereHas('products', function ($q) use($request) {
                 $q->where('status',1);
                 $q->orderBy('products.id','desc');
             })->where('status' , 1)->get();

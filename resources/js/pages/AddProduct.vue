@@ -23,6 +23,7 @@ onMounted(() =>{
     getCategories();
     getCities();
     getBranches();
+    getAddons();
     if (route.params.id !== undefined) {
         nextTick().then(() => {
             getProductDetails(route.params.id);
@@ -60,8 +61,7 @@ let data = reactive({
                 addonCategory : '',
                 addons:[],
                 quantity : 1,
-                required : false,
-                categoryAddons:[]
+                required : false
             }
         ],
         schedule: {
@@ -80,6 +80,7 @@ let data = reactive({
     categories : [],
     addonCategories : [],
     cities : [],
+    addons : [],
     branches : [],
     singleProducts : [],
     types : ['Single','Deal'],
@@ -126,18 +127,24 @@ const getAddonCategories = (() => {
             data.addonCategories = response.data.categories;
             if(!route.params.id){
                 data.product.addon_category_product[0].addonCategory = data.addonCategories[0].id.toString();
-                getCategoryAddons(0);
+
             }
         }
     }).catch((error) => {
         showNoty(error.response.data.message,'error')
     });
 });
-const getCategoryAddons = ((p_a_index) => {;
-    data.product.addon_category_product[p_a_index].categoryAddons =  data.addonCategories.find((category) => {
-       if(category.id == data.product.addon_category_product[p_a_index].addonCategory)
-           return category;
-    }).addons;
+const getAddons = (() => {;
+    axios.get('/api/addons?get=all' ).then((response) => {
+        if (response.data.addons !== undefined){
+            data.addons = response.data.addons;
+            if(!route.params.id){
+                data.product.addon_category_product[0].addonCategory = data.addonCategories[0].id.toString();
+            }
+        }
+    }).catch((error) => {
+        showNoty(error.response.data.message,'error')
+    });
 });
 const getProductDetails = (async (id) => {
    await axios.get('/api/get-product-details/' + id).then((response) => {
@@ -161,10 +168,6 @@ const getProductDetails = (async (id) => {
                 data.product.addon_category_product[index].addons.forEach((addon, a_index) => {
                     data.product.addon_category_product[index].addons[a_index] = addon.id.toString();
                 })
-                data.product.addon_category_product[index].categoryAddons =  data.addonCategories.find((category) => {
-                    if(category.id == data.product.addon_category_product[index].addonCategory)
-                        return category;
-                }).addons;
 
             });
 
@@ -188,10 +191,9 @@ const getProductDetails = (async (id) => {
                 data.product.addon_category_product = [
                     {
                         addonCategory : '',
-                        products:[],
+                        addons:[],
                         quantity : 1,
-                        required: false,
-                        categoryAddons:[]
+                        required: false
                     }
                 ];
 
@@ -226,8 +228,7 @@ const addMoreProducts = (() => {
         addonCategory : '',
         addons:[],
         quantity : 1,
-        required : false,
-        categoryAddons:[]
+        required : false
     };
     data.product.addon_category_product.push(item);
 });
@@ -633,7 +634,6 @@ const showNoty = ((message,type = 'success') => {
                                 <FormSelect
                                     v-model="product.addonCategory" :value="product.addonCategory"
                                     class="w-full"
-                                    @change="getCategoryAddons(d_index)"
                                 >
                                     <option
                                         v-for="(category,c_index) in data.addonCategories"
@@ -665,7 +665,7 @@ const showNoty = ((message,type = 'success') => {
                                     Multiple="Multiple"
                                 >
                                     <option
-                                        v-for="(addon,a_index) in product.categoryAddons"
+                                        v-for="(addon,a_index) in data.addons"
                                         :key="a_index"
                                         :value="addon.id"
                                     >

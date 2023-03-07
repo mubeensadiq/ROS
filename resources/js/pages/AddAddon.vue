@@ -21,7 +21,6 @@ export default {
                 price: 0,
                 required: false,
                 image: null,
-                addon_category_id: '',
             },
             addonCategories:[],
             toastText : '',
@@ -40,25 +39,14 @@ export default {
                 },1000)
             });
         }
-        this.getAddonCategories();
 
     },
     methods: {
-        getAddonCategories() {
-            axios.get('/api/addon-categories?get=all').then((response) => {
-                if (response.data.categories !== undefined){
-                    this.addonCategories = response.data.categories;
-                }
 
-            }).catch((error) => {
-                this.showNoty(error.response.data.message,'error')
-            });
-        },
         getAddonDetails(id) {
             axios.get('/api/get-addon-details/' + id).then((response) => {
                 if (response.data.addon !== undefined){
                     this.addon = response.data.addon;
-                    this.addon.addon_category_id = response.data.addon_category_id.toString();
                 }
 
             }).catch((error) => {
@@ -123,35 +111,6 @@ export default {
                         Information
                     </div>
                     <div class="mt-5">
-                        <FormInline
-                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
-                        >
-                            <FormLabel class="xl:w-64 xl:!mr-10">
-                                <div class="text-left">
-                                    <div class="flex items-center">
-                                        <div class="font-medium">Addon Category</div>
-                                    </div>
-                                </div>
-                            </FormLabel>
-                            <div class="flex-1 w-full mt-3 xl:mt-0">
-                                <TomSelect
-                                    v-model="addon.addon_category_id" :value="addon.addon_category_id"
-                                    :options="{
-                                        placeholder: 'Select Addon Category',
-                                      }"
-                                    class="w-full"
-                                >
-                                    <option
-                                        v-for="(category, index) in addonCategories"
-                                        :key="index"
-                                        :value="category.id"
-                                    >
-                                        {{ category.name }}
-                                    </option>
-                                </TomSelect>
-
-                            </div>
-                        </FormInline>
                         <FormInline
                             class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >

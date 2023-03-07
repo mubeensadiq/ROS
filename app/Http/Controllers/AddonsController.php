@@ -17,7 +17,7 @@ class AddonsController extends Controller
     public function index(Request $request)
     {
         try{
-            $addons = Addon::with('category');
+            $addons = new Addon();
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
                 $addons = $addons->where('name' ,'like', "%$query%")
@@ -59,14 +59,12 @@ class AddonsController extends Controller
             $validator = $request->validate([
                 'name' => 'required',
                 'price' => 'required',
-                'addon_category_id' => 'required',
             ]);
             Addon::updateOrCreate(['id' => $request->id],[
                 'name' => $request->name,
                 'price' => $request->price,
                 'required' => $request->required,
                 'image' => $request->image,
-                'addon_category_id' => $request->addon_category_id,
             ]);
             return response()->json([
                 'status' => 'success',
@@ -125,7 +123,7 @@ class AddonsController extends Controller
 
     public function addonCategories(Request $request){
         try{
-            $categories = AddonCategory::with('addons');
+            $categories = new AddonCategory();
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
                 $categories = $categories->where('name' ,'like', "%$query%")

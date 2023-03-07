@@ -106,7 +106,6 @@ export default {
                         <Table.Th class="border-b-0 whitespace-nowrap">
                             NAME
                         </Table.Th>
-                        <Table.Th class="border-b-0 whitespace-nowrap"> CATEGORY </Table.Th>
                         <Table.Th class="border-b-0 whitespace-nowrap"> PRICE </Table.Th>
                         <Table.Th class="text-center border-b-0 whitespace-nowrap">
                             ACTIONS
@@ -138,13 +137,6 @@ export default {
                         >
                             <span href="" class="font-medium whitespace-nowrap">
                                 {{ addon.name }}
-                            </span>
-                        </Table.Td>
-                        <Table.Td
-                            class="first:rounded-l-md last:rounded-r-md bg-white border-b-0 dark:bg-darkmode-600 shadow-[20px_3px_20px_#0000000b]"
-                        >
-                            <span href="" class="font-medium whitespace-nowrap">
-                                {{ addon.category.name }}
                             </span>
                         </Table.Td>
                         <Table.Td

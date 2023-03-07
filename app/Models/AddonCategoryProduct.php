@@ -13,4 +13,7 @@ class AddonCategoryProduct extends Model
     public function addons(){
         return $this->belongsToMany(Addon::class );
     }
+    public function category(){
+        return $this->belongsTo(AddonCategory::class , 'addon_category_id' );
+    }
 }
