@@ -3,58 +3,95 @@
 </style>
 
 <script setup lang="ts">
-import confirmation from "../../../public/images/assets/order-confirmation.png";
 import bg1 from "../../../public/images/assets/bg1.png";
 import logo from "../../../public/images/assets/logo.png";
 import facebook from "../../../public/images/assets/facebook.png";
 import youtube from "../../../public/images/assets/youtube.png";
 import googlePlus from "../../../public/images/assets/google-plus.png";
 import deal1 from "../../../public/images/assets/deal-1.png";
-import deal2 from "../../../public/images/assets/deal-2.png";
 import twitter from "../../../public/images/assets/twitter.png";
 import cash from "../../../public/images/assets/cash.png";
-import creditCard from "../../../public/images/assets/credit-card 1.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
-$(document).ready(function(){
-    $('#search').on("click",(function(e){
-        $(".form-group").addClass("sb-search-open");
-        e.stopPropagation()
-    }));
-    $(document).on("click", function(e) {
-        if ($(e.target).is("#search") === false && $(".form-control").val().length == 0) {
-            $(".form-group").removeClass("sb-search-open");
-        }
-    });
-    $(".form-control-submit").click(function(e){
-        $(".form-control").each(function(){
-            if($(".form-control").val().length == 0){
-                e.preventDefault();
-                $(this).css('border', '2px solid red');
-            }
-        });
-    });
-
-    $.fn.isInViewport = function() {
-        var elementTop = $(this).offset().top;
-        var elementBottom = elementTop + $(this).outerHeight();
-
-        var viewportTop = $(window).scrollTop();
-        var viewportBottom = viewportTop + $(window).height();
-
-        return elementBottom > viewportTop && elementTop < viewportBottom;
-    };
-
-    $(window).on('resize scroll', function() {
-        if ($('#mainHeaderSection').isInViewport()) {
-            $('.categories-section').removeClass('fixed-top');
-        } else {
-            $('.categories-section').addClass('fixed-top');
-        }
-    });
+import {onMounted, reactive} from "vue";
+import axios from "axios";
+import {email} from "@vuelidate/validators";
+const data = reactive({
+    cart : [],
+    subTotal: 0 ,
+    tax: 0,
+    delivery_fee: 100,
+    info:{
+        first_name: '',
+        last_name: '',
+        email:'',
+        phone_number:'',
+        alternate_phone:'',
+        delivery_address: '',
+        landmark:'',
+        instructions: ''
+    },
+    validateError:{
+        first_name: {
+            message : 'Please enter your first name',
+            error:false
+        },
+        last_name: {
+            message : 'Please enter your last name',
+            error:false
+        },
+        phone_number:{
+            message : 'Please enter your phone number',
+            error:false
+        },
+        delivery_address: {
+            message : 'Please enter delivery address',
+            error:false
+        },
+        email:{
+            message : 'Invalid Email Address',
+            error:false
+        },
+    }
 });
+onMounted( () => {
+    let cart = localStorage.getItem('cart');
+    if(cart)
+        data.cart = JSON.parse(cart);
+})
+const placeOrder = (() => {
+   const validate = validateFields();
+   if(validate){
+       axios.post('/api/place-order' , {data:data}).then((response) => {
 
+       })
+   }
+});
+const validateFields = (()=>{
+    const required_fields = ['first_name','last_name','phone_number','delivery_address'];
+    let validateFields = true;
+    required_fields.forEach((field) => {
+        data.validateError[field].error = false;
+        if(data.info[field] == ""){
+            data.validateError[field].error = true;
+            validateFields = false;
+        }
+    })
+    if(!validateFields)
+        return false;
+    if(data.info.email != ""){
+        const validEmail = validateEmail();
+        if(!validEmail)
+            return false;
+    }
+
+    return true;
+
+});
+const validateEmail = (() => {
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.info.email);
+});
 </script>
 
 <template>
@@ -115,35 +152,40 @@ $(document).ready(function(){
                         <form class="row g-5">
                             <div class="col-md-6">
                                 <label for="inputFirstName" class="form-label">First Name <sup class="text-danger">*</sup></label>
-                                <input type="text" class="form-control" id="inputFirstName" placeholder="Enter your first name" required>
+                                <input type="text" class="form-control" id="inputFirstName" placeholder="Enter your first name" required v-model="data.info.first_name">
+                                <span class="text-danger" v-if="data.validateError.first_name.error">{{data.validateError.first_name.message}}</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputLastName" class="form-label">Last Name <sup class="text-danger">*</sup></label>
-                                <input type="password" class="form-control" id="inputLastName" placeholder="Enter your last name" required>
+                                <input type="text" class="form-control" id="inputLastName" placeholder="Enter your last name" required v-model="data.info.last_name">
+                                <span class="text-danger" v-if="data.validateError.last_name.error">{{data.validateError.last_name.message}}</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputPhone" class="form-label">Phone Number <sup class="text-danger">*</sup></label>
-                                <input type="text" class="form-control" id="inputPhone" required>
+                                <input type="text" class="form-control" id="inputPhone" required placeholder="Enter Your Phone Number" v-model="data.info.phone_number">
+                                <span class="text-danger" v-if="data.validateError.phone_number.error">{{data.validateError.phone_number.message}}</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputAlternativeNumber" class="form-label">Alternate Number</label>
-                                <input type="text" class="form-control" id="inputAlternativeNumber">
+                                <input type="text" class="form-control" id="inputAlternativeNumber" placeholder="Enter Your Alternate Phone Number" v-model="data.info.alternate_phone">
                             </div>
                             <div class="col-12">
                                 <label for="inputAddress" class="form-label">Delivery Address <sup class="text-danger">*</sup></label>
-                                <input type="text" class="form-control" id="inputAddress" placeholder="Enter your complete address" required>
+                                <input type="text" class="form-control" id="inputAddress" placeholder="Enter your complete address" required v-model="data.info.delivery_address">
+                                <span class="text-danger" v-if="data.validateError.delivery_address.error">{{data.validateError.delivery_address.message}}</span>
                             </div>
                             <div class="col-12">
                                 <label for="inputInstructions" class="form-label">Delivery Instructions</label>
-                                <input type="text" class="form-control" id="inputInstructions" placeholder="Enter any instruction or note to rider">
+                                <input type="text" class="form-control" id="inputInstructions" placeholder="Enter any instruction or note to rider" v-model="data.info.instructions">
                             </div>
                             <div class="col-md-6">
                                 <label for="inputLandmark" class="form-label">Nearest Landmark</label>
-                                <input type="text" class="form-control" id="inputLandmark" placeholder="Any famous place nearby">
+                                <input type="text" class="form-control" id="inputLandmark" placeholder="Any famous place nearby" v-model="data.info.landmark">
                             </div>
                             <div class="col-md-6">
                                 <label for="inputEmail" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="inputEmail" placeholder="Please enter your email">
+                                <input type="email" class="form-control" id="inputEmail" placeholder="Please enter your email" v-model="data.info.email">
+                                <span class="text-danger" v-if="data.validateError.email.error">{{data.validateError.email.message}}</span>
                             </div>
                             <div class="col-12">
                                 <h6 class="text-capitalize">PAYMENT INFORMATION</h6>
@@ -152,11 +194,6 @@ $(document).ready(function(){
                                     <div class="cash col-sm-4 d-flex flex-column justify-content-center align-items-center">
                                         <img name="onCash" class="img img-responsive" :src="cash" alt="">
                                         <label for="onCash">Cash</label>
-                                    </div>
-                                    <span class="col-sm-1">&nbsp;</span>
-                                    <div class="online col-sm-4 d-flex flex-column justify-content-center align-items-center">
-                                        <img name="onCard" class="img img-responsive" :src="creditCard" alt="">
-                                        <label for="onCard">Online Payment</label>
                                     </div>
                                 </div>
                             </div>
@@ -170,49 +207,45 @@ $(document).ready(function(){
                             </div>
                             <hr class="hr">
                             <!-- Order ITEMS - to be looped through -->
-                            <div class="order-list d-flex align-items-center">
-                                <div class="order-image d-flex">
-                                    <img class="img" :src="deal1" alt="">
+                            <div class="order-list d-flex align-items-center mb-3" v-for="(cart,index) in data.cart.items">
+                                <div class="order-image d-flex col-3">
+                                    <img class="img" :src="cart.image !== null ? '/images/products/'+cart.image : deal1" alt="">
                                     <hr class="order-image-separator">
                                 </div>
-                                <div class="order-item d-flex justify-content-between align-items-center w-100">
-                                    <div class="item-name px-3">
-                                        <h6 class="text-capitalize">Italian Burger</h6>
-                                        <span>With cheese</span>
-                                        <span>Bacon (Rs. 10.00)</span>
+                                <div class="order-item d-flex justify-content-between align-items-center col-9">
+                                    <div class="item-name px-3 col-10">
+                                        <h6 class="text-capitalize">{{cart.quantity}} x {{cart.name}}</h6>
+                                        <template v-for="addon in cart.addons">
+                                            <p v-if="addon" class="mb-0">
+                                                <template v-if="Array.isArray(addon)">
+                                                    <span v-for="item in addon">{{item.quantity}} x {{item.name}} <span v-if="item.price > 0">Rs({{item.price}})</span> <br/></span>
+                                                </template>
+                                                <template v-else>
+                                                    {{addon.name}} <span v-if="addon.price > 0">Rs({{addon.price}})</span>
+                                                </template>
+                                            </p>
+                                        </template>
                                     </div>
-                                    <p class="item-value mb-0">Rs. 559</p>
-                                </div>
-                            </div>
-                            <div class="order-list d-flex align-items-center">
-                                <div class="order-image d-flex">
-                                    <img class="img" :src="deal2" alt="">
-                                    <hr class="order-image-separator">
-                                </div>
-                                <div class="order-item d-flex justify-content-between align-items-center w-100">
-                                    <div class="item-name px-3">
-                                        <h6 class="text-capitalize">Crunch burger with coke</h6>
-                                        <span>With cheese</span>
-                                        <span>Bacon (Rs. 10.00)</span>
-                                    </div>
-                                    <p class="item-value mb-0">Rs. 1099</p>
+                                    <p class="item-value mb-0 col-2">Rs. {{ cart.price * cart.quantity }}</p>
                                 </div>
                             </div>
                             <hr class="hr">
                             <div class="order-summary d-flex justify-content-between">
                                 <div class="summary-labels">
                                     <p>Subtotal</p>
+                                    <p>Tax</p>
                                     <p class="mb-0">Delivery Fee</p>
                                 </div>
                                 <div class="summary-values text-right">
-                                    <p>Rs. 559</p>
-                                    <p class="mb-0">Rs. 79</p>
+                                    <p>Rs. {{data.cart.subTotal}}</p>
+                                    <p>Rs. {{data.cart.tax_amount}}</p>
+                                    <p class="mb-0">Rs. {{ data.delivery_fee }}</p>
                                 </div>
                             </div>
                             <hr class="hr">
                             <div class="order-total d-flex justify-content-between">
                                 <label for="">Total</label>
-                                <span>Rs. 638</span>
+                                <span>{{data.cart.subTotal + data.cart.tax_amount + data.delivery_fee}}</span>
                             </div>
                             <div class="order-voucher mt-3">
                                 <label>Voucher</label>
@@ -222,7 +255,7 @@ $(document).ready(function(){
                                 </div>
                             </div>
 
-                            <button class="btn btn-warning btn-submit mt-3">Place Order</button>
+                            <button class="btn btn-warning btn-submit mt-3" @click="placeOrder()">Place Order</button>
                             <a href="#" class="continue-shopping">Continue Shopping</a>
                         </div>
                     </div>

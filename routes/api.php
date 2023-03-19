@@ -14,6 +14,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\RidersController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\OrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,6 +116,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /************** ADDON ROUTES ************/
     Route::get('/addons', [AddonsController::class , 'index']);
+    Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
+    Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
+    Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
+    /************** END ADDON ROUTES ************/
+
+    /************** ORDER AND CHECKOUT ROUTES ************/
+    Route::get('/checkout', [OrdersController::class , 'checkOut']);
     Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
     Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
     Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
