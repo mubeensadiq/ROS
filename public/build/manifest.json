@@ -1,27 +1,11 @@
 {
-  "resources/js/assets/images/logo.svg": {
-    "file": "assets/logo.9a88cec5.svg",
-    "src": "resources/js/assets/images/logo.svg"
-  },
-  "public/images/assets/order-confirmation.png": {
-    "file": "assets/order-confirmation.af08d117.png",
-    "src": "public/images/assets/order-confirmation.png"
-  },
-  "public/images/assets/facebook.png": {
-    "file": "assets/facebook.225d9c43.png",
-    "src": "public/images/assets/facebook.png"
-  },
   "public/images/assets/logo.png": {
     "file": "assets/logo.88a845cb.png",
     "src": "public/images/assets/logo.png"
   },
-  "public/images/assets/bg1.png": {
-    "file": "assets/bg1.6bf04d9a.png",
-    "src": "public/images/assets/bg1.png"
-  },
-  "public/images/assets/deal-1.png": {
-    "file": "assets/deal-1.150339f7.png",
-    "src": "public/images/assets/deal-1.png"
+  "public/images/assets/facebook.png": {
+    "file": "assets/facebook.225d9c43.png",
+    "src": "public/images/assets/facebook.png"
   },
   "public/images/assets/google-plus.png": {
     "file": "assets/google-plus.6e9fc204.png",
@@ -31,25 +15,41 @@
     "file": "assets/youtube.cb2db195.png",
     "src": "public/images/assets/youtube.png"
   },
+  "public/images/assets/bg1.png": {
+    "file": "assets/bg1.6bf04d9a.png",
+    "src": "public/images/assets/bg1.png"
+  },
   "public/images/assets/twitter.png": {
     "file": "assets/twitter.bb30a496.png",
     "src": "public/images/assets/twitter.png"
-  },
-  "public/images/assets/deal-2.png": {
-    "file": "assets/deal-2.3bf691de.png",
-    "src": "public/images/assets/deal-2.png"
   },
   "public/images/assets/cash.png": {
     "file": "assets/cash.b587fdec.png",
     "src": "public/images/assets/cash.png"
   },
-  "public/images/assets/credit-card 1.png": {
-    "file": "assets/credit-card 1.be90f433.png",
-    "src": "public/images/assets/credit-card 1.png"
+  "resources/js/assets/images/logo.svg": {
+    "file": "assets/logo.9a88cec5.svg",
+    "src": "resources/js/assets/images/logo.svg"
+  },
+  "public/images/assets/deal-1.png": {
+    "file": "assets/deal-1.150339f7.png",
+    "src": "public/images/assets/deal-1.png"
+  },
+  "public/images/assets/order-confirmation.png": {
+    "file": "assets/order-confirmation.af08d117.png",
+    "src": "public/images/assets/order-confirmation.png"
   },
   "public/images/assets/Vector.png": {
     "file": "assets/Vector.d065d9a9.png",
     "src": "public/images/assets/Vector.png"
+  },
+  "public/images/assets/deal-2.png": {
+    "file": "assets/deal-2.3bf691de.png",
+    "src": "public/images/assets/deal-2.png"
+  },
+  "public/images/assets/banner1.png": {
+    "file": "assets/banner1.1a4dac32.png",
+    "src": "public/images/assets/banner1.png"
   },
   "public/images/assets/banner.png": {
     "file": "assets/banner.a34c806a.png",
@@ -59,21 +59,17 @@
     "file": "assets/back.054de263.png",
     "src": "public/images/assets/back.png"
   },
-  "public/images/assets/banner1.png": {
-    "file": "assets/banner1.1a4dac32.png",
-    "src": "public/images/assets/banner1.png"
-  },
   "public/images/assets/fwd.png": {
     "file": "assets/fwd.54c4f756.png",
     "src": "public/images/assets/fwd.png"
   },
-  "public/images/assets/cart-icon.png": {
-    "file": "assets/cart-icon.f4168472.png",
-    "src": "public/images/assets/cart-icon.png"
-  },
   "public/images/assets/location.png": {
     "file": "assets/location.65247e12.png",
     "src": "public/images/assets/location.png"
+  },
+  "public/images/assets/cart-icon.png": {
+    "file": "assets/cart-icon.f4168472.png",
+    "src": "public/images/assets/cart-icon.png"
   },
   "public/images/assets/shopping-cart.png": {
     "file": "assets/shopping-cart.52b1677e.png",
@@ -84,11 +80,11 @@
     "src": "public/images/assets/delete.png"
   },
   "resources/js/app.js": {
-    "file": "assets/app.992202f5.js",
+    "file": "assets/app.a51d6698.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app.6f98521b.css"
+      "assets/app.391cf14a.css"
     ],
     "assets": [
       "assets/logo.9a88cec5.svg",
@@ -110,12 +106,11 @@
       "assets/bg1.6bf04d9a.png",
       "assets/deal-1.150339f7.png",
       "assets/deal-2.3bf691de.png",
-      "assets/cash.b587fdec.png",
-      "assets/credit-card 1.be90f433.png"
+      "assets/cash.b587fdec.png"
     ]
   },
   "resources/js/app.css": {
-    "file": "assets/app.6f98521b.css",
+    "file": "assets/app.391cf14a.css",
     "src": "resources/js/app.css"
   }
 }

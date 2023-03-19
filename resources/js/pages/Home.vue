@@ -53,7 +53,11 @@ const data = reactive({
     areas: [],
     branches: [],
     categories: [],
-    cart:[],
+    cart:{
+        items:[],
+        tax_amount : 0.00,
+        subTotal: 0.00
+    },
     temporaryItem:{ },
     discount : {},
     categoryProducts: [],
@@ -61,6 +65,11 @@ const data = reactive({
     locationType: 'Delivery',
     toastText: '',
     toastType: 'success',
+    tax_amount : 0,
+    tax : 0.00,
+    subTotal : 0.00,
+    tax_type : '',
+    taxApplicable: false
 })
 const city = ref(localStorage.getItem('city') ?? '');
 const area = ref(localStorage.getItem('area') ?? '');
@@ -106,6 +115,7 @@ const chanageLocationType = ((event) => {
 const getCities = (() => {
     axios.get('/cities-has-areas?get=all').then((response)=>{
         data.cities = response.data.cities;
+        taxApplicable();
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
@@ -144,7 +154,11 @@ const selectProduct = ((categoryIndex, productIndex) => {
     data.temporaryItem.name = data.categoryProducts[categoryIndex].products[productIndex].name;
     data.temporaryItem.price = data.categoryProducts[categoryIndex].products[productIndex].price;
     data.temporaryItem.image = data.categoryProducts[categoryIndex].products[productIndex].image;
+    data.temporaryItem.tax_applicable = data.categoryProducts[categoryIndex].products[productIndex].tax_applicable;
     data.temporaryItem.addons = [];
+    if(hasDiscount(data.temporaryItem)){
+        data.temporaryItem.price = getDiscountedPrice(data.temporaryItem);
+    }
     $('#productModal').modal('toggle');
 });
 const addIntoItem = ((addon,cat_index,type,quantity,index) => {
@@ -195,10 +209,9 @@ const getQuantity = ((index) => {
     let tempAddon =  data.temporaryItem.addons[index];
     let quantity = 0;
     tempAddon.forEach((addon) => {
-        console.log(addon);
        quantity += addon.quantity;
         if(addon.price > 0){
-            data.temporaryItem.price += addon.price;
+            data.temporaryItem.price += addon.price*addon.quantity;
         }
     });
     return quantity;
@@ -224,25 +237,24 @@ const addToCart = ( async() => {
         if(addon.required && item == undefined ){
             message = addon.category.title + " is required";
             validateCart = false;
-            return false;
+            return;
         }
         if(addon.quantity > 1){
             if(item !== undefined){
                 if(item.length == 0){
                     message = addon.category.title + " is required";
                     validateCart = false;
-                    return false;
+                    return;
                 }
                 let addedQuantity =  getQuantity(index);
                 if(addedQuantity !== addon.quantity){
                     message = "Please check the quantity of " + addon.category.title;
                     validateCart = false;
-                    return false;
+                    return;
                 }
             }
         }
         if(addon.quantity == 1 && item && item.price > 0){
-            console.log(addon);
             data.temporaryItem.price += item.price;
         }
     })
@@ -251,38 +263,87 @@ const addToCart = ( async() => {
     }
     if(validateCart){
         let productQtyElement = $('#product-quantity');
+
         data.temporaryItem.quantity = parseInt(productQtyElement.val());
-        data.cart.push(data.temporaryItem);
+        data.cart.items.push(data.temporaryItem);
+        data.cart.subTotal = getTotal();
+        data.cart.tax_amount = getTax();
+        localStorage.setItem('cart' , JSON.stringify(data.cart))
         data.temporaryItem = {};
+
         data.selectedProduct = null;
         $('#productModal').modal('toggle');
     }
 
 });
 const removeItem = ((index) => {
-    data.cart.splice(index , 1);
+    data.cart.items.splice(index , 1);
+    data.cart.subTotal = getTotal();
+    data.cart.tax_amount = getTax();
     localStorage.setItem('cart' , JSON.stringify(data.cart))
 
 });
 const updateCart = (() => {
-    data.cart.forEach((cart , index) => {
+    data.cart.items.forEach((cart , index) => {
         let productQtyElement = $('#cart-quantity-'+index);
         cart.quantity = parseInt(productQtyElement.val());
     })
+    data.cart.subTotal = getTotal();
+    data.cart.tax_amount = getTax();
     localStorage.setItem('cart' , JSON.stringify(data.cart))
 });
 const getTotal = (() => {
-   let price = 0;
-   data.cart.forEach((cart , index) => {
-      price += cart.price*cart.quantity
-   });
-   return price;
+    let price = 0.00;
+    data.cart.items.forEach((cart , index) => {
+        price += cart.price*cart.quantity
+    });
+    return Number(price.toFixed(2));
 });
 const updateQuantity = (() => {
     let productQtyElement = $('#product-quantity');
     let value = parseInt(productQtyElement.val());
     if(value < 1)
         productQtyElement.val(1);
+});
+const taxApplicable = (() => {
+    const city_id = localStorage.getItem('city');
+    data.cities.find((city , index) => {
+        if(city.id == city_id){
+            console.log("Inside");
+            data.tax_amount = city.tax_amount;
+            data.tax_type = city.tax_type;
+            data.taxApplicable = true;
+            return true;
+        }
+    });
+})
+
+const getTax = (() => {
+    let taxPrice = 0.00;
+    if(data.taxApplicable){
+        data.cart.items.forEach((cart , index) => {
+            if(cart.tax_applicable == 1){
+                if(data.tax_type == 'Inclusive Tax'){
+                    const discount = ((cart.price/100)*data.tax_amount).toFixed(2);
+                    taxPrice += Number(discount);
+                }
+            }
+        });
+    }
+
+    return  Number(taxPrice.toFixed(2));
+})
+const getDiscountedPrice = ((product) => {
+    let price = product.price;
+    if(data.discount){
+        if(data.discount.type == "percentage"){
+            price = price - ((price/100))*data.discount.value;
+        }
+        else{
+            price = price - data.discount.value;
+        }
+    }
+    return price;
 });
 const hasDiscount = ((product) => {
     let discount = false;
@@ -293,7 +354,6 @@ const hasDiscount = ((product) => {
         }
         if(data.discount.discount_on === 'Products'){
             data.discount.products.forEach((discount_product , index) => {
-                console.log(product.id , discount_product.id);
                 if(product.id == discount_product.id){
                     discount = true;
                     return true;
@@ -385,7 +445,7 @@ const showNoty = ((message,type = 'success') => {
             </div>
             <div class="shopping-cart">
 				<div class="shopping-icon" data-bs-toggle="modal" data-bs-target="#shoppingCartModal">
-					<span class="badge bg-dark rounded-circle p-2">{{data.cart.length}}</span>
+					<span class="badge bg-dark rounded-circle p-2">{{data.cart.items.length}}</span>
 					<img class="img img-responsive img-circle" :src="shoppingCartIcon" alt="">
 				</div>
 			</div>
@@ -465,7 +525,8 @@ const showNoty = ((message,type = 'success') => {
                                         <h5 class="card-title">{{product.name}}</h5>
                                         <p class="card-text">{{product.description}} </p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <label class="price-label">Rs. {{product.price}}</label>
+                                            <label class="price-label" v-if="hasDiscount(product)">Rs. <s class="price-label-strike">{{product.price}}</s> {{getDiscountedPrice(product)}}</label>
+                                            <label class="price-label" v-else>Rs. {{product.price}}</label>
                                             <img :src="cartIcon" alt="">
                                         </div>
                                     </div>
@@ -644,8 +705,8 @@ const showNoty = ((message,type = 'success') => {
 										<th scope="col"></th>
 									</tr>
 									</thead>
-									<tbody>
-										<tr v-for="(cart,index) in data.cart">
+									<tbody class="cart-body">
+										<tr v-for="(cart,index) in data.cart.items">
 											<td>
 												<div class="order-image d-flex">
 													<img class="img" :src="cart.image !== null ? '/images/products/'+cart.image : '/images/categories/profile-2.jpg'" alt="">
@@ -657,21 +718,28 @@ const showNoty = ((message,type = 'success') => {
 													<div class="item-name">
 														<h6 class="text-capitalize">{{cart.name}}</h6>
 														<p v-for="addon in cart.addons">
-                                                            <template  v-if="Array.isArray(addon)">
-                                                                <span v-for="item in addon">{{item.quantity}} x {{item.name}} <span v-if="addon.price > 0">Rs({{item.price}})</span> <br/></span>
+                                                            <template v-if="addon">
+                                                                <template v-if="Array.isArray(addon)">
+                                                                    <span v-for="item in addon">{{item.quantity}} x {{item.name}} <span v-if="item.price > 0">Rs({{item.price}})</span> <br/></span>
+                                                                </template>
+                                                                <template v-else>
+                                                                    {{addon.name}} <span v-if="addon.price > 0">Rs({{addon.price}})</span>
+                                                                </template>
                                                             </template>
-                                                            <template v-else>
-                                                                {{addon.name}} <span v-if="addon.price > 0">Rs({{addon.price}})</span>
-                                                            </template>
+
 
                                                         </p>
 													</div>
 
 												</div>
 											</td>
-											<td><p class="item-value mb-0">Rs. {{cart.price}}</p></td>
+											<td>
+                                                <p class="item-value mb-0">Rs. {{cart.price}}</p>
+                                            </td>
 											<td style="width:15%;"><input type="number" class="w-100" placeholder="0" :min="1" v-model="cart.quantity" :id="'cart-quantity-'+index" /></td>
-											<td><p class="item-value mb-0">Rs. {{ cart.price * cart.quantity }}</p></td>
+											<td>
+                                                <p class="item-value mb-0">Rs. {{ cart.price * cart.quantity }}</p>
+                                            </td>
 											<td @click="removeItem(index)"><a href="#"><img class="img remove-item" :src="deleteIcon" alt=""></a></td>
                                         </tr>
                                     </tbody>
@@ -684,16 +752,20 @@ const showNoty = ((message,type = 'success') => {
 										<h6>Cart Totals</h6>
 										<div class="order-total d-flex justify-content-between mt-5">
 											<p class="total-label">Subtotal</p>
-											<span class="text-dark">Rs. {{ getTotal() }}</span>
+											<span class="text-dark">Rs. {{ data.cart.subTotal}}.00</span>
 										</div>
+                                        <div class="order-total d-flex justify-content-between mt-2" v-if="data.taxApplicable">
+                                            <p class="total-label">Tax</p>
+                                            <span class="text-dark">Rs. {{ data.cart.tax_amount }}</span>
+                                        </div>
 										<hr class="hr">
 										<div class="order-total d-flex justify-content-between mt-3">
 											<p class="total-label">Total</p>
-											<span>Rs. {{ getTotal() }}</span>
+											<span>Rs. {{ data.cart.subTotal + data.cart.tax_amount }}</span>
 										</div>
 									</div>
 									<div class="proceed-cart text-center mt-3">
-										<a href="checkout.html" class="btn btn-yellow">Proceed to checkout</a>
+										<router-link :to="{name : 'Checkout'}" class="btn btn-yellow">Proceed to checkout</router-link>
 									</div>
 								</div>
 							</div>

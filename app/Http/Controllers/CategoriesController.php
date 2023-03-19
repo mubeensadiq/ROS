@@ -132,7 +132,7 @@ class CategoriesController extends Controller
                                 $q->where('areas.id',$area_id);
                             })->first();
                             $b_product = $branch->products->find($product->id);
-                            if($b_product){
+                            if($b_product && $b_product->pivot->price > 0){
                                 $categories[$cat_index]['products'][$index]['price'] = $b_product->pivot->price;
                             }
                         }
