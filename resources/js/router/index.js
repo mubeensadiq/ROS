@@ -28,6 +28,8 @@ import Confirmation from "../pages/Confirmation.vue";
 import Checkout from "../pages/Checkout.vue";
 import Discounts from "../pages/Discounts.vue";
 import AddDiscount from "../pages/AddDiscount.vue";
+import Orders from "../pages/Orders.vue";
+import OrderDetails from "../pages/Orders.vue";
 import { useUserStore } from "../stores/users";
 const routes = [
     {
@@ -219,6 +221,16 @@ const routes = [
             path: "discount/create",
             name: "discounts.create",
             component: AddDiscount,
+        },
+        {
+            path: "orders",
+            name: "orders",
+            component: Orders,
+        },
+        {
+            path: "order/details/:id",
+            name: "order.details",
+            component: OrderDetails,
         },
     ],
   },

@@ -29,6 +29,7 @@ use App\Http\Controllers\OrdersController;
 /************** AUTH ROUTES ************/
 Route::post('/login' , [LoginController::class, 'authenticate']);
 Route::post('/logout' , [LoginController::class, 'logout']);
+Route::post('/save-order', [OrdersController::class , 'saveOrder']);
 /************** END AUTH ROUTES ************/
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
@@ -121,9 +122,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
     /************** END ADDON ROUTES ************/
 
-    /************** ORDER AND CHECKOUT ROUTES ************/
+    /************** ORDER ROUTES ************/
+    Route::get('/orders', [OrdersController::class , 'index']);
     Route::get('/checkout', [OrdersController::class , 'checkOut']);
-    Route::post('/save-addon', [AddonsController::class , 'saveAddon']);
+
     Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
     Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
     /************** END ADDON ROUTES ************/

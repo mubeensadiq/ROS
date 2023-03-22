@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderProduct;
+use App\Models\OrderProductAddon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -10,14 +12,12 @@ class OrdersController extends Controller
 {
     public function index(Request $request){
         try{
-            $orders = Order::with('category');
+            $orders = Order::with('rider');
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
-                $orders = $orders->where('name' ,'like', "%$query%")
-                    ->orWhere('price' ,'like', "%$query%")
-                    ->orWhereHas('categories', function ($q) use ($query) {
-                        $q->where('name', 'like', "%$query%");
-                    });
+                $orders = $orders->where('firs_name' ,'like', "%$query%")
+                    ->orWhere('last_name' ,'like', "%$query%")
+                    ->orWhere('order_number' ,'like', "%$query%");
             }
             if(isset($request->type) && $request->type != ''){
                 $orders = $orders->where('type' , $request->type)->get();
@@ -69,44 +69,60 @@ class OrdersController extends Controller
     public function saveOrder(Request $request){
         try{
             $request->validate([
-                'name' => 'required',
-                'description' => 'required',
-                'image' => 'required',
-                'price' => 'required',
+                'customer.first_name' => 'required',
+                'customer.last_name' => 'required',
+                'customer.phone_number' => 'required',
+                'customer.delivery_address' => 'required',
+                'customer.email' => 'email',
             ]);
-            $order = Order::updateOrCreate(['id' => $request->id] , [
-                'name' => $request->name,
-                'description' => $request->description,
-                'price' => $request->price,
-                'status' => $request->status,
-                'image' => $request->image,
-                'type' => $request->type,
-                'tax_applicable' => $request->tax_applicable,
-                'discount' => $request->discount,
+            $customer = $request->customer;
+            $cart = $request->cart;
+
+            $order = Order::create([
+                'first_name' => $customer['first_name'],
+                'last_name' => $customer['last_name'],
+                'phone_number' => $customer['phone_number'],
+                'alternate_phone' => $customer['alternate_phone'],
+                'delivery_address' => $customer['delivery_address'],
+                'email' => $customer['email'],
+                'instructions' => $customer['instructions'],
+                'sub_total' => $cart['subTotal'],
+                'tax' => $cart['tax_amount'],
+                'total' => $cart['subTotal'] + $cart['tax_amount'],
+                'payment_type' => 'cash'
             ]);
-            $order->categories()->sync($request->categories);
-            $order->branch_order()->detach();
-            foreach ($request->branch_order as $p_branch){
-                foreach ($p_branch['branches']  as $branch){
-                    if($branch !== '')
-                        $order->branch_order()->attach($branch , ['price' => $p_branch['price']]);
+            foreach ($cart['items'] as $item){
+                $product = OrderProduct::create([
+                   'order_id' =>  $order->id,
+                    'product_name' => $item['name'],
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity']
+                ]);
+                foreach ($item['addons'] as $addon){
+                    if($addon == null) continue;
+                    if(isset($addon[0])){
+                        foreach ($addon as $add){
+                            OrderProductAddon::create([
+                                'order_product_id' => $product->id,
+                                'name' => $add['name'],
+                                'price' => $add['price'],
+                                'quantity' => $add['quantity']
+                            ]);
+                        }
+                    }
+                    else{
+                        OrderProductAddon::create([
+                            'order_product_id' => $product->id,
+                            'name' => $addon['name'],
+                            'price' => $addon['price'],
+                            'quantity' => $addon['quantity']
+                        ]);
+                    }
+
+
                 }
             }
-            $order->addon_category_order()->delete();
-            foreach ($request->addon_category_order as $order_addon){
-                if(isset($order_addon['addons']) && count($order_addon['addons']) > 0){
-                    $addon_cat_prod =  $order->addon_category_order()->create(['addon_category_id' => $order_addon['addonCategory'],'quantity' => $order_addon['quantity'] , 'required' => $order_addon['required']]);
-                    $addon_cat_prod->addons()->sync($order_addon['addons']);
-                }
-            }
-            OrderSchedule::updateOrCreate(['order_id' => $order->id],[
-                'start_date' => $request->schedule['start_date'],
-                'end_date' => $request->schedule['end_date'],
-                'start_time' => $request->schedule['start_time'],
-                'end_time' => $request->schedule['end_time'],
-                'specific_date' => $request->schedule['specific_date'],
-                'specific_day' => json_encode($request->schedule['specific_day'])
-            ]);
+
 
             return response()->json([
                 'status' => 'success',

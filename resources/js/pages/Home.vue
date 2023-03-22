@@ -22,7 +22,7 @@ import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 import Notification from "./Notification.vue";
-import {onMounted, reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch, onBeforeUnmount} from "vue";
 import TomSelect from "../base-components/TomSelect";
 import {FormCheck,} from "../base-components/Form";
 import axios from "axios";
@@ -100,8 +100,10 @@ onMounted(() => {
         if(localStorage.getItem('city') === null)
             $('#selectLocationModal').modal('show');
     });
-})
-
+});
+onBeforeUnmount(() => {
+    $('#shoppingCartModal').modal('toggle');
+});
 const getCategories = (() => {
     axios.get('/categories?get=all&status=1').then((response)=>{
         data.categories = response.data.categories;
@@ -309,7 +311,6 @@ const taxApplicable = (() => {
     const city_id = localStorage.getItem('city');
     data.cities.find((city , index) => {
         if(city.id == city_id){
-            console.log("Inside");
             data.tax_amount = city.tax_amount;
             data.tax_type = city.tax_type;
             data.taxApplicable = true;
@@ -383,6 +384,9 @@ const hasDiscount = ((product) => {
     }
     return discount;
 });
+const showCartModal = (() => {
+    $('#shoppingCartModal').modal('toggle');
+})
 const showNoty = ((message,type = 'success') => {
     data.toastText = message;
     data.toastType = type;
@@ -444,7 +448,7 @@ const showNoty = ((message,type = 'success') => {
                 </a>
             </div>
             <div class="shopping-cart">
-				<div class="shopping-icon" data-bs-toggle="modal" data-bs-target="#shoppingCartModal">
+				<div class="shopping-icon" @click="showCartModal()">
 					<span class="badge bg-dark rounded-circle p-2">{{data.cart.items.length}}</span>
 					<img class="img img-responsive img-circle" :src="shoppingCartIcon" alt="">
 				</div>
@@ -684,7 +688,7 @@ const showNoty = ((message,type = 'success') => {
 
 
 		<!-- shoppingCartModal -->
-		<div class="modal fade" id="shoppingCartModal" tabindex="-1" aria-labelledby="shoppingCartModalLabel" aria-hidden="true">
+		<div class="modal fade" id="shoppingCartModal"  data-bs-backdrop="static" >
 			<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
 				<div class="modal-content p-3 border-r-20">
 					<div class="modal-header border-0 d-flex align-items-start">

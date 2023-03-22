@@ -19,8 +19,6 @@ import axios from "axios";
 import {email} from "@vuelidate/validators";
 const data = reactive({
     cart : [],
-    subTotal: 0 ,
-    tax: 0,
     delivery_fee: 100,
     info:{
         first_name: '',
@@ -63,8 +61,10 @@ onMounted( () => {
 const placeOrder = (() => {
    const validate = validateFields();
    if(validate){
-       axios.post('/api/place-order' , {data:data}).then((response) => {
+       axios.post('/api/save-order' , {'customer' : data.info , 'cart' : data.cart}).then((response) => {
+            if(response.status == 'success'){
 
+            }
        })
    }
 });
