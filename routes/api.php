@@ -124,6 +124,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /************** ORDER ROUTES ************/
     Route::get('/orders', [OrdersController::class , 'index']);
+    Route::get('/order-details/{id}', [OrdersController::class , 'getOrderDetails']);
     Route::get('/checkout', [OrdersController::class , 'checkOut']);
 
     Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);

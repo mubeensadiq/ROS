@@ -475,16 +475,7 @@ label , h2, h3,h4,h5,h6,p,span {
 }
 
 .billing-details p {
-    font-weight: 300;
-    font-size: 24px;
-    color: #090808 !important;
     line-height: 36px;
-}
-
-.billing-details p span {
-    font-weight: 600;
-    font-size: 24px;
-    color: #1E1D23 !important;
 }
 .summary-labels p{
     font-size: 16px;
@@ -526,7 +517,7 @@ label , h2, h3,h4,h5,h6,p,span {
 #checkoutForm {
     box-shadow: 0px 1px 50px rgb(0 0 0 / 5%);
     border-radius: 10px;
-    margin: 100px 70px;
+    margin: 0px 0px 100px 0px;
 }
 
 .billing-details h3 {
@@ -761,6 +752,8 @@ footer p {
 
 .text-dark{
     color:#000 !important;
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif !important;
 }
 
 /* Product Modal */
@@ -1017,4 +1010,36 @@ footer p {
 }
 .text-danger{
     color: #B60000 !important;
+}
+.order-status{
+    background: #000;
+    padding: 0.8em 2em;
+    color: #fff !important;
+    font-size: 18px;
+    margin-bottom: 1em;
+    font-family: 'Poppins', sans-serif !important;
+}
+.order-number{
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif !important;
+}
+.your-order{
+    font-size: 24px;
+    margin-bottom: 1em;
+    font-family: 'Poppins', sans-serif !important;
+}
+.order-number span{
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: bold;
+}
+.order-image{
+    width: 200px;
+    margin: 5% 35%;
+}
+.confirm-page-logo{
+    text-align: center;
+    margin-left: 25%;
+    border-radius: 50%;
+    background: #000;
 }

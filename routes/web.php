@@ -7,6 +7,7 @@ use App\Http\Controllers\CitiesController;
 use App\Http\Controllers\AreasController;
 use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\DiscountsController;
+use App\Http\Controllers\OrdersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
 Route::get('/branches-by-city', [BranchesController::class , 'getBranchesByCity']);
 Route::get('/discount/{id?}', [DiscountsController::class , 'getDiscountDetails']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
+Route::get('/order-details/{id}', [OrdersController::class , 'getOrderDetails']);
 Route::get('/{any}',function () {
     return view('welcome');
 })->where('any', '.*');

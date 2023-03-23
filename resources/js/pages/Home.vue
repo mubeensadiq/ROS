@@ -27,6 +27,7 @@ import TomSelect from "../base-components/TomSelect";
 import {FormCheck,} from "../base-components/Form";
 import axios from "axios";
 import Tippy from "../base-components/Tippy";
+import text from "../base-components/Form/InputGroup/Text.vue";
 
 
 $.fn.isInViewport = function() {
@@ -212,11 +213,19 @@ const getQuantity = ((index) => {
     let quantity = 0;
     tempAddon.forEach((addon) => {
        quantity += addon.quantity;
-        if(addon.price > 0){
-            data.temporaryItem.price += addon.price*addon.quantity;
-        }
     });
     return quantity;
+});
+const addAddonPrice = ((addon , index) => {
+    let item = data.temporaryItem.addons[index];
+    if(addon.quantity == 1 && item && item.price > 0)
+        data.temporaryItem.price += item.price;
+    if(addon.quantity > 1){
+        item.forEach((addon) => {
+            data.temporaryItem.price += addon.price*addon.quantity;
+        });
+    }
+
 });
 const manageProductCounter = ((type) => {
 
@@ -235,38 +244,37 @@ const addToCart = ( async() => {
     let validateCart = true;
     let message = "";
     await data.selectedProduct.addon_category_product.forEach((addon , index) => {
+        let errorElement = $('#'+index);
+        errorElement.html('');
         let item = data.temporaryItem.addons[index];
         if(addon.required && item == undefined ){
-            message = addon.category.title + " is required";
+            message = "You must select at least one addon - "+addon.category.title;
             validateCart = false;
-            return;
+            errorElement.html(message);
         }
         if(addon.quantity > 1){
             if(item !== undefined){
                 if(item.length == 0){
-                    message = addon.category.title + " is required";
+                    message = "You must select at least one addon - "+addon.category.title;
                     validateCart = false;
-                    return;
+                    errorElement.html(message);
                 }
                 let addedQuantity =  getQuantity(index);
                 if(addedQuantity !== addon.quantity){
-                    message = "Please check the quantity of " + addon.category.title;
+                    message = "Sorry but you can select only " +addon.quantity +" quantity of "  + addon.category.title;
                     validateCart = false;
-                    return;
+                    errorElement.html(message);
                 }
             }
         }
-        if(addon.quantity == 1 && item && item.price > 0){
-            data.temporaryItem.price += item.price;
-        }
     })
-    if(!validateCart){
-        showNoty(message,'error');
-    }
     if(validateCart){
         let productQtyElement = $('#product-quantity');
 
         data.temporaryItem.quantity = parseInt(productQtyElement.val());
+        await data.selectedProduct.addon_category_product.forEach((addon , index) => {
+            addAddonPrice(addon , index);
+        })
         data.cart.items.push(data.temporaryItem);
         data.cart.subTotal = getTotal();
         data.cart.tax_amount = getTax();
@@ -387,11 +395,6 @@ const hasDiscount = ((product) => {
 const showCartModal = (() => {
     $('#shoppingCartModal').modal('toggle');
 })
-const showNoty = ((message,type = 'success') => {
-    data.toastText = message;
-    data.toastType = type;
-    document.getElementById("toastBtn").click();
-});
 </script>
 
 <template>
@@ -515,7 +518,6 @@ const showNoty = ((message,type = 'success') => {
     </section>
 
     <main>
-        <Notification :toastText="data.toastText" :toastType="data.toastType" />
         <template v-for="(category , categoryIndex) in data.categoryProducts">
             <section v-if="category.products && category.products.length > 0" class="base-section gourmet-fries"   :id="category.id">
                 <div class="container px-container">
@@ -812,6 +814,7 @@ const showNoty = ((message,type = 'success') => {
                                 <template v-for="(cat_product,a_c_p_index) in data.selectedProduct.addon_category_product">
                                     <div class="preferences mb-3" v-if="cat_product.addons.length > 0">
                                         <h6 class="addon-cat-title">{{cat_product.category.title}}<span v-if="cat_product.required" class="required-label">Required</span></h6>
+                                        <span class="text-danger text-error" :id="a_c_p_index"></span>
                                         <template v-for="(addon,index) in cat_product.addons">
                                             <div class="flex-1 w-full mt-3 xl:mt-0 mb-3">
                                                 <div class="flex flex-col sm:flex-row cart-counter">

@@ -16,7 +16,9 @@ import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
 import {onMounted, reactive} from "vue";
 import axios from "axios";
-import {email} from "@vuelidate/validators";
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
 const data = reactive({
     cart : [],
     delivery_fee: 100,
@@ -62,8 +64,10 @@ const placeOrder = (() => {
    const validate = validateFields();
    if(validate){
        axios.post('/api/save-order' , {'customer' : data.info , 'cart' : data.cart}).then((response) => {
-            if(response.status == 'success'){
-
+            if(response.data.status == 'success'){
+                localStorage.setItem('order', JSON.stringify(response.data.order));
+                localStorage.removeItem('cart');
+                router.push('/confirm');
             }
        })
    }

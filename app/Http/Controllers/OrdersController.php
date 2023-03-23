@@ -44,7 +44,7 @@ class OrdersController extends Controller
     }
     public function getOrderDetails(Request $request , $id){
         try{
-            $order = Order::with(['categories' , 'addon_category_order.addons' , 'branch_order','schedule'])->where('id' , $id)->first();
+            $order = Order::with(['products.addons'])->where('id' , $id)->first();
             if($order){
                 return response()->json([
                     'status' => 'success',
@@ -77,8 +77,14 @@ class OrdersController extends Controller
             ]);
             $customer = $request->customer;
             $cart = $request->cart;
-
+            $order_number = '000001';
+            $last_order = Order::latest()->first();
+            if($last_order){
+                $order_number = intval($last_order->order_number) + 1;
+                $order_number = sprintf('%06d', $order_number);
+            }
             $order = Order::create([
+                'order_number' => $order_number,
                 'first_name' => $customer['first_name'],
                 'last_name' => $customer['last_name'],
                 'phone_number' => $customer['phone_number'],
@@ -89,7 +95,8 @@ class OrdersController extends Controller
                 'sub_total' => $cart['subTotal'],
                 'tax' => $cart['tax_amount'],
                 'total' => $cart['subTotal'] + $cart['tax_amount'],
-                'payment_type' => 'cash'
+                'payment_type' => 'cash',
+                'status' => 'received'
             ]);
             foreach ($cart['items'] as $item){
                 $product = OrderProduct::create([
@@ -126,7 +133,8 @@ class OrdersController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Successfully Saved'
+                'message' => 'Successfully Saved',
+                'order' => $order
             ],200);
         }
         catch (\Exception $ex){

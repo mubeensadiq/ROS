@@ -29,7 +29,7 @@ import Checkout from "../pages/Checkout.vue";
 import Discounts from "../pages/Discounts.vue";
 import AddDiscount from "../pages/AddDiscount.vue";
 import Orders from "../pages/Orders.vue";
-import OrderDetails from "../pages/Orders.vue";
+import OrderDetails from "../pages/OrderDetails.vue";
 import { useUserStore } from "../stores/users";
 const routes = [
     {

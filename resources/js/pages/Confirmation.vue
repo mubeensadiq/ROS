@@ -14,7 +14,26 @@ import twitter from "../../../public/images/assets/twitter.png";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
+import {onMounted, reactive} from "vue";
+import axios from "axios";
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
+const data = reactive({
+    order : null,
+});
+onMounted( () => {
+    let order = localStorage.getItem('order');
+    if(order){
+        data.order = JSON.parse(order);
+        axios.get('/order-details/'+data.order.id).then((response) => {
+            if(response.data.order !== undefined){
+                data.order = response.data.order;
+            }
+        })
+    }
 
+})
 
 </script>
 
@@ -33,6 +52,8 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
     <link rel="mask-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/safari-pinned-tab.svg"
           color="#712cf9">
     <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico">
+
+
     <section id="mainHeaderSection">
         <div class="container-fluid p-0">
             <div class="alert-msg text-light">FREE Delivery On Orders Above <span>Rs. 2000</span></div>
@@ -60,78 +81,29 @@ import "https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js";
                 <img class="img background position-relative w-100" :src="bg1" alt="">
                 <div class="w-100 d-flex flex-column justify-content-center align-items-center text-center checkout-logo">
                     <img class="img img-responsive logo" :src="logo" alt="">
-                    <h2 class="text-uppercase">DELIVERY INFORMATION</h2>
+                    <h2 class="text-uppercase">ORDER INFORMATION</h2>
                 </div>
             </div>
         </div>
     </section>
-
     <main>
+        <div class="row py-5 justify-content-center">
+            <div class="col-6 text-center">
+                <section id="checkoutForm" v-if="data.order">
+                    <div class="container-fluid">
 
-        <section id="checkoutForm">
-            <div class="container-fluid">
-                <div class="row py-5">
-                    <div class="col-md-12 text-center">
-                        <img :src="confirmation" alt="">
-                        <h3 class="text-capitalize my-5">Your Order Details</h3>
-                    </div>
-                    <div class="billing-details col-md-5 col-xs-12 px-4 mb-5">
-                        <p>Your order from: <span>Restaurant Name</span></p>
-                        <p>Delivery address: <span>1, D, 8 Khaliq-uz-Zaman Rd</span></p>
-                        <p>Order number: <span>#ASFD-69832</span></p>
-                    </div>
-                    <div class="col-md-7 col-xs-12 px-4">
-                        <div class="order-details px-4">
-                            <!-- Order ITEMS - to be looped through -->
-                            <div class="order-list d-flex align-items-center">
-                                <div class="order-image d-flex">
-                                    <img class="img" :src="deal1" alt="">
-                                    <hr class="order-image-separator">
-                                </div>
-                                <div class="order-item d-flex justify-content-between align-items-center w-100">
-                                    <div class="item-name px-3">
-                                        <h6 class="text-capitalize">Italian Burger</h6>
-                                        <span>With cheese</span>
-                                        <span>Bacon (Rs. 10.00)</span>
-                                    </div>
-                                    <p class="item-value mb-0">Rs. 559</p>
-                                </div>
-                            </div>
-                            <div class="order-list d-flex align-items-center">
-                                <div class="order-image d-flex">
-                                    <img class="img" :src="deal2" alt="">
-                                    <hr class="order-image-separator">
-                                </div>
-                                <div class="order-item d-flex justify-content-between align-items-center w-100">
-                                    <div class="item-name px-3">
-                                        <h6 class="text-capitalize">Crunch burger with coke</h6>
-                                        <span>With cheese</span>
-                                        <span>Bacon (Rs. 10.00)</span>
-                                    </div>
-                                    <p class="item-value mb-0">Rs. 1099</p>
-                                </div>
-                            </div>
-                            <hr class="hr">
-                            <div class="order-summary d-flex justify-content-between">
-                                <div class="summary-labels">
-                                    <p>Subtotal</p>
-                                    <p class="mb-0">Delivery Fee</p>
-                                </div>
-                                <div class="summary-values text-right">
-                                    <p>Rs. 559</p>
-                                    <p class="mb-0">Rs. 79</p>
-                                </div>
-                            </div>
-                            <hr class="hr">
-                            <div class="order-total d-flex justify-content-between">
-                                <label for="">Total</label>
-                                <span>Rs. 638</span>
-                            </div>
+                        <div class="billing-details py-5">
+                            <p class="your-order">Your Order is</p>
+                            <span class="order-status text-uppercase">{{data.order.status}}</span>
+                            <img :src="confirmation" alt="" class="order-image">
+                            <p class="order-number">Order Number: <span>{{data.order.order_number}}</span></p>
+                            <p class="order-text">Your order has been received. we might call you for confirmation or
+                                address details if required.</p>
                         </div>
                     </div>
-                </div><!-- /.row -->
+                </section>
             </div><!-- /.row -->
-        </section>
+        </div><!-- /.row -->
 
 
         <!-- FOOTER -->
