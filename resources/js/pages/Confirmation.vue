@@ -95,7 +95,7 @@ onMounted( () => {
                         <div class="billing-details py-5">
                             <p class="your-order">Your Order is</p>
                             <span class="order-status text-uppercase">{{data.order.status}}</span>
-                            <img :src="confirmation" alt="" class="order-image">
+                            <img :src="confirmation" alt="" class="order-confirm-image">
                             <p class="order-number">Order Number: <span>{{data.order.order_number}}</span></p>
                             <p class="order-text">Your order has been received. we might call you for confirmation or
                                 address details if required.</p>
