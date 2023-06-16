@@ -334,7 +334,7 @@ const getTax = (() => {
             if(cart.tax_applicable == 1){
                 if(data.tax_type == 'Inclusive Tax'){
                     const discount = ((cart.price/100)*data.tax_amount).toFixed(2);
-                    taxPrice += Number(discount);
+                    taxPrice += Number(discount)*cart.quantity;
                 }
             }
         });
