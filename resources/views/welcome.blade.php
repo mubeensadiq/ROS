@@ -18,4 +18,5 @@
         window.Permissions = [];
     @endauth
 </script>
+{{--<script> !function() { var t; if (t = window.webbot = window.webbot = window.webbot || [], !t.init) return t.invoked ? void (window.console && console.error && console.error("Snippet included twice.")) : ( t.load =function(e){ var o,n; o=document.createElement("script"); e.type="text/javscript"; o.async=!0; o.crossorigin="anonymous"; o.src="https://app.botsify.com/web-bot/script/frame/"+e+"/webbot.js"; n=document.getElementsByTagName("script")[0]; n.parentNode.insertBefore(o,n); }); }(); webbot.load('prbBgdgSmgi3koqcRgEEY4aWR5CZz9jrwb9nbhNF'); </script>--}}
 </html>
