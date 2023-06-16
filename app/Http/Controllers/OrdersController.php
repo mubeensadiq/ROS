@@ -19,15 +19,11 @@ class OrdersController extends Controller
                     ->orWhere('last_name' ,'like', "%$query%")
                     ->orWhere('order_number' ,'like', "%$query%");
             }
-            if(isset($request->type) && $request->type != ''){
-                $orders = $orders->where('type' , $request->type)->get();
-            }
-            else{
-                if(isset($request->get) && $request->get == 'all')
-                    $orders = $orders->get();
-                else
-                    $orders = $orders->paginate(20)->appends($request->all());
-            }
+            $orders = $orders->orderBy('id' ,'desc');
+            if(isset($request->get) && $request->get == 'all')
+                $orders = $orders->get();
+            else
+                $orders = $orders->paginate(20)->appends($request->all());
             return response()->json([
                 'status' => 'success',
                 'orders' => $orders

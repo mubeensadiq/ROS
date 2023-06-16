@@ -33,6 +33,16 @@ Route::post('/save-order', [OrdersController::class , 'saveOrder']);
 /************** END AUTH ROUTES ************/
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+    /************** REPORTING ROUTES ************/
+    Route::group(['prefix' => 'report'] , function(){
+        Route::get('/products', [ProductsController::class , 'index']);
+        Route::post('/save-product', [ProductsController::class , 'saveProduct']);
+        Route::get('/get-product-details/{id}', [ProductsController::class , 'getProductDetails']);
+        Route::delete('/delete-product/{id}', [ProductsController::class , 'deleteProduct']);
+    });
+
+    /************** END REPORTING ROUTES ************/
+
     /************** PRODUCT ROUTES ************/
     Route::get('/products', [ProductsController::class , 'index']);
     Route::post('/save-product', [ProductsController::class , 'saveProduct']);

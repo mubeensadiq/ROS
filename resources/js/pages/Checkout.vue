@@ -260,7 +260,7 @@ const validateEmail = (() => {
                             </div>
 
                             <button class="btn btn-warning btn-submit mt-3" @click="placeOrder()">Place Order</button>
-                            <a href="#" class="continue-shopping">Continue Shopping</a>
+                            <router-link :to="{name : 'Home'}" class="btn btn-warning mt-3">Continue Shopping</router-link>
                         </div>
                     </div>
                 </div><!-- /.row -->
