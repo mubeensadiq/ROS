@@ -45,10 +45,13 @@ const getOrderDetails = ((url = '/api/order-details/'+route.params.id) => {
             <span class="text-warning">Name</span> : {{data.order.customer_name}}
         </div>
           <div class="mt-1"><span class="text-warning">Phone: </span>{{data.order.phone_number}}</div>
+	<div class="mt-1" v-if="data.order.email">
+            <span class="text-warning">Email</span> : {{data.order.email}}
+        </div>
           <div class="mt-1" v-if="data.order.alternate_phone"><span class="text-warning">Alternate Phone:</span> {{data.order.alternate_phone}}</div>
           <div class="mt-1"><span class="text-warning">Address: </span>{{data.order.delivery_address}}</div>
           <div class="mt-1" v-if="data.order.landmark"><span class="text-warning">Landmark: </span>{{data.order.landmark}}</div>
-          <div class="mt-1" v-if="data.order.landmark"><span class="text-warning">Instructions: </span> {{data.order.instructions}}</div>
+          <div class="mt-1" v-if="data.order.instructions"><span class="text-warning">Instructions: </span> {{data.order.instructions}}</div>
       </div>
       <div class="mt-10 lg:mt-0 lg:ml-auto lg:text-right">
         <div class="text-3xl font-semibold text-primary">ORDER NUMBER</div>

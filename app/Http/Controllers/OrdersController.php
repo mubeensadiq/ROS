@@ -88,6 +88,7 @@ class OrdersController extends Controller
                 'delivery_address' => $customer['delivery_address'],
                 'email' => $customer['email'],
                 'instructions' => $customer['instructions'],
+                'landmark' => $customer['landmark'],
                 'sub_total' => $cart['subTotal'],
                 'tax' => $cart['tax_amount'],
                 'total' => $cart['subTotal'] + $cart['tax_amount'],
