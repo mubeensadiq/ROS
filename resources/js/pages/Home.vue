@@ -4,8 +4,6 @@
 <script setup lang="ts">
 import logoUrl from "../../../public/images/assets/logo.png";
 import Vector from "../../../public/images/assets/Vector.png";
-import banner from "../../../public/images/assets/banner.png";
-import banner1 from "../../../public/images/assets/banner1.png";
 import back from "../../../public/images/assets/back.png";
 import fwd from "../../../public/images/assets/fwd.png";
 import cartIcon from "../../../public/images/assets/cart-icon.png";
@@ -50,6 +48,7 @@ $.fn.isInViewport = function() {
 
 
 const data = reactive({
+    banners: [],
     cities: [],
     areas: [],
     branches: [],
@@ -90,6 +89,7 @@ watch(branch, async(val) => {
     $('#selectLocationModal').modal('hide');
 })
 onMounted(() => {
+    getBanners();
     getCategories();
     getCities();
     getCategoryProducts();
@@ -104,6 +104,13 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
     $('#shoppingCartModal').modal('toggle');
+});
+const getBanners = (() => {
+    axios.get('/banners').then((response)=>{
+        data.banners = response.data.banners;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
 });
 const getCategories = (() => {
     axios.get('/categories?get=all&status=1').then((response)=>{
@@ -458,43 +465,11 @@ const showCartModal = (() => {
 			</div>
             <div id="myCarousel" class="carousel slide my-0" data-bs-ride="carousel">
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button v-for="(banner,index) in data.banners" type="button" data-bs-target="#myCarousel" :data-bs-slide-to="index" :class="{'active' : index === 0}"></button>
                 </div>
                 <div class="carousel-inner">
-                    <div class="carousel-item h-100 active">
-                        <img :src="banner1" alt="" class="bd-placeholder-img" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" >
-                        <div class="container">
-                            <div class="carousel-caption text-start customize-caption">
-                                <h1 class="mb-0 text-uppercase">Italian<br><span>Burger</span></h1>
-                                <p class="mb-0">With medium 2-Topping Pizza.</p>
-                                <span>*Additional charge for premium toppings. Minimum of 2 required.</span>
-                                <p class="cta mb-0 mt-3"><a class="btn btn-lg btn-yellow" href="#">Order Now</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item h-100">
-                        <img :src="banner" alt="" class="bd-placeholder-img" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" >
-                        <div class="container">
-                            <div class="carousel-caption text-start customize-caption">
-                                <h1 class="mb-0 text-uppercase">Italian<br><span>Burger</span></h1>
-                                <p class="mb-0">With medium 2-Topping Pizza.</p>
-                                <span>*Additional charge for premium toppings. Minimum of 2 required.</span>
-                                <p class="cta mb-0 mt-3"><a class="btn btn-lg btn-yellow" href="#">Order Now</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item h-100">
-                        <img :src="banner1" alt="" class="bd-placeholder-img" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" >
-                        <div class="container">
-                            <div class="carousel-caption text-start customize-caption">
-                                <h1 class="mb-0 text-uppercase">Italian<br><span>Burger</span></h1>
-                                <p class="mb-0">With medium 2-Topping Pizza.</p>
-                                <span>*Additional charge for premium toppings. Minimum of 2 required.</span>
-                                <p class="cta mb-0 mt-3"><a class="btn btn-lg btn-yellow" href="#">Order Now</a></p>
-                            </div>
-                        </div>
+                    <div v-for="(banner,index) in data.banners" class="carousel-item h-100" :class="{'active' : index === 0}">
+                        <img :src="banner.image !== null ? '/images/banners/'+banner.image : '/images/assets/banner1.png'" alt="" class="bd-placeholder-img" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" >
                     </div>
                 </div>
             </div>

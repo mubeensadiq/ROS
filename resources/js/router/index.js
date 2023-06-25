@@ -31,6 +31,7 @@ import AddDiscount from "../pages/AddDiscount.vue";
 import Orders from "../pages/Orders.vue";
 import OrderDetails from "../pages/OrderDetails.vue";
 import { useUserStore } from "../stores/users";
+import Banners from "../pages/Banners.vue";
 const routes = [
     {
         path: "/",
@@ -231,6 +232,11 @@ const routes = [
             path: "order/details/:id",
             name: "order.details",
             component: OrderDetails,
+        },
+        {
+            path: "banners",
+            name: "banners",
+            component: Banners,
         },
     ],
   },
