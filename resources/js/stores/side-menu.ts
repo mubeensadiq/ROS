@@ -82,6 +82,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "CreditCard",
             pageName: "branches",
             title: "Branches",
+        },
+
+        {
+            icon: "Activity",
+            pageName: "banners",
+            title: "Banners",
+        },
+
+        {
+            icon: "Activity",
+            pageName: "settings",
+            title: "Settings",
         }
     ],
   }),

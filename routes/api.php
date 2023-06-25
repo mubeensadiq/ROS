@@ -15,6 +15,7 @@ use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\RidersController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\BannersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,10 +137,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/orders', [OrdersController::class , 'index']);
     Route::get('/order-details/{id}', [OrdersController::class , 'getOrderDetails']);
     Route::get('/checkout', [OrdersController::class , 'checkOut']);
+    /************** END ORDER ROUTES ************/
 
-    Route::get('/get-addon-details/{id}', [AddonsController::class , 'getAddonDetails']);
-    Route::delete('/delete-addon/{id}', [AddonsController::class , 'deleteAddon']);
-    /************** END ADDON ROUTES ************/
+    /************** BANNER ROUTES ************/
+    Route::get('/banners', [BannersController::class , 'index']);
+    Route::post('/save-banner', [BannersController::class , 'saveBanner']);
+    Route::delete('/delete-banner/{id}', [BannersController::class , 'deleteBanner']);
+    /************** END BANNER ROUTES ************/
 
     /************** SINGLE ROUTES ************/
     Route::post('/upload-image', [ImageController::class,'upload']);

@@ -16,8 +16,11 @@ class ImageController extends Controller
      */
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
+        $image_validation = "required|image|mimes:png,jpg,jpeg|max:512";
+        if($request->has('resolution'))
+            $image_validation .= $request->resolution;
         $validator = $request->validate([
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'image' => $image_validation,
             'path' => 'required',
         ]);
         try {
