@@ -28,6 +28,8 @@ return new class extends Migration
             $table->double('tax');
             $table->double('total');
             $table->string('payment_type');
+            $table->string('order_type')->default('Delivery');
+            $table->string('branch')->nullable();
             $table->string('status');
             $table->timestamps();
         });

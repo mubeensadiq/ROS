@@ -16,6 +16,9 @@ use App\Http\Controllers\RidersController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\BannersController;
+use App\Http\Controllers\ReportingController;
+use App\Http\Controllers\SettingsController;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,13 +39,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /************** REPORTING ROUTES ************/
     Route::group(['prefix' => 'report'] , function(){
-        Route::get('/products', [ProductsController::class , 'index']);
-        Route::post('/save-product', [ProductsController::class , 'saveProduct']);
-        Route::get('/get-product-details/{id}', [ProductsController::class , 'getProductDetails']);
-        Route::delete('/delete-product/{id}', [ProductsController::class , 'deleteProduct']);
+        Route::get('/dashboard-stats', [ReportingController::class , 'DashboardStats']);
+        Route::get('/get-report', [ReportingController::class , 'getReport']);
     });
-
     /************** END REPORTING ROUTES ************/
+
+    /************** SETTING ROUTES ************/
+    Route::get('/settings', [SettingsController::class , 'index']);
+    Route::post('/save-settings', [SettingsController::class , 'saveSettings']);
+    /************** END SETTING ROUTES ************/
 
     /************** PRODUCT ROUTES ************/
     Route::get('/products', [ProductsController::class , 'index']);

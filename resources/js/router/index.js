@@ -32,6 +32,8 @@ import Orders from "../pages/Orders.vue";
 import OrderDetails from "../pages/OrderDetails.vue";
 import { useUserStore } from "../stores/users";
 import Banners from "../pages/Banners.vue";
+import Settings from "../pages/Settings.vue";
+import Reporting from "../pages/Reporting.vue";
 const routes = [
     {
         path: "/",
@@ -238,6 +240,16 @@ const routes = [
             name: "banners",
             component: Banners,
         },
+        {
+            path: "settings",
+            name: "settings",
+            component: Settings,
+        },
+        {
+            path: "reporting",
+            name: "reporting",
+            component: Reporting,
+        }
     ],
   },
   {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import _ from "lodash";
-import {ref, provide, onMounted, reactive} from "vue";
+import {ref, provide, onMounted, reactive, watch} from "vue";
 import fakerData from "../utils/faker";
 import Button from "../base-components/Button";
 import Pagination from "../base-components/Pagination";
@@ -17,20 +17,20 @@ import SimpleLineChart1 from "../components/SimpleLineChart1";
 import ReportMap from "../components/ReportMap";
 import { Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
+import axios from "axios";
+import dayjs from "dayjs";
 
 const salesReportFilter = ref<string>("");
 const importantNotesRef = ref<TinySliderElement>();
-
+const data = reactive({
+    stats:{},
+    loading:true
+});
 provide("bind[importantNotesRef]", (el: TinySliderElement) => {
     importantNotesRef.value = el;
 });
-onMounted(()=>{
-
-})
-const data = reactive({
-    dateRange : {
-
-    }
+watch(salesReportFilter, async (newSalesReportFilter) => {
+    loadData(newSalesReportFilter);
 });
 const prevImportantNotes = () => {
     importantNotesRef.value?.tns.goTo("prev");
@@ -38,6 +38,27 @@ const prevImportantNotes = () => {
 const nextImportantNotes = () => {
     importantNotesRef.value?.tns.goTo("next");
 };
+const loadData = ((reportFilter) => {
+    data.loading = true;
+    const dates = reportFilter.split('-');
+    const format = "YYYY-MM-D HH:mm:ss";
+    
+    let start_date = dayjs(dates[0]).format(format);
+    let end_date = dayjs(dates[1]).add(1,'day').format(format);
+    axios.get('/api/report/dashboard-stats',{params : {'start_date' : start_date , 'end_date' :end_date}}).then((response)=>{
+        data.stats = response.data.stats;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+    data.loading = false;
+});
+const getAvgOrderAmount = (() => {
+    if(data.stats.total_sale == undefined || data.stats.total_orders == undefined)
+        return 0;
+    if(data.stats.total_sale == 0 || data.stats.total_orders == 0)
+        return 0;
+    return data.stats.total_sale/data.stats.total_orders;
+});
 </script>
 
 <template>
@@ -47,12 +68,38 @@ const nextImportantNotes = () => {
                 <!-- BEGIN: General Report -->
                 <div class="col-span-12 mt-8">
                     <div class="flex items-center h-10 intro-y">
-                        <h2 class="mr-5 text-lg font-medium truncate">General Report</h2>
-                        <a href="" class="flex items-center ml-auto text-primary">
+                        
+                        <div class="items-center block h-10 intro-y sm:flex">
+                            <h2 class="mr-5 text-lg font-medium truncate">General Report</h2>
+                        <div class="relative mt-3 sm:ml-auto sm:mt-0 text-slate-500">
+                            <Lucide
+                                icon="Calendar"
+                                class="absolute inset-y-0 left-0 z-10 w-4 h-4 my-auto ml-3"
+                            />
+                            <Litepicker
+                                v-model="salesReportFilter"
+                                :options="{
+                  autoApply: false,
+                  singleMode: false,
+                  numberOfColumns: 2,
+                  numberOfMonths: 2,
+                  showWeekNumbers: true,
+                  dropdowns: {
+                    minYear: 1990,
+                    maxYear: null,
+                    months: true,
+                    years: true,
+                  },
+                }"
+                                class="pl-10 sm:w-56 !box"
+                            />
+                        </div>
+                    </div>
+                        <a v-on:click="loadData(salesReportFilter)" class="flex items-center ml-auto text-primary">
                             <Lucide icon="RefreshCcw" class="w-4 h-4 mr-3" /> Reload Data
                         </a>
                     </div>
-                    <div class="grid grid-cols-12 gap-6 mt-5">
+                    <div class="grid grid-cols-12 gap-6 mt-5" v-if="!data.loading">
                         <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
                             <div
                                 :class="[
@@ -66,19 +113,9 @@ const nextImportantNotes = () => {
                                             icon="ShoppingCart"
                                             class="w-[28px] h-[28px] text-primary"
                                         />
-                                        <div class="ml-auto">
-                                            <Tippy
-                                                as="div"
-                                                class="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                                content="33% Higher than last month"
-                                            >
-                                                33%
-                                                <Lucide icon="ChevronUp" class="w-4 h-4 ml-0.5" />
-                                            </Tippy>
-                                        </div>
                                     </div>
-                                    <div class="mt-6 text-3xl font-medium leading-8">4.710</div>
-                                    <div class="mt-1 text-base text-slate-500">Item Sales</div>
+                                    <div class="mt-6 text-3xl font-medium leading-8">{{ data.stats.total_sale  !== undefined ?  data.stats.total_sale : 0 }}</div>
+                                    <div class="mt-1 text-base text-slate-500">Total Sale</div>
                                 </div>
                             </div>
                         </div>
@@ -95,19 +132,9 @@ const nextImportantNotes = () => {
                                             icon="CreditCard"
                                             class="w-[28px] h-[28px] text-pending"
                                         />
-                                        <div class="ml-auto">
-                                            <Tippy
-                                                as="div"
-                                                class="cursor-pointer bg-danger py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                                content="2% Lower than last month"
-                                            >
-                                                2%
-                                                <Lucide icon="ChevronDown" class="w-4 h-4 ml-0.5" />
-                                            </Tippy>
-                                        </div>
                                     </div>
-                                    <div class="mt-6 text-3xl font-medium leading-8">3.721</div>
-                                    <div class="mt-1 text-base text-slate-500">New Orders</div>
+                                    <div class="mt-6 text-3xl font-medium leading-8">{{ data.stats.total_orders !== undefined ? data.stats.total_orders : 0 }}</div>
+                                    <div class="mt-1 text-base text-slate-500">Total Orders</div>
                                 </div>
                             </div>
                         </div>
@@ -124,20 +151,10 @@ const nextImportantNotes = () => {
                                             icon="Monitor"
                                             class="w-[28px] h-[28px] text-warning"
                                         />
-                                        <div class="ml-auto">
-                                            <Tippy
-                                                as="div"
-                                                class="cursor-pointer bg-success py-[3px] flex rounded-full text-white text-xs pl-2 pr-1 items-center font-medium"
-                                                content="12% Higher than last month"
-                                            >
-                                                12%
-                                                <Lucide icon="ChevronUp" class="w-4 h-4 ml-0.5" />
-                                            </Tippy>
-                                        </div>
                                     </div>
-                                    <div class="mt-6 text-3xl font-medium leading-8">2.149</div>
+                                    <div class="mt-6 text-3xl font-medium leading-8">{{ getAvgOrderAmount() }}</div>
                                     <div class="mt-1 text-base text-slate-500">
-                                        Total Products
+                                        Avg Order Amount
                                     </div>
                                 </div>
                             </div>
@@ -178,32 +195,7 @@ const nextImportantNotes = () => {
                 <!-- END: General Report -->
                 <!-- BEGIN: Sales Report -->
                 <div class="col-span-12 mt-8 lg:col-span-6">
-                    <div class="items-center block h-10 intro-y sm:flex">
-                        <h2 class="mr-5 text-lg font-medium truncate">Sales Report</h2>
-                        <div class="relative mt-3 sm:ml-auto sm:mt-0 text-slate-500">
-                            <Lucide
-                                icon="Calendar"
-                                class="absolute inset-y-0 left-0 z-10 w-4 h-4 my-auto ml-3"
-                            />
-                            <Litepicker
-                                v-model="salesReportFilter"
-                                :options="{
-                  autoApply: false,
-                  singleMode: false,
-                  numberOfColumns: 2,
-                  numberOfMonths: 2,
-                  showWeekNumbers: true,
-                  dropdowns: {
-                    minYear: 1990,
-                    maxYear: null,
-                    months: true,
-                    years: true,
-                  },
-                }"
-                                class="pl-10 sm:w-56 !box"
-                            />
-                        </div>
-                    </div>
+                    
                     <div class="p-5 mt-12 intro-y box sm:mt-5">
                         <div class="flex flex-col md:flex-row md:items-center">
                             <div class="flex">

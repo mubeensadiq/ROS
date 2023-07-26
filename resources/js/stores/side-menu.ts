@@ -89,12 +89,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "banners",
             title: "Banners",
         },
-
         {
             icon: "Activity",
             pageName: "settings",
             title: "Settings",
+        },
+        {
+            icon: "Activity",
+            pageName: "reporting",
+            title: "Reporting",
         }
+        
     ],
   }),
 });

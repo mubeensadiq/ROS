@@ -29,7 +29,7 @@ const setValue = (props: LitepickerProps, emit: LitepickerEmit) => {
   if (!props.modelValue.length) {
     let date = '';
     if(props.options.singleMode !== undefined){
-        date = dayjs().format(format) + dayjs().add(1, "month").format(format);
+        date = dayjs().subtract(1, "month").format(format) + ' - ' + dayjs().format(format);
     }
 
     emit("update:modelValue", date);
