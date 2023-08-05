@@ -20,7 +20,7 @@ import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.min.js";
 import "https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js";
 import "https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js";
 import Notification from "./Notification.vue";
-import {onMounted, reactive, ref, watch, onBeforeUnmount} from "vue";
+import {onMounted, reactive, ref, watch, onBeforeUnmount, onBeforeMount} from "vue";
 import TomSelect from "../base-components/TomSelect";
 import {FormCheck,} from "../base-components/Form";
 import axios from "axios";
@@ -48,6 +48,7 @@ $.fn.isInViewport = function() {
 
 
 const data = reactive({
+    settings:{},
     banners: [],
     cities: [],
     areas: [],
@@ -102,12 +103,25 @@ onMounted(() => {
             $('#selectLocationModal').modal('show');
     });
 });
+onBeforeMount(() => {
+    getSettings();
+});
 onBeforeUnmount(() => {
     $('#shoppingCartModal').modal('toggle');
 });
 const getBanners = (() => {
     axios.get('/banners').then((response)=>{
         data.banners = response.data.banners;
+    }).catch( (error) => {
+        console.log(error.response.data.message)
+    });
+});
+const getSettings = (() => {
+    axios.get('/settings').then((response)=>{
+        data.settings = response.data.settings;
+        if(data.settings.company_name !== undefined)
+            document.title = data.settings.company_name;
+
     }).catch( (error) => {
         console.log(error.response.data.message)
     });
@@ -447,12 +461,13 @@ const showCartModal = (() => {
             </header>
             <div class="brand d-flex justify-content-between">
                 <img class="img img-responsive logo" :src="logoUrl" alt="">
-                <a class="theme-background-foreground phone-btn" href="tel:+1 369-256-7894" data-track-call="">
+                <a class="theme-background-foreground phone-btn" data-track-call="">
                     <div class="call-order d-flex">
                         <img class="img img-responsive" :src="Vector" alt="">
                         <div class="call-order-text d-flex flex-column">
                             <span class="label">Call and Order in</span>
-                            <span class="call-to">+1 369-256-7894</span>
+                            <span class="call-to" v-if="data.settings.company_contact == undefined">+1 369-256-7894</span>
+                            <span class="call-to" v-else>{{data.settings.company_contact}}</span>
                         </div>
                     </div>
                 </a>
@@ -558,14 +573,12 @@ const showCartModal = (() => {
         </section>
 
 
-        <section class="base-section about-section">
+        <section class="base-section about-section" v-if="data.settings.company_description != undefined">
             <div class="container-fluid px-container about-container">
                 <h3 class="section-header text-uppercase text-center">ABOUT US</h3>
                 <div class="row">
                     <div class="col-xs-12 text-center px-5">
-                        <p class="">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
-                        <p class="">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
-                        <p class="">Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip. Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+                        <p class="" v-html="data.settings.company_description"></p>
                     </div>
                 </div><!-- /.row -->
             </div>

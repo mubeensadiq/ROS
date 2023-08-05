@@ -9,6 +9,7 @@ use App\Http\Controllers\BranchesController;
 use App\Http\Controllers\DiscountsController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\BannersController;
+use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,7 @@ use App\Http\Controllers\BannersController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/settings', [SettingsController::class , 'index']);
 Route::get('/banners', [BannersController::class , 'index']);
 Route::get('/categories', [CategoriesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);

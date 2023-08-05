@@ -1,8 +1,4 @@
 {
-  "public/images/assets/bg1.png": {
-    "file": "assets/bg1.6bf04d9a.png",
-    "src": "public/images/assets/bg1.png"
-  },
   "public/images/assets/logo.png": {
     "file": "assets/logo.88a845cb.png",
     "src": "public/images/assets/logo.png"
@@ -15,21 +11,33 @@
     "file": "assets/youtube.cb2db195.png",
     "src": "public/images/assets/youtube.png"
   },
+  "public/images/assets/bg1.png": {
+    "file": "assets/bg1.6bf04d9a.png",
+    "src": "public/images/assets/bg1.png"
+  },
   "public/images/assets/google-plus.png": {
     "file": "assets/google-plus.6e9fc204.png",
     "src": "public/images/assets/google-plus.png"
-  },
-  "public/images/assets/deal-1.png": {
-    "file": "assets/deal-1.150339f7.png",
-    "src": "public/images/assets/deal-1.png"
   },
   "public/images/assets/twitter.png": {
     "file": "assets/twitter.bb30a496.png",
     "src": "public/images/assets/twitter.png"
   },
+  "public/images/assets/deal-1.png": {
+    "file": "assets/deal-1.150339f7.png",
+    "src": "public/images/assets/deal-1.png"
+  },
   "public/images/assets/cash.png": {
     "file": "assets/cash.b587fdec.png",
     "src": "public/images/assets/cash.png"
+  },
+  "public/images/assets/order-confirmation.png": {
+    "file": "assets/order-confirmation.af08d117.png",
+    "src": "public/images/assets/order-confirmation.png"
+  },
+  "resources/js/assets/images/logo.svg": {
+    "file": "assets/logo.a8b7d868.svg",
+    "src": "resources/js/assets/images/logo.svg"
   },
   "public/images/assets/Vector.png": {
     "file": "assets/Vector.d065d9a9.png",
@@ -58,14 +66,6 @@
   "public/images/assets/delete.png": {
     "file": "assets/delete.ac4cdd82.png",
     "src": "public/images/assets/delete.png"
-  },
-  "public/images/assets/order-confirmation.png": {
-    "file": "assets/order-confirmation.af08d117.png",
-    "src": "public/images/assets/order-confirmation.png"
-  },
-  "resources/js/assets/images/logo.svg": {
-    "file": "assets/logo.a8b7d868.svg",
-    "src": "resources/js/assets/images/logo.svg"
   },
   "resources/js/assets/images/fakers/food-beverage-1.jpg": {
     "file": "assets/food-beverage-1.d39f08d6.jpg",
@@ -151,17 +151,13 @@
     "file": "assets/preview-10.eb96f2a4.jpg",
     "src": "resources/js/assets/images/fakers/preview-10.jpg"
   },
-  "resources/js/assets/images/fakers/preview-12.jpg": {
-    "file": "assets/preview-12.64e6dfb7.jpg",
-    "src": "resources/js/assets/images/fakers/preview-12.jpg"
-  },
   "resources/js/assets/images/fakers/preview-11.jpg": {
     "file": "assets/preview-11.36a1d04d.jpg",
     "src": "resources/js/assets/images/fakers/preview-11.jpg"
   },
-  "resources/js/assets/images/fakers/preview-14.jpg": {
-    "file": "assets/preview-14.d5228d4d.jpg",
-    "src": "resources/js/assets/images/fakers/preview-14.jpg"
+  "resources/js/assets/images/fakers/preview-12.jpg": {
+    "file": "assets/preview-12.64e6dfb7.jpg",
+    "src": "resources/js/assets/images/fakers/preview-12.jpg"
   },
   "resources/js/assets/images/fakers/preview-13.jpg": {
     "file": "assets/preview-13.c5ac9ae4.jpg",
@@ -171,9 +167,9 @@
     "file": "assets/preview-15.ea941116.jpg",
     "src": "resources/js/assets/images/fakers/preview-15.jpg"
   },
-  "resources/js/assets/images/fakers/preview-4.jpg": {
-    "file": "assets/preview-4.b172fabc.jpg",
-    "src": "resources/js/assets/images/fakers/preview-4.jpg"
+  "resources/js/assets/images/fakers/preview-14.jpg": {
+    "file": "assets/preview-14.d5228d4d.jpg",
+    "src": "resources/js/assets/images/fakers/preview-14.jpg"
   },
   "resources/js/assets/images/fakers/preview-2.jpg": {
     "file": "assets/preview-2.a983be43.jpg",
@@ -182,6 +178,10 @@
   "resources/js/assets/images/fakers/preview-3.jpg": {
     "file": "assets/preview-3.71548c26.jpg",
     "src": "resources/js/assets/images/fakers/preview-3.jpg"
+  },
+  "resources/js/assets/images/fakers/preview-4.jpg": {
+    "file": "assets/preview-4.b172fabc.jpg",
+    "src": "resources/js/assets/images/fakers/preview-4.jpg"
   },
   "resources/js/assets/images/fakers/preview-5.jpg": {
     "file": "assets/preview-5.a579d9bf.jpg",
@@ -199,13 +199,13 @@
     "file": "assets/preview-8.473654d2.jpg",
     "src": "resources/js/assets/images/fakers/preview-8.jpg"
   },
-  "resources/js/assets/images/fakers/profile-1.jpg": {
-    "file": "assets/profile-1.0441b45e.jpg",
-    "src": "resources/js/assets/images/fakers/profile-1.jpg"
-  },
   "resources/js/assets/images/fakers/preview-9.jpg": {
     "file": "assets/preview-9.595878a6.jpg",
     "src": "resources/js/assets/images/fakers/preview-9.jpg"
+  },
+  "resources/js/assets/images/fakers/profile-1.jpg": {
+    "file": "assets/profile-1.0441b45e.jpg",
+    "src": "resources/js/assets/images/fakers/profile-1.jpg"
   },
   "resources/js/assets/images/fakers/profile-10.jpg": {
     "file": "assets/profile-10.7f88f31b.jpg",
@@ -219,13 +219,13 @@
     "file": "assets/profile-12.097d5674.jpg",
     "src": "resources/js/assets/images/fakers/profile-12.jpg"
   },
-  "resources/js/assets/images/fakers/profile-13.jpg": {
-    "file": "assets/profile-13.d2befb57.jpg",
-    "src": "resources/js/assets/images/fakers/profile-13.jpg"
-  },
   "resources/js/assets/images/fakers/profile-14.jpg": {
     "file": "assets/profile-14.67599da9.jpg",
     "src": "resources/js/assets/images/fakers/profile-14.jpg"
+  },
+  "resources/js/assets/images/fakers/profile-13.jpg": {
+    "file": "assets/profile-13.d2befb57.jpg",
+    "src": "resources/js/assets/images/fakers/profile-13.jpg"
   },
   "resources/js/assets/images/fakers/profile-15.jpg": {
     "file": "assets/profile-15.ab896cb7.jpg",
@@ -235,6 +235,10 @@
     "file": "assets/profile-2.21f19505.jpg",
     "src": "resources/js/assets/images/fakers/profile-2.jpg"
   },
+  "resources/js/assets/images/fakers/profile-3.jpg": {
+    "file": "assets/profile-3.614e7dcb.jpg",
+    "src": "resources/js/assets/images/fakers/profile-3.jpg"
+  },
   "resources/js/assets/images/fakers/profile-4.jpg": {
     "file": "assets/profile-4.eb6bc8ad.jpg",
     "src": "resources/js/assets/images/fakers/profile-4.jpg"
@@ -242,10 +246,6 @@
   "resources/js/assets/images/fakers/profile-5.jpg": {
     "file": "assets/profile-5.46711484.jpg",
     "src": "resources/js/assets/images/fakers/profile-5.jpg"
-  },
-  "resources/js/assets/images/fakers/profile-3.jpg": {
-    "file": "assets/profile-3.614e7dcb.jpg",
-    "src": "resources/js/assets/images/fakers/profile-3.jpg"
   },
   "resources/js/assets/images/fakers/profile-6.jpg": {
     "file": "assets/profile-6.a9037862.jpg",
@@ -264,11 +264,11 @@
     "src": "resources/js/assets/images/fakers/profile-9.jpg"
   },
   "resources/js/app.js": {
-    "file": "assets/app.0f028ffb.js",
+    "file": "assets/app.87ce4003.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app.df1841a9.css"
+      "assets/app.15448bc1.css"
     ],
     "assets": [
       "assets/logo.a8b7d868.svg",
@@ -340,7 +340,7 @@
     ]
   },
   "resources/js/app.css": {
-    "file": "assets/app.df1841a9.css",
+    "file": "assets/app.15448bc1.css",
     "src": "resources/js/app.css"
   }
 }
