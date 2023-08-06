@@ -7,7 +7,6 @@ import { Menu, Popover } from "../../base-components/Headless";
 import fakerData from "../../utils/faker";
 import _ from "lodash";
 import { TransitionRoot } from "@headlessui/vue";
-import "/public/js/push-notifications.js"
 const searchDropdown = ref(false);
 const showSearchDropdown = () => {
   searchDropdown.value = true;
@@ -26,6 +25,11 @@ export default defineComponent({
             user : JSON.parse(localStorage.getItem('user')),
             profile : JSON.parse(localStorage.getItem('profile'))
         };
+    },
+    mounted(){
+      let recaptchaScript = document.createElement('script')
+      recaptchaScript.setAttribute('src', '/js/push-notifications.js')
+      document.head.appendChild(recaptchaScript)
     },
     methods: {
         async logout() {
