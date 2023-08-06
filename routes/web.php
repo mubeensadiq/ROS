@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PushNotificationsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\DealsController;
@@ -30,6 +31,7 @@ Route::get('/branches-by-city', [BranchesController::class , 'getBranchesByCity'
 Route::get('/discount/{id?}', [DiscountsController::class , 'getDiscountDetails']);
 Route::get('/category-products', [CategoriesController::class , 'products']);
 Route::get('/order-details/{id}', [OrdersController::class , 'getOrderDetails']);
+Route::post('/enable-notifications', [PushNotificationsController::class , 'enableNotifications']);
 Route::get('/{any}',function () {
     return view('welcome');
 })->where('any', '.*');

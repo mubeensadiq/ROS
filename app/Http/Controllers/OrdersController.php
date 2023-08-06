@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\Controllers\PushNotificationsController;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductAddon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Notifications\NewOrder;
 
 class OrdersController extends Controller
 {
+    public function __construct()
+    {
+        $this->pushNotification = new PushNotificationsController();
+    }
     public function index(Request $request){
         try{
             $orders = Order::with('rider');
@@ -128,7 +134,7 @@ class OrdersController extends Controller
                 }
             }
 
-
+            $this->pushNotification->newOrder($adminUser->id, $title, $body, $packet, $isWhitelabel);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved',

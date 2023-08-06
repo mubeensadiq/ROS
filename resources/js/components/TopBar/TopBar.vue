@@ -7,7 +7,7 @@ import { Menu, Popover } from "../../base-components/Headless";
 import fakerData from "../../utils/faker";
 import _ from "lodash";
 import { TransitionRoot } from "@headlessui/vue";
-
+import "/public/js/push-notifications.js"
 const searchDropdown = ref(false);
 const showSearchDropdown = () => {
   searchDropdown.value = true;
@@ -19,6 +19,7 @@ const hideSearchDropdown = () => {
 <script lang="ts">
 import { useUserStore } from "../../stores/users";
 import {defineComponent} from "vue";
+import axios from "axios";
 export default defineComponent({
     data() {
         return {
@@ -66,7 +67,11 @@ export default defineComponent({
     </div>
     <!-- END: Search  -->
     <!-- BEGIN: Notifications -->
-
+    <div class="relative mr-auto intro-x sm:mr-6">
+      <div onclick="enableNotifications('/enable-notifications')" class="cursor-pointer relative text-slate-600 outline-none block" id="headlessui-popover-button-1" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stroke-1.5 w-5 h-5 dark:text-slate-500"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+      </div>
+    </div>
     <!-- END: Notifications  -->
     <!-- BEGIN: Account Menu -->
     <Menu>

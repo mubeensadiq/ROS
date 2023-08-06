@@ -12,6 +12,7 @@
 <div id="app"></div>
 </body>
 <script type="text/javascript">
+    window.vapid_public_key = "{{env('vapid_public_key')}}";
     @auth
         window.Permissions = {!! json_encode(Auth::user()->allPermissions, true) !!};
     @else

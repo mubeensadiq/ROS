@@ -93,6 +93,8 @@ onMounted(() => {
     getBanners();
     getCategories();
     getCities();
+    if(city.value !== '' && data.branches.length == 0)
+        getBranches();
     getCategoryProducts();
     getDiscount();
     let cart = localStorage.getItem('cart');
@@ -438,29 +440,10 @@ const showCartModal = (() => {
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu">
     <section id="mainHeaderSection">
         <div class="container-fluid p-0">
-            <div class="alert-msg text-light">FREE Delivery On Orders Above <span>Rs. 2000</span></div>
-            <header class="d-block d-md-none">
-                <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-                    <div class="container-fluid">
-                        <a class="navbar-brand" href="#"></a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarCollapse">
-                            <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                                <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">About</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
+            <div v-if="data.settings.top_bar != undefined && data.settings.top_bar == 1 && data.settings.top_bar_text != undefined" class="alert-msg text-light">{{ data.settings.top_bar_text }}</div>
             <div class="brand d-flex justify-content-between">
-                <img class="img img-responsive logo" :src="logoUrl" alt="">
+                <img v-if="data.settings.company_logo == undefined" class="img img-responsive logo" :src="logoUrl" alt="">
+                <img v-else class="img img-responsive logo" :src="'/images/assets/'+data.settings.company_logo" alt="">
                 <a class="theme-background-foreground phone-btn" data-track-call="">
                     <div class="call-order d-flex">
                         <img class="img img-responsive" :src="Vector" alt="">
@@ -540,33 +523,13 @@ const showCartModal = (() => {
 
         </template>
 
-        <section class="base-section location-section">
+        <section class="base-section location-section" v-if="data.branches.length > 0">
             <div class="container-fluid px-container location-container">
-                <h3 class="section-header text-uppercase text-center text-white">our locations</h3>
+                <h3 class="section-header text-uppercase text-center text-white">Our locations</h3>
                 <div class="row location-content">
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
+                    <div v-for="branch in data.branches" class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
                         <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
-                        <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
-                        <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
-                        <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
-                        <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-xs-12 d-flex justify-content-center">
-                        <img :src="location" alt="">
-                        <p class="mb-0">Vicolo Tre Marchetti 91 Lovadina, Treviso(TV), 31027</p>
+                        <p>{{ branch.address}}</p>
                     </div>
                 </div><!-- /.row -->
             </div>
