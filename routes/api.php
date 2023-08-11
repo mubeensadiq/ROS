@@ -141,6 +141,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     /************** ORDER ROUTES ************/
     Route::get('/orders', [OrdersController::class , 'index']);
     Route::get('/order-details/{id}', [OrdersController::class , 'getOrderDetails']);
+    Route::post('/update-order', [OrdersController::class , 'updateOrder']);
     Route::get('/checkout', [OrdersController::class , 'checkOut']);
     /************** END ORDER ROUTES ************/
 

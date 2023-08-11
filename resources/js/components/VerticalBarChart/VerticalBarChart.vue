@@ -9,35 +9,26 @@ import { getColor } from "../../utils/colors";
 const props = defineProps<{
   width?: number;
   height?: number;
+  data?: object;
+  label?: string;
 }>();
 
 const colorScheme = computed(() => useColorSchemeStore().colorScheme);
 const darkMode = computed(() => useDarkModeStore().darkMode);
-
+console.log(props);
 const data = computed<ChartData>(() => {
   return {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+    labels: Object.keys(props.data),
     datasets: [
       {
-        label: "Html Template",
+        label: props.label,
         barPercentage: 0.5,
         barThickness: 6,
         maxBarThickness: 8,
         minBarLength: 2,
-        data: [0, 200, 250, 200, 500, 450, 850, 1050],
+        data: Object.values(props.data),
         backgroundColor: colorScheme.value ? getColor("primary") : "",
-      },
-      {
-        label: "VueJs Template",
-        barPercentage: 0.5,
-        barThickness: 6,
-        maxBarThickness: 8,
-        minBarLength: 2,
-        data: [0, 300, 400, 560, 320, 600, 720, 850],
-        backgroundColor: darkMode.value
-          ? getColor("darkmode.200")
-          : getColor("slate.300"),
-      },
+      }
     ],
   };
 });

@@ -4,19 +4,21 @@ import { ref, reactive , onMounted } from "vue";
 import Button from "../base-components/Button";
 import {pageLimits} from "../utils/helper";
 import Pagination from "../base-components/Pagination";
-import { FormInput, FormSelect } from "../base-components/Form";
+import { FormInline , FormInput, FormSelect, FormLabel} from "../base-components/Form";
 import Lucide from "../base-components/Lucide";
 import Tippy from "../base-components/Tippy";
 import { Dialog, Menu } from "../base-components/Headless";
 import Table from "../base-components/Table";
-const deleteConfirmationModal = ref(false);
-const deleteButtonRef = ref(null);
+import TomSelect from "../base-components/TomSelect";
+const statusButtonRef = ref(null);
 const limits = pageLimits();
 import Notification from "./Notification.vue";
 import axios from "axios";
-const data = reactive({ orders: [], orderID: 0, deleteConfirmationModal: false, toastText : '', toastType : 'success', search:'' })
+const data = reactive({ orders: [], riders:{}, order:{}, orderStatusModal: false, toastText : '', toastType : 'success', search:'' })
+const orderStatus = ref(['ALL','Received' , 'Preparing', 'Completed','Cancelled']);
 onMounted(() => {
     getOrders();
+    getRiders();
 })
 
 const getOrders = ((url = '/api/orders') => {
@@ -26,8 +28,28 @@ const getOrders = ((url = '/api/orders') => {
         showNoty(error.response.data.message, 'error')
     });
 });
-
-
+const getRiders = ((url = '/api/riders?get=all') => {
+    axios.get(url).then((response)=>{
+        data.riders = response.data.riders;
+    }).catch( (error) => {
+        showNoty(error.response.data.message, 'error')
+    });
+});
+const setOrderStatusModal = ((value, order = {}) =>{
+    data.order = order;
+    data.orderStatusModal = value;
+});
+const updateOrder = (()=> {
+    axios.post('/api/update-order',  data.order).then((response) => {
+        if (response.data.status === 'success') {
+            showNoty(response.data.message)
+            getOrders("/api/orders?page=" + data.orders.current_page);
+            data.orderStatusModal = false;
+        }
+    }).catch((error) => {
+        showNoty(error.response.data.message, 'error')
+    });
+});
 const showNoty = ((message,type = 'success') => {
     data.toastText = message;
     data.toastType = type;
@@ -143,6 +165,19 @@ const showNoty = ((message,type = 'success') => {
                                     <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
                                     Details
                                 </RouterLink>
+                                <a 
+                                    class="flex items-center text-warning"
+                                    href="#"
+                                    @click="
+                                        (event) => {
+                                            event.preventDefault();
+                                            setOrderStatusModal(true , order);
+                                        }
+                                    "
+                                >
+                                <Lucide icon="CheckSquare" class="w-4 h-4 mr-1"/>
+                                    Update
+                                </a>
                             </div>
                         </Table.Td>
                     </Table.Tr>
@@ -182,21 +217,89 @@ const showNoty = ((message,type = 'success') => {
     </div>
     <!-- BEGIN: Delete Confirmation Modal -->
     <Dialog
-        :open="data.deleteConfirmationModal"
+        :open="data.orderStatusModal"
         @close="
       () => {
-        setDeleteConfirmationModal(false);
+        setOrderStatusModal(false);
       }
     "
-        :initialFocus="deleteButtonRef"
+        :initialFocus="statusButtonRef"
     >
         <Dialog.Panel>
             <div class="p-5 text-center">
-                <Lucide icon="XCircle" class="w-16 h-16 mx-auto mt-3 text-danger" />
-                <div class="mt-5 text-3xl">Are you sure?</div>
+                <div class="mt-2 text-3xl">Update Order Status And Assign Rider</div>
                 <div class="mt-2 text-slate-500">
-                    Do you really want to delete these records? <br />
-                    This process cannot be undone.
+                    <div class="p-5 mt-2 intro-y box">
+                <div
+                    class="p-5 border rounded-md border-slate-200/60 dark:border-darkmode-400"
+                >
+                    <div
+                        class="flex items-center pb-5 text-base font-medium border-b border-slate-200/60 dark:border-darkmode-400"
+                    >
+                    </div>
+                    <div class="mt-2">
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Status</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="data.order.status" :value="data.order.status"
+                                    :options="{
+                                        placeholder: 'Order Status',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(status, index) in orderStatus"
+                                        :key="index"
+                                        :value="status"
+                                    >
+                                        {{ status }}
+                                    </option>
+                                </TomSelect>
+
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Riders</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <TomSelect
+                                    v-model="data.order.rider" :value="data.order.rider"
+                                    :options="{
+                                        placeholder: 'Select Rider',
+                                      }"
+                                    class="w-full"
+                                >
+                                    <option
+                                        v-for="(rider, index) in data.riders"
+                                        :key="index"
+                                        :value="rider.id"
+                                    >
+                                        {{ rider.name }}
+                                    </option>
+                                </TomSelect>
+
+                            </div>
+                        </FormInline>
+
+                    </div>
+                </div>
+            </div>
                 </div>
             </div>
             <div class="px-5 pb-8 text-center">
@@ -205,7 +308,7 @@ const showNoty = ((message,type = 'success') => {
                     type="button"
                     @click="
             () => {
-              setDeleteConfirmationModal(false);
+              setOrderStatusModal(false);
             }
           "
                     class="w-24 mr-1"
@@ -213,13 +316,13 @@ const showNoty = ((message,type = 'success') => {
                     Cancel
                 </Button>
                 <Button
-                    variant="danger"
+                    variant="success"
                     type="button"
                     class="w-24"
-                    ref="deleteButtonRef"
-                    @click="deleteOrder"
+                    ref="statusButtonRef"
+                    @click="updateOrder"
                 >
-                    Delete
+                    Update
                 </Button>
             </div>
         </Dialog.Panel>

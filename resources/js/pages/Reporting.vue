@@ -23,7 +23,6 @@ const salesReportFilter = ref<string>("");
 onMounted(() =>{
     getProducts();
     getBranches();
-    getReport();
 })
 onUpdated(() => {
     
@@ -34,22 +33,23 @@ const filter = reactive({
         order_type : null,
         product : null,
         phone_number:null,
-        start_date:'',
-        end_date:''
+        start_date:dayjs().format("DD MMMM YYYY"),
+        end_date:dayjs().format("DD MMMM YYYY"),
+        start_time:'',
+        end_time:''
 });
 const loading = ref(false);
 const products = ref<object>({});
 const branches = ref<object>({});
-const orderTypes = ref(['Pickup','Delivery']);
-const orderStatus = ref(['Received' , 'Preparing', 'Complete','Cancelled']);
+const orderTypes = ref(['ALL','Pickup','Delivery']);
+const orderStatus = ref(['ALL','Received' , 'Preparing', 'Completed','Cancelled']);
 const records = ref<object>({});
 const getReport = (() => {
     loading.value = true;
-    const dates = salesReportFilter.value.split('-');
-    const format = "YYYY-MM-D HH:mm:ss";
+    const format = "YYYY-MM-D";
     
-    filter.start_date = dayjs(dates[0]).format(format);
-    filter.end_date = dayjs(dates[1]).add(1,'day').format(format);
+    filter.start_date = dayjs(filter.start_date).format(format);
+    filter.end_date = dayjs(filter.end_date).format(format);
     axios.get('/api/report/get-report' , {params: {filter : filter}} ).then((response) => {
         if (response.data.records !== null){
             records.value = response.data.records;
@@ -82,29 +82,6 @@ const dateFormat = ((date) => {
     <div class="flex items-center mt-8 intro-y">
         <div class="items-center block h-10 intro-y sm:flex">
             <h2 class="mr-auto text-lg font-medium">Report</h2>
-            <div class="relative mt-3 sm:ml-auto sm:mt-0 text-slate-500">
-                <Lucide
-                    icon="Calendar"
-                    class="absolute inset-y-0 left-0 z-10 w-4 h-4 my-auto ml-3"
-                />
-                <Litepicker
-                    v-model="salesReportFilter"
-                    :options="{
-                        autoApply: true,
-                        singleMode: false,
-                        numberOfColumns: 2,
-                        numberOfMonths: 2,
-                        showWeekNumbers: true,
-                        dropdowns: {
-                        minYear: 1990,
-                        maxYear: null,
-                        months: true,
-                        years: true,
-                        },
-                    }"
-                    class="pl-10 sm:w-56 !box"
-                />
-            </div>
         </div>
     </div>
     <div class="grid grid-cols-11 pb-20 mt-5 gap-x-6" >
@@ -122,6 +99,106 @@ const dateFormat = ((date) => {
                         APPLY FILTER
                     </div>
                     <div class="mt-5">
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Start Date</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <Preview.Panel>
+                                    <Litepicker
+                                        v-model="filter.start_date"
+                                        :value="filter.start_date"
+                                        placeholder="Start Date"
+                                        :options="{
+                                            autoApply: true,
+                                            showWeekNumbers: true,
+                                            dropdowns: {
+                                                minYear: 2023,
+                                                maxYear: null,
+                                                months: true,
+                                                years: true,
+                                            },
+                                        }"
+                                    />
+                                </Preview.Panel>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">End Date</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <Preview.Panel>
+                                    <Litepicker
+                                        v-model="filter.end_date"
+                                        :value="filter.end_date"
+                                        placeholder="End Date"
+                                        :options="{
+                                            autoApply: true,
+                                            showWeekNumbers: true,
+                                            dropdowns: {
+                                                minYear: 1990,
+                                                maxYear: null,
+                                                months: true,
+                                                years: true,
+                                            },
+                                        }"
+                                    />
+                                </Preview.Panel>
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">Start Time</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="start_time"
+                                    type="time"
+                                    placeholder="start time"
+                                    v-model="filter.start_time"
+                                    :value="filter.start_time"
+                                />
+                            </div>
+                        </FormInline>
+                        <FormInline
+                            class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
+                        >
+                            <FormLabel class="xl:w-64 xl:!mr-10">
+                                <div class="text-left">
+                                    <div class="flex items-center">
+                                        <div class="font-medium">End Time</div>
+                                    </div>
+                                </div>
+                            </FormLabel>
+                            <div class="flex-1 w-full mt-3 xl:mt-0">
+                                <FormInput
+                                    id="end_time"
+                                    type="time"
+                                    placeholder="end time"
+                                    v-model="filter.end_time"
+                                    :value="filter.end_time"
+                                />
+                            </div>
+                        </FormInline>
                         <FormInline
                             class="flex-col items-start pt-5 mt-5 xl:flex-row first:mt-0 first:pt-0"
                         >

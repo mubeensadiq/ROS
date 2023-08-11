@@ -10,14 +10,18 @@ class RidersController extends Controller
 {
     public function index(Request $request){
         try{
-            $riders = Rider::with('branch')->orderBy('name','asc');
-            if(isset($request->search) && $request->search != ''){
-                $query = $request['search'];
-                $riders = $riders->where('name' ,'like', "%$query%")
-                    ->orWhere('phone_number_1' ,'like', "%$query%");
+            if(isset($request->get) && $request->get === 'all'){
+                $riders = Rider::orderBy('name','asc')->get();
             }
-            $riders = $riders->paginate(20)->appends($request->all());
-
+            else{
+                $riders = Rider::with('branch')->orderBy('name','asc');
+                if(isset($request->search) && $request->search != ''){
+                    $query = $request['search'];
+                    $riders = $riders->where('name' ,'like', "%$query%")
+                        ->orWhere('phone_number_1' ,'like', "%$query%");
+                }
+                $riders = $riders->paginate(20)->appends($request->all());
+            }
             return response()->json([
                 'status' => 'success',
                 'riders' => $riders

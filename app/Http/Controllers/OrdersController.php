@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Api\Controllers\PushNotificationsController;
+use App\Http\Controllers\PushNotificationsController;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductAddon;
@@ -21,9 +21,10 @@ class OrdersController extends Controller
             $orders = Order::with('rider');
             if(isset($request->search) && $request->search != ''){
                 $query = $request['search'];
-                $orders = $orders->where('firs_name' ,'like', "%$query%")
+                $orders = $orders->where('first_name' ,'like', "%$query%")
                     ->orWhere('last_name' ,'like', "%$query%")
-                    ->orWhere('order_number' ,'like', "%$query%");
+                    ->orWhere('order_number' ,'like', "%$query%")
+                    ->orWhere('phone_number' ,'like', "%$query%");
             }
             $orders = $orders->orderBy('id' ,'desc');
             if(isset($request->get) && $request->get == 'all')
@@ -50,6 +51,32 @@ class OrdersController extends Controller
             if($order){
                 return response()->json([
                     'status' => 'success',
+                    'order' => $order
+                ],200);
+            }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No order Found'
+            ],200);
+
+        }
+        catch (\Exception $ex){
+            Log::info($ex);
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ],500);
+        }
+    }
+
+    public function updateOrder(Request $request){
+        try{
+            $order = Order::with(['products.addons'])->where('id' , $request->id)->first();
+            if($order){
+                Order::where('id' , $request->id)->update(['status' => $request->status , 'rider' => $request->rider]);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Order Successfully updated',
                     'order' => $order
                 ],200);
             }
