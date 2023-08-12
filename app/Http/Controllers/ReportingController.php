@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -35,11 +36,21 @@ class ReportingController extends Controller
     public function widgetStats($request){
         try{
             $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
+                'total_sale' => 0 , 'total_orders' => 0 , 'top_product' => 'N/A'
             ];
             $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
             $stats['total_sale'] = $orders->sum('total');
             $stats['total_orders'] = $orders->count('id');
+
+            $product = OrderProduct::with('product')
+                        ->select(DB::raw('count(*) as orders , product_id '))
+                        ->whereBetween('created_at',[$request->start_date , $request->end_date])
+                        ->groupBy('product_id')
+                        ->orderBy('orders' , 'DESC')
+                        ->limit(1)
+                        ->first();
+            if($product)
+                $stats['top_product'] = $product->product->name;
         }
         catch(\Exception $ex){
             Log::info("dashboardStats");
@@ -97,16 +108,17 @@ class ReportingController extends Controller
             $stats = Order::select(DB::raw('count(*) as orders, DAYNAME(created_at) as order_day'))
                             ->whereBetween('created_at',[$request->start_date , $request->end_date])
                             ->groupBy('order_day')
-                            ->orderBy(DB::raw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')"))
+                            ->orderBy(DB::raw("FIELD(order_day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')"))
                             ->get()->pluck('orders', 'order_day');
 
             $days = ['Monday','Tuesday','Wednesday','Thursday','Friday', 'Saturday', 'Sunday'];
-            $stats = $stats->toArray();
+            
             foreach($days as $day){
                 if(!isset($stats[$day]))
                     $stats[$day] = 0;
                 
             }
+            $stats = $stats->toArray();
             ksort($stats);
             
         }

@@ -126,7 +126,7 @@ class OrdersController extends Controller
                 'tax' => $cart['tax_amount'],
                 'total' => $cart['subTotal'] + $cart['tax_amount'],
                 'payment_type' => 'cash',
-                'status' => 'received'
+                'status' => 'Received'
             ]);
             foreach ($cart['items'] as $item){
                 $product = OrderProduct::create([

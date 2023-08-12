@@ -12,6 +12,10 @@ class OrderProduct extends Model
     protected $guarded = ['id' , 'created_at', 'updated_at'];
 
     //Order Product has many addons
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
+    //Order Product has many addons
     public function addons(){
         return $this->hasMany(OrderProductAddon::class,'order_product_id' , 'id');
     }

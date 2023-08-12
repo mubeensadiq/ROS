@@ -101,7 +101,7 @@ const getAvgOrderAmount = (() => {
         return 0;
     if(data.stats.total_sale == 0 || data.stats.total_orders == 0)
         return 0;
-    return data.stats.total_sale/data.stats.total_orders;
+    return Math.round(data.stats.total_sale/data.stats.total_orders);
 });
 
 const loadMoreData = ((start_date , end_date , type , key) => {
@@ -229,11 +229,11 @@ const dateFormat = ((date) => {
                                 <div class="p-5 box">
                                     <div class="flex">
                                         <Lucide
-                                            icon="User"
-                                            class="w-[28px] h-[28px] text-success"
+                                            icon="Monitor"
+                                            class="w-[28px] h-[28px] text-warning"
                                         />
                                     </div>
-                                    <div class="mt-6 text-3xl font-medium leading-8">152.040</div>
+                                    <div class="mt-6 text-3xl font-medium leading-8">{{ data.stats.top_product !== undefined ? data.stats.top_product : 'N/A' }}</div>
                                     <div class="mt-1 text-base text-slate-500">
                                         Top Product
                                     </div>

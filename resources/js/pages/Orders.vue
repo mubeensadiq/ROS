@@ -15,7 +15,7 @@ const limits = pageLimits();
 import Notification from "./Notification.vue";
 import axios from "axios";
 const data = reactive({ orders: [], riders:{}, order:{}, orderStatusModal: false, toastText : '', toastType : 'success', search:'' })
-const orderStatus = ref(['ALL','Received' , 'Preparing', 'Completed','Cancelled']);
+const orderStatus = ref(['Received' , 'Preparing', 'Completed','Cancelled']);
 onMounted(() => {
     getOrders();
     getRiders();
