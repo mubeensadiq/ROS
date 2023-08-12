@@ -9,12 +9,13 @@ import { getColor } from "../../utils/colors";
 const props = defineProps<{
   width?: number;
   height?: number;
+  data?: object;
 }>();
 
 const colorScheme = computed(() => useColorSchemeStore().colorScheme);
 const darkMode = computed(() => useDarkModeStore().darkMode);
 
-const chartData = [15, 10, 65];
+const chartData = Object.values(props.data);
 const chartColors = () => [
   getColor("pending", 0.9),
   getColor("warning", 0.9),
@@ -22,7 +23,7 @@ const chartColors = () => [
 ];
 const data = computed<ChartData>(() => {
   return {
-    labels: ["31 - 50 Years old", ">= 50 Years old", "17 - 30 Years old"],
+    labels: Object.keys(props.data),
     datasets: [
       {
         data: chartData,

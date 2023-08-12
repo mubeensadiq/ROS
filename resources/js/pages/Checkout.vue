@@ -21,7 +21,7 @@ const router = useRouter()
 const route = useRoute()
 const data = reactive({
     cart : [],
-    delivery_fee: 100,
+    delivery_charges: 0,
     info:{
         first_name: '',
         last_name: '',
@@ -30,7 +30,10 @@ const data = reactive({
         alternate_phone:'',
         delivery_address: '',
         landmark:'',
-        instructions: ''
+        instructions: '',
+        city: localStorage.getItem('city') ?? 0,
+        area: localStorage.getItem('area') ?? null,
+        branch: localStorage.getItem('branch') ?? null
     },
     validateError:{
         first_name: {
@@ -56,14 +59,22 @@ const data = reactive({
     }
 });
 onMounted( () => {
+    getDeliveryCharges();
     let cart = localStorage.getItem('cart');
     if(cart)
         data.cart = JSON.parse(cart);
 })
+const getDeliveryCharges =(() => {
+    axios.get('/area-details/'+localStorage.getItem('area') ?? 0).then((response) => {
+        if(response.data.status == 'success' && response.data.area != undefined){
+            data.delivery_charges = response.data.area.delivery_charges;
+        }
+    })
+});
 const placeOrder = (() => {
    const validate = validateFields();
    if(validate){
-       axios.post('/api/save-order' , {'customer' : data.info , 'cart' : data.cart}).then((response) => {
+       axios.post('/api/save-order' , {'customer' : data.info , 'cart' : data.cart , 'delivery_charges' : data.delivery_charges}).then((response) => {
             if(response.data.status == 'success'){
                 localStorage.setItem('order', JSON.stringify(response.data.order));
                 localStorage.removeItem('cart');
@@ -243,13 +254,13 @@ const validateEmail = (() => {
                                 <div class="summary-values text-right">
                                     <p>Rs. {{data.cart.subTotal}}</p>
                                     <p>Rs. {{data.cart.tax_amount}}</p>
-                                    <p class="mb-0">Rs. {{ data.delivery_fee }}</p>
+                                    <p class="mb-0">Rs. {{ data.delivery_charges }}</p>
                                 </div>
                             </div>
                             <hr class="hr">
                             <div class="order-total d-flex justify-content-between">
                                 <label for="">Total</label>
-                                <span>{{data.cart.subTotal + data.cart.tax_amount + data.delivery_fee}}</span>
+                                <span>{{data.cart.subTotal + data.cart.tax_amount + data.delivery_charges}}</span>
                             </div>
                             <div class="order-voucher mt-3">
                                 <label>Voucher</label>

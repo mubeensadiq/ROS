@@ -45,12 +45,9 @@ class NewOrder extends Notification
     public function toWebPush($notifiable, $notification)
     {
         return (new WebPushMessage())
-            // ->id($notification->id)
             ->title($this->title)
             ->icon(url('/img/push_notification.png'))
-            ->body($this->body)
-            ->action('View account', 'view_account')
-            ->data($this->packet);
+            ->body($this->body);
     }
 
     /**

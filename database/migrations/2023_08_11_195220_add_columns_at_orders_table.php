@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->integer('city')->after('order_type');
-            $table->integer('area')->nullable()->after('order_type');
-            $table->integer('branch')->nullable()->after('order_type');
-            $table->integer('rider')->nullable()->after('order_type');
+            $table->integer('area')->nullable()->after('city');
+            $table->integer('branch')->nullable()->after('area');
+            $table->integer('rider')->nullable()->after('branch');
             $table->integer('cancel_reason')->nullable()->after('status');
+            $table->integer('delivery_charges')->default(0)->after('tax');
         });
     }
 
@@ -34,6 +35,8 @@ return new class extends Migration
             $table->dropColumn('area');
             $table->dropColumn('branch');
             $table->dropColumn('rider');
+            $table->dropColumn('cancel_reason');
+            $table->dropColumn('delivery_charges');
         });
     }
 };

@@ -27,6 +27,7 @@ Route::get('/banners', [BannersController::class , 'index']);
 Route::get('/categories', [CategoriesController::class , 'index']);
 Route::get('/cities-has-areas', [CitiesController::class , 'getCitiesHasAreas']);
 Route::get('/areas-by-city', [AreasController::class , 'getAreasByCity']);
+Route::get('/area-details/{id}', [AreasController::class , 'getAreaDetails']);
 Route::get('/branches-by-city', [BranchesController::class , 'getBranchesByCity']);
 Route::get('/discount/{id?}', [DiscountsController::class , 'getDiscountDetails']);
 Route::get('/category-products', [CategoriesController::class , 'products']);

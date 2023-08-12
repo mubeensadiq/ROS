@@ -20,14 +20,14 @@ class PushNotificationsController extends Controller
      * @return   status
      *
      */
-    public function newOrder($id, $title, $body, $packet = [])
+    public function newOrder($title, $body)
     {
         try {
             $users = User::get();
             foreach($users as $user){
               $notification =  PushSubscription::where('subscribable_id' , $user->id)->first();
               if($notification)
-                $user->notify(new \App\Notifications\NewOrder($title, $body, $packet));
+                $user->notify(new \App\Notifications\NewOrder($title, $body));
             }
             
             return response()->json(['success' => true]);

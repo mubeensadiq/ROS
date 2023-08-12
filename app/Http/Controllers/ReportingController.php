@@ -36,21 +36,13 @@ class ReportingController extends Controller
     public function widgetStats($request){
         try{
             $stats = [
-                'total_sale' => 0 , 'total_orders' => 0 , 'top_product' => 'N/A'
+                'total_sale' => 0 , 'total_orders' => 0 , 'total_sale_wo_dc' => 0
             ];
             $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
             $stats['total_sale'] = $orders->sum('total');
+            $stats['total_sale_wo_dc'] = $orders->sum('total') - $orders->sum('delivery_charges');
             $stats['total_orders'] = $orders->count('id');
 
-            $product = OrderProduct::with('product')
-                        ->select(DB::raw('count(*) as orders , product_id '))
-                        ->whereBetween('created_at',[$request->start_date , $request->end_date])
-                        ->groupBy('product_id')
-                        ->orderBy('orders' , 'DESC')
-                        ->limit(1)
-                        ->first();
-            if($product)
-                $stats['top_product'] = $product->product->name;
         }
         catch(\Exception $ex){
             Log::info("dashboardStats");
@@ -190,16 +182,37 @@ class ReportingController extends Controller
 
     public function branchesStats($request){
         try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
+            $stats = Order::with('branch')
+            ->select(DB::raw('count(*) as orders , sum(total) as sale, branch'))
+            ->whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->where('branch' , 'is not' , null)
+            ->groupBy('branch')
+            ->orderBy('sale' , 'DESC')
+            ->limit(5)
+            ->get();
+           
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
-            Log::info($ex->getMessage());
+            Log::info("datesStats");
+            Log::info($ex);
+        }
+        return response()->json(['stats' => $stats]);
+    }
+    public function areasStats($request){
+        try{
+            $stats = Order::with('area')
+            ->select(DB::raw('count(*) as orders , sum(total) as sale, area'))
+            ->whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->where('area' , 'is not' , null)
+            ->groupBy('area')
+            ->orderBy('sale' , 'DESC')
+            ->limit(5)
+            ->get();
+           
+        }
+        catch(\Exception $ex){
+            Log::info("datesStats");
+            Log::info($ex);
         }
         return response()->json(['stats' => $stats]);
     }
@@ -222,12 +235,19 @@ class ReportingController extends Controller
 
     public function categoryStats($request){
         try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
+            $stats = [];
+            $categories = OrderProduct::with('product.categories')
+            ->select(DB::raw('count(*) as orders , sum(price*quantity) as sale, product_id'))
+            ->whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->groupBy('product_id')
+            ->orderBy('sale' , 'DESC')
+            ->limit(5)
+            ->get();
+            
+            foreach($categories as $index => $category){
+                $cat = $category->product->categories[0];
+                $stats[] = ['category' => $cat->name , 'orders' => $category->orders, 'sale' => $category->sale];
+            }
         }
         catch(\Exception $ex){
             Log::info("dashboardStats");
@@ -239,28 +259,19 @@ class ReportingController extends Controller
 
     public function productStats($request){
         try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
-        }
-        catch(\Exception $ex){
-            Log::info("dashboardStats");
-            Log::info($ex->getMessage());
-        }
-        return response()->json(['stats' => $stats]);
-    }
-
-    public function costStats($request){
-        try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
+            $stats = [];
+            $products = OrderProduct::with('product')
+            ->select(DB::raw('count(*) as orders , sum(price*quantity) as sale, product_id'))
+            ->whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->groupBy('product_id')
+            ->orderBy('sale' , 'DESC')
+            ->limit(5)
+            ->get();
+            
+            foreach($products as $index => $product){
+                $prod = $product->product;
+                $stats[] = ['product' => $prod->name , 'orders' => $product->orders, 'sale' => $product->sale];
+            }
         }
         catch(\Exception $ex){
             Log::info("dashboardStats");
@@ -271,18 +282,28 @@ class ReportingController extends Controller
 
     public function orderStatusStats($request){
         try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
+            $stats = Order::select(DB::raw('count(*) as orders , status'))
+            ->whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->groupBy('status')
+            ->orderBy(DB::raw("FIELD(status, 'Received', 'Preparing', 'Completed', 'Cancelled')"))
+            ->get()->pluck('orders','status');
+           
+            $statuses = ['Received', 'Preparing', 'Completed', 'Cancelled'];
+            $newArray = [];
+            foreach($statuses as $status){
+                if(isset($stats[$status])){
+                    $newArray[$status] =  $stats[$status];
+                }
+                else{
+                    $newArray[$status] = 0;
+                }
+            }
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
-            Log::info($ex->getMessage());
+            Log::info("datesStats");
+            Log::info($ex);
         }
-        return response()->json(['stats' => $stats]);
+        return response()->json(['stats' => $newArray]);
     }
     /**
      * Display a listing of the resource.

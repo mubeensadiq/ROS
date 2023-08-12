@@ -31,9 +31,10 @@ const data = reactive({
     salesStats:{},
     orderStats:{},
     branchStats:{},
+    areaStats:{},
     dealStats:{},
     categoryStats:{},
-    productStats:{},
+    productsStats:{},
     costStats:{},
     orderStatusStats:{},
     loading:true
@@ -42,14 +43,15 @@ const reports = {
     'statsPerDates' : 'dates',
     'statsPerDay' : 'day',
     'statsPerHour' : 'hour' ,
-    'salesStats' : 'sales',
-    'orderStats' : 'orders',
-    'branchStats' : 'branches',
-    'dealStat' : 'deals',
+    'orderStatusStats' : 'orderStatus',
     'categoryStats' : 'category',
     'productsStats' : 'product',
-    'costStats' : 'cost',
-    'orderStatusStats' : 'orderStatus'
+    'branchStats' : 'branches',
+    'areaStats' : 'areas',
+    'salesStats' : 'sales',
+    'orderStats' : 'orders',
+    'dealStat' : 'deals',
+    'costStats' : 'cost'
 }
 const start_date = ref<string>("");
 const end_date = ref<string>("");
@@ -61,9 +63,10 @@ const loadedData =  reactive({
     salesStats:false,
     orderStats:false,
     branchStats:false,
+    areaStats:false,
     dealStats:false,
     categoryStats:false,
-    productStats:false,
+    productsStats:false,
     costStats:false,
     orderStatusStats:false,
 });
@@ -118,6 +121,10 @@ const loadMoreData = ((start_date , end_date , type , key) => {
 const dateFormat = ((date) => {
     return dayjs(date)
         .format("DD MMMM YYYY");
+})
+const calculatePercent = ((num) => {
+    let percent = ((num*100)/data.stats.total_orders);
+    return Math.round(percent);
 })
 </script>
 
@@ -189,6 +196,27 @@ const dateFormat = ((date) => {
                                 <div class="p-5 box">
                                     <div class="flex">
                                         <Lucide
+                                            icon="ShoppingCart"
+                                            class="w-[28px] h-[28px] text-primary"
+                                        />
+                                    </div>
+                                    <div class="mt-6 text-3xl font-medium leading-8">{{ data.stats.total_sale_wo_dc !== undefined ? data.stats.total_sale_wo_dc : 0 }}</div>
+                                    <div class="mt-1 text-base text-slate-500">
+                                        Total Sale W/O DC
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                            <div
+                                :class="[
+                  'relative zoom-in',
+                  'before:content-[\'\'] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70',
+                ]"
+                            >
+                                <div class="p-5 box">
+                                    <div class="flex">
+                                        <Lucide
                                             icon="CreditCard"
                                             class="w-[28px] h-[28px] text-pending"
                                         />
@@ -219,27 +247,7 @@ const dateFormat = ((date) => {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
-                            <div
-                                :class="[
-                  'relative zoom-in',
-                  'before:content-[\'\'] before:w-[90%] before:shadow-[0px_3px_20px_#0000000b] before:bg-slate-50 before:h-full before:mt-3 before:absolute before:rounded-md before:mx-auto before:inset-x-0 before:dark:bg-darkmode-400/70',
-                ]"
-                            >
-                                <div class="p-5 box">
-                                    <div class="flex">
-                                        <Lucide
-                                            icon="Monitor"
-                                            class="w-[28px] h-[28px] text-warning"
-                                        />
-                                    </div>
-                                    <div class="mt-6 text-3xl font-medium leading-8">{{ data.stats.top_product !== undefined ? data.stats.top_product : 'N/A' }}</div>
-                                    <div class="mt-1 text-base text-slate-500">
-                                        Top Product
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
                 <!-- END: General Report -->
@@ -282,7 +290,8 @@ const dateFormat = ((date) => {
                     </div>
                 </div>
                 <!-- END: Weekly Top Seller -->
-                <!-- BEGIN: Sales Report -->
+                
+                <!-- BEGIN: Houlry Report -->
                 <div class="col-span-12 mt-8 sm:col-span-12 lg:col-span-8" v-if="loadedData.statsPerHour">
                     <div class="flex items-center h-10 intro-y">
                         <h2 class="mr-5 text-lg font-medium truncate">Hourly Report</h2>
@@ -293,7 +302,101 @@ const dateFormat = ((date) => {
                         </div>
                     </div>
                 </div>
+                <!-- END: Hourly Report -->
+                <!-- BEGIN: Sales Report -->
+                <div class="col-span-12 mt-8 sm:col-span-6 lg:col-span-4" v-if="loadedData.orderStatusStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">Order Status</h2>
+                    </div>
+                    <div class="p-5 mt-5 intro-y box">
+                        <div class="mt-3">
+                            <ReportDonutChart :height="213" :data="data.orderStatusStats" />
+                        </div>
+                        <div class="mx-auto mt-8 w-52 sm:w-auto">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 mr-3 rounded-full bg-primary"></div>
+                                <span class="truncate">Received</span>
+                                <span class="ml-auto font-medium">100%</span>
+                            </div>
+                            <div class="flex items-center mt-4">
+                                <div class="w-2 h-2 mr-3 rounded-full bg-pending"></div>
+                                <span class="truncate">Preparing</span>
+                                <span class="ml-auto font-medium">{{calculatePercent(data.orderStatusStats.Preparing)}}%</span>
+                            </div>
+                            <div class="flex items-center mt-4">
+                                <div class="w-2 h-2 mr-3 rounded-full bg-warning"></div>
+                                <span class="truncate">Completed</span>
+                                <span class="ml-auto font-medium">{{calculatePercent(data.orderStatusStats.Completed)}}%</span>
+                            </div>
+                            <div class="flex items-center mt-4">
+                                <div class="w-2 h-2 mr-3 rounded-full bg-warning"></div>
+                                <span class="truncate">Cancelled</span>
+                                <span class="ml-auto font-medium">{{calculatePercent(data.orderStatusStats.Cancelled)}}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- END: Sales Report -->
+                <!-- BEGIN: Top Categories -->
+                <div class="col-span-12 mt-8 xl:col-span-4" v-if="loadedData.categoryStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">
+                            Top 5 Categories
+                        </h2>
+                    </div>
+                    <div class="mt-5">
+                        <div
+                            v-for="(category, index) in data.categoryStats"
+                            :key="index"
+                            class="intro-y"
+                        >
+                            <div class="flex items-center px-4 py-4 mb-3 box zoom-in">
+                                <div class="ml-4 mr-auto">
+                                    <div class="font-medium">{{ category.category }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">
+                                        {{ category.orders }} Orders
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-2 py-1 text-xs font-medium text-white rounded-full cursor-pointer bg-success"
+                                >
+                                Sale {{ category.sale }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Top Categories -->
+                <!-- BEGIN: Top Products -->
+                <div class="col-span-12 mt-8 xl:col-span-4" v-if="loadedData.productsStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">
+                            Top 5 Products
+                        </h2>
+                    </div>
+                    <div class="mt-5">
+                        <div
+                            v-for="(product, key) in data.productsStats"
+                            :key="key"
+                            class="intro-y"
+                        >
+                            <div class="flex items-center px-4 py-4 mb-3 box zoom-in">
+                                <div class="ml-4 mr-auto">
+                                    <div class="font-medium">{{ product.product }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">
+                                        {{ product.orders }} Orders
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-2 py-1 text-xs font-medium text-white rounded-full cursor-pointer bg-success"
+                                >
+                                Sale {{ product.sale }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Top Products -->
             </div>
         </div>
     </div>

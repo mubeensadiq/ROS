@@ -12,6 +12,7 @@ use App\Notifications\NewOrder;
 
 class OrdersController extends Controller
 {
+    protected $pushNotification;
     public function __construct()
     {
         $this->pushNotification = new PushNotificationsController();
@@ -124,8 +125,13 @@ class OrdersController extends Controller
                 'landmark' => $customer['landmark'],
                 'sub_total' => $cart['subTotal'],
                 'tax' => $cart['tax_amount'],
+                'delivery_charges' => $request->delivery_charges,
                 'total' => $cart['subTotal'] + $cart['tax_amount'],
                 'payment_type' => 'cash',
+                'order_type' => 'Delivery',
+                'city' => $customer['city'],
+                'area' => $customer['area'],
+                'branch' => $customer['branch'],
                 'status' => 'Received'
             ]);
             foreach ($cart['items'] as $item){
@@ -160,8 +166,16 @@ class OrdersController extends Controller
 
                 }
             }
-
-            $this->pushNotification->newOrder($adminUser->id, $title, $body, $packet, $isWhitelabel);
+            try{
+                $title = "New Order has landed";
+                $customer = $customer['first_name'] . ' ' . $customer['last_name'];
+                $body = "New Order $order_number has been placed by $customer";
+                $this->pushNotification->newOrder($title, $body);
+            }
+            catch (\Exception $ex){
+                Log::info("Error in Push Notification");
+                Log::info($ex);
+            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Successfully Saved',
