@@ -33,7 +33,8 @@ const data = reactive({
         instructions: '',
         city: localStorage.getItem('city') ?? 0,
         area: localStorage.getItem('area') ?? null,
-        branch: localStorage.getItem('branch') ?? null
+        branch: localStorage.getItem('branch') ?? null,
+        order_type: localStorage.getItem('locationType') ?? null
     },
     validateError:{
         first_name: {

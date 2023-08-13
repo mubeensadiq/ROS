@@ -1,27 +1,16 @@
 <script setup lang="ts">
 import _ from "lodash";
 import {ref, provide, onMounted, reactive, watch, onActivated, onUpdated} from "vue";
-import fakerData from "../utils/faker";
-import Button from "../base-components/Button";
-import Pagination from "../base-components/Pagination";
-import { FormInput, FormSelect } from "../base-components/Form";
-import TinySlider, { TinySliderElement } from "../base-components/TinySlider";
 import Lucide from "../base-components/Lucide";
-import Tippy from "../base-components/Tippy";
 import Litepicker from "../base-components/Litepicker";
 import ReportDonutChart from "../components/ReportDonutChart";
 import ReportLineChart from "../components/ReportLineChart";
 import ReportPieChart from "../components/ReportPieChart";
 import VerticalBarChart from "../components/VerticalBarChart";
-import SimpleLineChart1 from "../components/SimpleLineChart1";
-import ReportMap from "../components/ReportMap";
-import { Menu } from "../base-components/Headless";
-import Table from "../base-components/Table";
 import axios from "axios";
 import dayjs from "dayjs";
 
 const salesReportFilter = ref<string>("");
-const importantNotesRef = ref<TinySliderElement>();
 const data = reactive({
     stats:{},
     statsPerDates:{},
@@ -62,27 +51,18 @@ const loadedData =  reactive({
     productsStats:false,
     orderStatusStats:false,
 });
-provide("bind[importantNotesRef]", (el: TinySliderElement) => {
-    importantNotesRef.value = el;
-});
 watch(salesReportFilter, async (newSalesReportFilter) => {
     loadData(newSalesReportFilter);
     $.each(reports, function(key,value){
         loadMoreData(start_date.value , end_date.value , value , key);
     });
 });
-const prevImportantNotes = () => {
-    importantNotesRef.value?.tns.goTo("prev");
-};
-const nextImportantNotes = () => {
-    importantNotesRef.value?.tns.goTo("next");
-};
 const loadData = ((reportFilter) => {
     data.loading = true;
     const dates = reportFilter.split('-');
     const format = "YYYY-MM-D HH:mm:ss";
-    start_date.value = dayjs(dates[0]).subtract(2,'month').format(format);
-    end_date.value = dayjs(dates[1]).add(1,'day').format(format);
+    start_date.value = dayjs(dates[0]).format(format);
+    end_date.value = dayjs(dates[1]).format(format);
     axios.get('/api/report/dashboard-stats',{params : {'start_date' : start_date.value , 'end_date' :end_date.value}}).then((response)=>{
         data.stats = response.data.stats;
     }).catch( (error) => {

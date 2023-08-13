@@ -46,7 +46,7 @@ class BranchesController extends Controller
     }
     public function getBranchesByCity(Request $request){
         try{
-            $branches = Branch::whereHas('areas',function ($q) use($request) {
+            $branches = Branch::with('areas')->whereHas('areas',function ($q) use($request) {
                 $q->where('city_id' , $request->city_id);
             })->get();
             return response()->json([

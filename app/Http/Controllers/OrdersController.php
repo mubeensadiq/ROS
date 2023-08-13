@@ -128,7 +128,7 @@ class OrdersController extends Controller
                 'delivery_charges' => $request->delivery_charges,
                 'total' => $cart['subTotal'] + $cart['tax_amount'],
                 'payment_type' => 'cash',
-                'order_type' => 'Delivery',
+                'order_type' => $customer['order_type'],
                 'city' => $customer['city'],
                 'area' => $customer['area'],
                 'branch' => $customer['branch'],

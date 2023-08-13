@@ -40,7 +40,7 @@ class AreasController extends Controller
     }
     public function getAreasByCity(Request $request){
         try{
-            $areas = Area::with('city')->where('city_id', $request->city_id)->get();
+            $areas = Area::with('city','branches')->where('city_id', $request->city_id)->get();
             return response()->json([
                 'status' => 'success',
                 'areas' => $areas

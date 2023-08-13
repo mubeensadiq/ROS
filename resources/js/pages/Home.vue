@@ -81,11 +81,20 @@ watch(city, async (newCity) => {
     getBranches();
 })
 watch(area, async(val) => {
-    localStorage.setItem('area' , area.value)
+    console.log(area);
+    localStorage.setItem('area' , area.value);
+    let selectedArea = data.areas.find(item => item.id == area.value);
+    if(selectedArea && selectedArea.branches !== undefined)
+        localStorage.setItem('branch' , selectedArea.branches[0].id);
     $('#selectLocationModal').modal('hide');
 })
 watch(branch, async(val) => {
+    console.log(branch);
     localStorage.setItem('branch' , branch.value)
+    let selectedBranch = data.branches.find(item => item.id == branch.value);
+    console.log(selectedBranch);
+    if(selectedBranch && selectedBranch.areas !== undefined)
+        localStorage.setItem('area' , selectedBranch.areas[0].id);
     getCategoryProducts();
     $('#selectLocationModal').modal('hide');
 })
@@ -97,6 +106,7 @@ onMounted(() => {
         getBranches();
     getCategoryProducts();
     getDiscount();
+    localStorage.setItem('locationType' , data.locationType)
     let cart = localStorage.getItem('cart');
     if(cart)
         data.cart = JSON.parse(cart);
@@ -137,6 +147,7 @@ const getCategories = (() => {
 });
 const chanageLocationType = ((event) => {
     data.locationType = event.target.value;
+    localStorage.setItem('locationType' , data.locationType)
 });
 const getCities = (() => {
     axios.get('/cities-has-areas?get=all').then((response)=>{
