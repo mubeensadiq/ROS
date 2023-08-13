@@ -20,6 +20,12 @@ class Order extends Model
     public function rider(){
         return $this->hasOne(OrderRider::class);
     }
+    public function branch(){
+        return $this->belongsTo(Branch::class,'branch','id');
+    }
+    public function area(){
+        return $this->belongsTo(Area::class , 'area' , 'id');
+    }
 
     protected function getCustomerNameAttribute()
     {

@@ -1,15 +1,11 @@
 {
-  "public/images/assets/logo.png": {
-    "file": "assets/logo.88a845cb.png",
-    "src": "public/images/assets/logo.png"
-  },
-  "resources/js/assets/images/logo.svg": {
-    "file": "assets/logo.a8b7d868.svg",
-    "src": "resources/js/assets/images/logo.svg"
-  },
   "public/images/assets/order-confirmation.png": {
     "file": "assets/order-confirmation.af08d117.png",
     "src": "public/images/assets/order-confirmation.png"
+  },
+  "public/images/assets/logo.png": {
+    "file": "assets/logo.88a845cb.png",
+    "src": "public/images/assets/logo.png"
   },
   "public/images/assets/facebook.png": {
     "file": "assets/facebook.225d9c43.png",
@@ -19,25 +15,21 @@
     "file": "assets/youtube.cb2db195.png",
     "src": "public/images/assets/youtube.png"
   },
-  "public/images/assets/bg1.png": {
-    "file": "assets/bg1.6bf04d9a.png",
-    "src": "public/images/assets/bg1.png"
-  },
   "public/images/assets/google-plus.png": {
     "file": "assets/google-plus.6e9fc204.png",
     "src": "public/images/assets/google-plus.png"
+  },
+  "public/images/assets/bg1.png": {
+    "file": "assets/bg1.6bf04d9a.png",
+    "src": "public/images/assets/bg1.png"
   },
   "public/images/assets/twitter.png": {
     "file": "assets/twitter.bb30a496.png",
     "src": "public/images/assets/twitter.png"
   },
-  "public/images/assets/cash.png": {
-    "file": "assets/cash.b587fdec.png",
-    "src": "public/images/assets/cash.png"
-  },
-  "public/images/assets/deal-1.png": {
-    "file": "assets/deal-1.150339f7.png",
-    "src": "public/images/assets/deal-1.png"
+  "resources/js/assets/images/logo.svg": {
+    "file": "assets/logo.a8b7d868.svg",
+    "src": "resources/js/assets/images/logo.svg"
   },
   "public/images/assets/Vector.png": {
     "file": "assets/Vector.d065d9a9.png",
@@ -67,8 +59,16 @@
     "file": "assets/shopping-cart.52b1677e.png",
     "src": "public/images/assets/shopping-cart.png"
   },
+  "public/images/assets/cash.png": {
+    "file": "assets/cash.b587fdec.png",
+    "src": "public/images/assets/cash.png"
+  },
+  "public/images/assets/deal-1.png": {
+    "file": "assets/deal-1.150339f7.png",
+    "src": "public/images/assets/deal-1.png"
+  },
   "resources/js/app.js": {
-    "file": "assets/app.312af239.js",
+    "file": "assets/app.6997c1ae.js",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [

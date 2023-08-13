@@ -27,15 +27,12 @@ const data = reactive({
     statsPerDates:{},
     statsPerDay:{},
     statsPerHour:{},
-    statsPerWeek:{},
-    salesStats:{},
     orderStats:{},
     branchStats:{},
     areaStats:{},
     dealStats:{},
     categoryStats:{},
     productsStats:{},
-    costStats:{},
     orderStatusStats:{},
     loading:true
 });
@@ -48,10 +45,8 @@ const reports = {
     'productsStats' : 'product',
     'branchStats' : 'branches',
     'areaStats' : 'areas',
-    'salesStats' : 'sales',
     'orderStats' : 'orders',
-    'dealStat' : 'deals',
-    'costStats' : 'cost'
+    'dealStat' : 'deals'
 }
 const start_date = ref<string>("");
 const end_date = ref<string>("");
@@ -59,15 +54,12 @@ const loadedData =  reactive({
     statsPerDates:false,
     statsPerDay:false,
     statsPerHour:false,
-    statsPerWeek:false,
-    salesStats:false,
     orderStats:false,
     branchStats:false,
     areaStats:false,
     dealStats:false,
     categoryStats:false,
     productsStats:false,
-    costStats:false,
     orderStatusStats:false,
 });
 provide("bind[importantNotesRef]", (el: TinySliderElement) => {
@@ -123,8 +115,8 @@ const dateFormat = ((date) => {
         .format("DD MMMM YYYY");
 })
 const calculatePercent = ((num) => {
-    let percent = ((num*100)/data.stats.total_orders);
-    return Math.round(percent);
+    let percent = ((num/data.stats.total_orders)*100);
+    return percent.toFixed(2);
 })
 </script>
 
@@ -316,7 +308,7 @@ const calculatePercent = ((num) => {
                             <div class="flex items-center">
                                 <div class="w-2 h-2 mr-3 rounded-full bg-primary"></div>
                                 <span class="truncate">Received</span>
-                                <span class="ml-auto font-medium">100%</span>
+                                <span class="ml-auto font-medium">{{calculatePercent(data.orderStatusStats.Received)}}%</span>
                             </div>
                             <div class="flex items-center mt-4">
                                 <div class="w-2 h-2 mr-3 rounded-full bg-pending"></div>
@@ -397,6 +389,96 @@ const calculatePercent = ((num) => {
                     </div>
                 </div>
                 <!-- END: Top Products -->
+                <!-- BEGIN: Top Branches -->
+                <div class="col-span-12 mt-8 xl:col-span-4" v-if="loadedData.areaStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">
+                            Most Sale Areas
+                        </h2>
+                    </div>
+                    <div class="mt-5">
+                        <div
+                            v-for="(area, key) in data.areaStats"
+                            :key="key"
+                            class="intro-y"
+                        >
+                            <div class="flex items-center px-4 py-4 mb-3 box zoom-in">
+                                <div class="ml-4 mr-auto">
+                                    <div class="font-medium">{{ area.area.area }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">
+                                        {{ area.orders }} Orders
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-2 py-1 text-xs font-medium text-white rounded-full cursor-pointer bg-success"
+                                >
+                                Sale {{ area.sale }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Top Areas -->
+                <!-- BEGIN: Top Branches -->
+                <div class="col-span-12 mt-8 xl:col-span-4" v-if="loadedData.branchStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">
+                            Most Sale Branches
+                        </h2>
+                    </div>
+                    <div class="mt-5">
+                        <div
+                            v-for="(branch, key) in data.branchStats"
+                            :key="key"
+                            class="intro-y"
+                        >
+                            <div class="flex items-center px-4 py-4 mb-3 box zoom-in">
+                                <div class="ml-4 mr-auto">
+                                    <div class="font-medium">{{ branch.branch.name }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">
+                                        {{ branch.orders }} Orders
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-2 py-1 text-xs font-medium text-white rounded-full cursor-pointer bg-success"
+                                >
+                                Sale {{ branch.sale }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Top Branches -->
+                <!-- BEGIN: Top Orders -->
+                <div class="col-span-12 mt-8 xl:col-span-4" v-if="loadedData.orderStats">
+                    <div class="flex items-center h-10 intro-y">
+                        <h2 class="mr-5 text-lg font-medium truncate">
+                            Top 5 Orders
+                        </h2>
+                    </div>
+                    <div class="mt-5">
+                        <div
+                            v-for="(order, key) in data.orderStats"
+                            :key="key"
+                            class="intro-y"
+                        >
+                            <div class="flex items-center px-4 py-4 mb-3 box zoom-in">
+                                <div class="ml-4 mr-auto">
+                                    <div class="font-medium">Customer: {{ order.customer_name }}</div>
+                                    <div class="text-slate-500 text-xs mt-0.5">
+                                        Order Number {{ order.order_number }}
+                                    </div>
+                                </div>
+                                <div
+                                    class="px-2 py-1 text-xs font-medium text-white rounded-full cursor-pointer bg-success"
+                                >
+                                Rs {{ order.total }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Top Branches -->
             </div>
         </div>
     </div>

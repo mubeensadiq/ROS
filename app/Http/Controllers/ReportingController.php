@@ -115,7 +115,7 @@ class ReportingController extends Controller
             
         }
         catch(\Exception $ex){
-            Log::info("datesStats");
+            Log::info("dayStats");
             Log::info($ex);
         }
         return response()->json(['stats' => $stats]);
@@ -142,40 +142,23 @@ class ReportingController extends Controller
             }
         }
         catch(\Exception $ex){
-            Log::info("datesStats");
+            Log::info("hourStats");
             Log::info($ex);
         }
         return response()->json(['stats' => $newArray]);
     }
 
-    public function salesStats($request){
-        try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
-        }
-        catch(\Exception $ex){
-            Log::info("dashboardStats");
-            Log::info($ex->getMessage());
-        }
-        return response()->json(['stats' => $stats]);
-    }
-
     public function ordersStats($request){
         try{
-            $stats = [
-                'total_sale' => 0 , 'total_orders' => 0
-            ];
-            $orders = Order::whereBetween('created_at',[$request->start_date , $request->end_date])->get();
-            $stats['total_sale'] = $orders->sum('total');
-            $stats['total_orders'] = $orders->count('id');
+            $stats = Order::whereBetween('created_at',[$request->start_date , $request->end_date])
+            ->orderBy('total' , 'DESC')
+            ->limit(5)
+            ->get();
+           
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
-            Log::info($ex->getMessage());
+            Log::info("ordersStats");
+            Log::info($ex);
         }
         return response()->json(['stats' => $stats]);
     }
@@ -185,15 +168,14 @@ class ReportingController extends Controller
             $stats = Order::with('branch')
             ->select(DB::raw('count(*) as orders , sum(total) as sale, branch'))
             ->whereBetween('created_at',[$request->start_date , $request->end_date])
-            ->where('branch' , 'is not' , null)
+            ->where('branch' , '!=' , null)
             ->groupBy('branch')
             ->orderBy('sale' , 'DESC')
             ->limit(5)
             ->get();
-           
         }
         catch(\Exception $ex){
-            Log::info("datesStats");
+            Log::info("branchesStats");
             Log::info($ex);
         }
         return response()->json(['stats' => $stats]);
@@ -203,7 +185,7 @@ class ReportingController extends Controller
             $stats = Order::with('area')
             ->select(DB::raw('count(*) as orders , sum(total) as sale, area'))
             ->whereBetween('created_at',[$request->start_date , $request->end_date])
-            ->where('area' , 'is not' , null)
+            ->where('area' , '!=' , null)
             ->groupBy('area')
             ->orderBy('sale' , 'DESC')
             ->limit(5)
@@ -211,7 +193,7 @@ class ReportingController extends Controller
            
         }
         catch(\Exception $ex){
-            Log::info("datesStats");
+            Log::info("areasStats");
             Log::info($ex);
         }
         return response()->json(['stats' => $stats]);
@@ -227,7 +209,7 @@ class ReportingController extends Controller
             $stats['total_orders'] = $orders->count('id');
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
+            Log::info("dealsStats");
             Log::info($ex->getMessage());
         }
         return response()->json(['stats' => $stats]);
@@ -250,7 +232,7 @@ class ReportingController extends Controller
             }
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
+            Log::info("categoryStats");
             Log::info($ex->getMessage());
         }
         return response()->json(['stats' => $stats]);
@@ -274,7 +256,7 @@ class ReportingController extends Controller
             }
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
+            Log::info("productStats");
             Log::info($ex->getMessage());
         }
         return response()->json(['stats' => $stats]);
@@ -300,7 +282,7 @@ class ReportingController extends Controller
             }
         }
         catch(\Exception $ex){
-            Log::info("datesStats");
+            Log::info("orderStatusStats");
             Log::info($ex);
         }
         return response()->json(['stats' => $newArray]);
@@ -330,7 +312,7 @@ class ReportingController extends Controller
             $orders = $orders->paginate(20);
         }
         catch(\Exception $ex){
-            Log::info("dashboardStats");
+            Log::info("getReport");
             Log::info($ex->getMessage());
         }
         return response()->json(['records' => $orders]);

@@ -29,9 +29,13 @@ onUpdated(() => {
 });
 const filter = reactive({
         branch : null,
+        area : null,
+        rider : null,
         order_status : null,
         order_type : null,
         product : null,
+        category : null,
+        customer : null,
         phone_number:null,
         start_date:dayjs().format("DD MMMM YYYY"),
         end_date:dayjs().format("DD MMMM YYYY"),
